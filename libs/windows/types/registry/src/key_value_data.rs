@@ -110,7 +110,11 @@ impl BinRead for KeyValueData {
             KeyValueDataType::RegExpandSZ => Self::RegExpandSZ(Self::parse_reg_sz_raw(
                 &Self::read_vec(reader, data_size)?[..],
             )?),
-            KeyValueDataType::RegBinary => todo!(),
+            KeyValueDataType::RegBinary => {
+                let mut bytes = vec![0u8; data_size];
+                reader.read_exact(&mut bytes)?;
+                Self::RegBinary(bytes)
+            }
             KeyValueDataType::RegDWord => {
                 if data_size != 4 {
                     return Err(binread::Error::AssertFail {
