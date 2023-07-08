@@ -1,8 +1,9 @@
 use binread::BinRead;
+use serde::Serialize;
 
 /// Possible data types of the data belonging to a [`KeyValue`].
 /// https://docs.microsoft.com/en-us/windows/win32/sysinfo/registry-value-types
-#[derive(BinRead, Clone, Copy)]
+#[derive(BinRead, Clone, Copy, Serialize)]
 #[br(repr=u32)]
 pub enum KeyValueDataType {
     /// Data with no particular type

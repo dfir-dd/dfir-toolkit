@@ -1,12 +1,13 @@
 use std::{
     fmt::Display,
-    io::{Read, Seek},
 };
 
-use binread::{BinRead, BinReaderExt, BinResult};
+use binread::{BinRead, BinReaderExt};
 use chrono::{DateTime, Utc};
-use encoding_rs::{UTF_16LE, WINDOWS_1252};
+use serde::Serialize;
 use winstructs::timestamp::WinTimestamp;
+
+use crate::registry_string::RegistryString;
 
 use super::KeyValueDataType;
 
@@ -22,7 +23,7 @@ use super::KeyValueDataType;
 /// let parsed_data: KeyValueData = reader.read_ne_args((KeyValueDataType::RegSZ, 5)).unwrap();
 /// assert_eq!(parsed_data, KeyValueData::RegSZ("Test".to_string()));
 /// ```
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, Serialize)]
 pub enum KeyValueData {
     RegNone,
     RegSZ(String),
@@ -39,58 +40,6 @@ pub enum KeyValueData {
     RegFileTime(DateTime<Utc>),
 }
 
-impl KeyValueData {
-    fn parse_reg_sz_raw(raw_string: &[u8]) -> BinResult<String> {
-        let (cow, _, had_errors) = UTF_16LE.decode(raw_string);
-
-        if !had_errors {
-            Ok(cow.strip_suffix('\0').unwrap_or(&cow).to_owned())
-        } else {
-            let (cow, _, had_errors) = WINDOWS_1252.decode(raw_string);
-            if had_errors {
-                Err(binread::error::Error::Custom {
-                    pos: 0,
-                    err: Box::new("unable to decode RegSZ string"),
-                })
-            } else {
-                //assert_eq!(raw_string.len(), cow.len());
-                Ok(cow.strip_suffix('\0').unwrap_or(&cow).to_owned())
-            }
-        }
-    }
-
-    fn read_vec<S: Read + Seek, I: TryInto<usize>>(reader: &mut S, bytes: I) -> BinResult<Vec<u8>>
-    where
-        <I as std::convert::TryInto<usize>>::Error: std::fmt::Debug,
-    {
-        let mut bytes = vec![0u8; TryInto::try_into(bytes).unwrap()];
-        reader.read_exact(&mut bytes)?;
-        Ok(bytes)
-    }
-
-    pub(crate) fn parse_reg_multi_sz(raw_string: &[u8]) -> BinResult<Vec<String>> {
-        let mut multi_string: Vec<String> = Self::parse_reg_sz_raw(raw_string)?
-            .split('\0')
-            .map(|x| x.to_owned())
-            .collect();
-
-        // due to the way split() works we have an empty string after the last \0 character
-        // and due to the way RegMultiSZ works we have an additional empty string between the
-        // last two \0 characters.
-        // those additional empty strings will be deleted afterwards:
-        assert!(!multi_string.len() >= 2);
-        //assert_eq!(multi_string.last().unwrap().len(), 0);
-        multi_string.pop();
-
-        if multi_string.last().is_some() && multi_string.last().unwrap().is_empty() {
-            // assert_eq!(multi_string.last().unwrap().len(), 0);
-            multi_string.pop();
-        }
-
-        Ok(multi_string)
-    }
-}
-
 impl BinRead for KeyValueData {
     type Args = (KeyValueDataType, u32);
 
@@ -104,12 +53,10 @@ impl BinRead for KeyValueData {
 
         Ok(match data_type {
             KeyValueDataType::RegNone => Self::RegNone,
-            KeyValueDataType::RegSZ => Self::RegSZ(Self::parse_reg_sz_raw(
-                &Self::read_vec(reader, data_size)?[..],
-            )?),
-            KeyValueDataType::RegExpandSZ => Self::RegExpandSZ(Self::parse_reg_sz_raw(
-                &Self::read_vec(reader, data_size)?[..],
-            )?),
+            KeyValueDataType::RegSZ => Self::RegSZ(reader.read_le_args::<RegistryString>(data_size)?.into()),
+            KeyValueDataType::RegExpandSZ => {
+                Self::RegExpandSZ(reader.read_le_args::<RegistryString>(data_size)?.into())
+            }
             KeyValueDataType::RegBinary => {
                 let mut bytes = vec![0u8; data_size];
                 reader.read_exact(&mut bytes)?;
@@ -133,23 +80,21 @@ impl BinRead for KeyValueData {
                 }
                 Self::RegDWordBigEndian(reader.read_be()?)
             }
-            KeyValueDataType::RegLink => Self::RegLink(Self::parse_reg_sz_raw(
-                &Self::read_vec(reader, data_size)?[..],
-            )?),
+            KeyValueDataType::RegLink => Self::RegLink(reader.read_le_args::<RegistryString>(data_size)?.into()),
             KeyValueDataType::RegMultiSZ => {
-                let bytes = Self::read_vec(reader, data_size)?;
-                let strings = Self::parse_reg_multi_sz(&bytes[..])?;
+                let bytes = super::read_vec(reader, data_size)?;
+                let strings = super::parse_reg_multi_sz(&bytes[..])?;
                 Self::RegMultiSZ(strings)
             }
-            KeyValueDataType::RegResourceList => Self::RegResourceList(Self::parse_reg_sz_raw(
-                &Self::read_vec(reader, data_size)?[..],
-            )?),
-            KeyValueDataType::RegFullResourceDescriptor => Self::RegFullResourceDescriptor(
-                Self::parse_reg_sz_raw(&Self::read_vec(reader, data_size)?[..])?,
-            ),
-            KeyValueDataType::RegResourceRequirementsList => Self::RegResourceRequirementsList(
-                Self::parse_reg_sz_raw(&Self::read_vec(reader, data_size)?[..])?,
-            ),
+            KeyValueDataType::RegResourceList => {
+                Self::RegResourceList(reader.read_le_args::<RegistryString>(data_size)?.into())
+            }
+            KeyValueDataType::RegFullResourceDescriptor => {
+                Self::RegFullResourceDescriptor(reader.read_le_args::<RegistryString>(data_size)?.into())
+            }
+            KeyValueDataType::RegResourceRequirementsList => {
+                Self::RegResourceRequirementsList(reader.read_le_args::<RegistryString>(data_size)?.into())
+            }
             KeyValueDataType::RegQWord => {
                 if data_size != 8 {
                     return Err(binread::Error::AssertFail {
