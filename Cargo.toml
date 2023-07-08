@@ -1,5 +1,24 @@
-[workspace]
+[package]
+name = "dfir-toolkit"
+version = "0.1.0"
+edition = "2021"
+authors = ["Jan Starke <Jan.Starke@telekom.de>"]
+description = "CLI tools for digital forensics and incident response"
+homepage = "https://www.github.com/janstarke/dfir_toolkit"
+license = "GPL-3.0"
 
-members = [
-    "libs/windows/types/registry"
-]
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[features]
+
+[dependencies]
+anyhow = "1.0"
+binread = "2.2.0"
+chrono = "0.4"
+clap = {version = "4.3", features = ["derive"] }
+clap-verbosity-flag = "2.0.0"
+csv = "1.2.2"
+encoding_rs = "0.8"
+log = {version = "0.4", features = [ "release_max_level_info" ]}
+serde = { version = "1.0", features = ["derive"] }
+simplelog = "0.12"
+winstructs = "0.3.0"

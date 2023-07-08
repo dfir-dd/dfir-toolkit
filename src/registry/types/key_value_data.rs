@@ -7,9 +7,7 @@ use chrono::{DateTime, Utc};
 use serde::Serialize;
 use winstructs::timestamp::WinTimestamp;
 
-use crate::registry_string::RegistryString;
-
-use super::KeyValueDataType;
+use super::{KeyValueDataType, RegistryString};
 
 /// Represents a binary registry datum
 ///
