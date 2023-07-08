@@ -1,6 +1,6 @@
 [package]
 name = "dfir-toolkit"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 authors = ["Jan Starke <Jan.Starke@telekom.de>"]
 description = "CLI tools for digital forensics and incident response"
