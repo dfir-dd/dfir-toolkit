@@ -182,6 +182,7 @@ impl Display for KeyValueData {
 mod tests {
     use super::*;
     use binread::BinReaderExt;
+    use chrono::{NaiveDate, Duration};
     use std::io::Cursor;
 
     #[test]
@@ -223,5 +224,23 @@ mod tests {
             .read_ne_args((KeyValueDataType::RegQWord, 8))
             .unwrap();
         assert_eq!(parsed_data, KeyValueData::RegQWord(0x0807060504030201));
+    }
+
+    #[test]
+    fn test_parse_filetime_ok() {
+        let mut reader = Cursor::new(b"\x66\x47\x46\x20\x77\xDE\xCF\x01");
+        let parsed_data: KeyValueData = reader
+            .read_ne_args((KeyValueDataType::RegFileTime, 8))
+            .unwrap();
+        
+        let expected = DateTime::<Utc>::from_utc(
+            NaiveDate::from_ymd_opt(2014, 10, 2)
+                .unwrap()
+                .and_hms_opt(19, 29, 4)
+                .unwrap(),
+            Utc
+        );
+        let nanos = Duration::microseconds(98493);
+        assert_eq!(parsed_data, KeyValueData::RegFileTime(expected + nanos));
     }
 }
