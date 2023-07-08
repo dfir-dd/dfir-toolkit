@@ -15,7 +15,7 @@ use super::{KeyValueDataType, RegistryString};
 /// # use std::io::Cursor;
 /// # use std::io::Read;
 /// # use binread::BinReaderExt;
-/// # use windows_types_registry::*;
+/// # use dfir_toolkit::registry::types::{KeyValueDataType, KeyValueData};
 ///
 /// let mut reader = Cursor::new(b"Test\0");
 /// let parsed_data: KeyValueData = reader.read_ne_args((KeyValueDataType::RegSZ, 5)).unwrap();
