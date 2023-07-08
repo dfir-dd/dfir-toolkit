@@ -67,6 +67,28 @@ impl KeyValueData {
         reader.read_exact(&mut bytes)?;
         Ok(bytes)
     }
+
+    pub(crate) fn parse_reg_multi_sz(raw_string: &[u8]) -> BinResult<Vec<String>> {
+        let mut multi_string: Vec<String> = Self::parse_reg_sz_raw(raw_string)?
+            .split('\0')
+            .map(|x| x.to_owned())
+            .collect();
+
+        // due to the way split() works we have an empty string after the last \0 character
+        // and due to the way RegMultiSZ works we have an additional empty string between the
+        // last two \0 characters.
+        // those additional empty strings will be deleted afterwards:
+        assert!(!multi_string.len() >= 2);
+        //assert_eq!(multi_string.last().unwrap().len(), 0);
+        multi_string.pop();
+
+        if multi_string.last().is_some() && multi_string.last().unwrap().is_empty() {
+            // assert_eq!(multi_string.last().unwrap().len(), 0);
+            multi_string.pop();
+        }
+
+        Ok(multi_string)
+    }
 }
 
 impl BinRead for KeyValueData {
@@ -110,7 +132,11 @@ impl BinRead for KeyValueData {
             KeyValueDataType::RegLink => Self::RegLink(Self::parse_reg_sz_raw(
                 &Self::read_vec(reader, data_size)?[..],
             )?),
-            KeyValueDataType::RegMultiSZ => todo!(),
+            KeyValueDataType::RegMultiSZ => {
+                let bytes = Self::read_vec(reader, data_size)?;
+                let strings = Self::parse_reg_multi_sz(&bytes[..])?;
+                Self::RegMultiSZ(strings)
+            }
             KeyValueDataType::RegResourceList => Self::RegResourceList(Self::parse_reg_sz_raw(
                 &Self::read_vec(reader, data_size)?[..],
             )?),
@@ -182,7 +208,7 @@ impl Display for KeyValueData {
 mod tests {
     use super::*;
     use binread::BinReaderExt;
-    use chrono::{NaiveDate, Duration};
+    use chrono::{Duration, NaiveDate};
     use std::io::Cursor;
 
     #[test]
@@ -232,15 +258,32 @@ mod tests {
         let parsed_data: KeyValueData = reader
             .read_ne_args((KeyValueDataType::RegFileTime, 8))
             .unwrap();
-        
+
         let expected = DateTime::<Utc>::from_utc(
             NaiveDate::from_ymd_opt(2014, 10, 2)
                 .unwrap()
                 .and_hms_opt(19, 29, 4)
                 .unwrap(),
-            Utc
+            Utc,
         );
         let nanos = Duration::microseconds(98493);
         assert_eq!(parsed_data, KeyValueData::RegFileTime(expected + nanos));
+    }
+
+    #[test]
+    fn test_parse_multi_sz_cp1252_ok() {
+        let bytes = b"Test1\0Test2\0Test3\0\0";
+        let mut reader = Cursor::new(bytes);
+        let parsed_data: KeyValueData = reader
+            .read_ne_args((KeyValueDataType::RegMultiSZ, bytes.len() as u32))
+            .unwrap();
+        assert_eq!(
+            parsed_data,
+            KeyValueData::RegMultiSZ(vec![
+                "Test1".to_string(),
+                "Test2".to_string(),
+                "Test3".to_string()
+            ])
+        );
     }
 }
