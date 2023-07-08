@@ -1,0 +1,5 @@
+[workspace]
+
+members = [
+    "libs/windows/types/registry"
+]
