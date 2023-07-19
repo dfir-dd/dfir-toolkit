@@ -1,0 +1,18 @@
+[package]
+name = "dfirtk-sessionevent-derive"
+version = "0.1.0"
+edition = "2021"
+authors = ["Jan Starke <Jan.Starke@telekom.de>"]
+description = "CLI tools for digital forensics and incident response"
+homepage = "https://www.github.com/janstarke/dfir_toolkit"
+license = "GPL-3.0"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+quote = "1"
+syn = "2"
+proc-macro2 = "1"
+darling = "0.20"
+# eventdata = {path="../eventdata"}
