@@ -10,9 +10,6 @@ use clap::Parser;
 use colored_json::to_colored_json_auto;
 use evtx::{EvtxParser, SerializedEvtxRecord};
 
-mod event_id;
-
-mod range;
 use term_table::{row::Row, table_cell::TableCell};
 
 /// Display one or more events from an evtx file

@@ -1,5 +1,5 @@
 use chrono::{DateTime, Duration, Utc};
-use eventdata::SessionId;
+use dfirtk_eventdata::SessionId;
 use serde::{Serialize, Serializer};
 
 use super::ActiveDirectoryDomainName;

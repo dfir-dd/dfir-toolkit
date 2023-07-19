@@ -1,6 +1,6 @@
 use std::{collections::HashMap, path::Path};
 
-use eventdata::SessionId;
+use dfirtk_eventdata::SessionId;
 use evtx::EvtxParser;
 
 use super::{Session, SessionEvent};

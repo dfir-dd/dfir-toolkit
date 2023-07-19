@@ -3,7 +3,7 @@ use std::collections::HashSet;
 use chrono::{DateTime, Duration, Utc};
 use serde::{Serialize, Serializer};
 
-use eventdata::SessionId;
+use dfirtk_eventdata::SessionId;
 
 #[derive(Serialize, Debug)]
 pub struct SessionAsJson {

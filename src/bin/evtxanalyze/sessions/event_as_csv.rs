@@ -1,5 +1,5 @@
 use chrono::{DateTime, Utc};
-use eventdata::{EventId, EventLevel};
+use dfirtk_eventdata::{EventLevel, EventId};
 use serde::Serialize;
 
 use super::SessionEvent;

@@ -1,7 +1,9 @@
 use clap::{Parser, ValueEnum};
 
-use super::{Rfc3339Datetime, SystemField};
+use dfir_toolkit::common::Rfc3339Datetime;
 use regex::Regex;
+
+use crate::system_field::SystemField;
 
 #[derive(ValueEnum, Clone)]
 pub(crate) enum SortOrder {

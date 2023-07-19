@@ -37,8 +37,12 @@ default = ["pol_export", "mactime2", "evtxtools"]
 mactime2 = ["gzip", "elastic", "chrono-tz", "thiserror", "bitflags", "encoding_rs_io"]
 gzip = ["flate2"]
 elastic = ["es4forensics", "serde_json"]
-evtxtools = ["evtx"]
+evtxtools = ["evtxscan", "evtxcat", "evtxls", "evtxanalyze"]
 pol_export = []
+evtxscan = ["evtx"]
+evtxcat = ["evtx", "colored_json", "term-table", "termsize"]
+evtxls = ["evtx", "colored", "lazy-regex", "regex", "sigpipe", "dfirtk-eventdata"]
+evtxanalyze = ["evtx", "dfirtk-sessionevent-derive", "dfirtk-eventdata"]
 
 [dependencies]
 anyhow = "1.0"
@@ -64,7 +68,8 @@ bitflags = {version="2", optional=true}
 encoding_rs_io = {version="0.1", optional=true}
 
 # evtxtools
-#sessionevent-derive = {path="derive-crates/sessionevent-derive", optional=true}
+dfirtk-eventdata = {version="0.1", optional=true}
+dfirtk-sessionevent-derive = {version="0.1", optional=true}
 evtx={version="0.8", optional=true}
 colored_json = {version="3", optional=true}
 term-table = {version = "1.3", optional=true}

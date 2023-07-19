@@ -4,7 +4,7 @@ use std::{
 };
 
 use super::{ActiveDirectoryDomainName, SessionAsCsv, SessionAsJson, SessionEvent};
-use eventdata::SessionId;
+use dfirtk_eventdata::SessionId;
 
 pub struct Session {
     events: BTreeSet<SessionEvent>,

@@ -4,8 +4,8 @@ use anyhow::Result;
 use chrono::Duration;
 use clap::Parser;
 use colored_json::to_colored_json_auto;
+use dfir_toolkit::evtx::{EventId, Range};
 use evtx::{EvtxParser, SerializedEvtxRecord};
-use libevtx::{EventId, Range};
 use term_table::{row::Row, table_cell::TableCell};
 
 /// Find time skews in an evtx file

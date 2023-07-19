@@ -12,13 +12,13 @@ pub(crate) use process::*;
 use regex::Regex;
 use serde_json::{json, Value};
 
-use crate::analyze::{pstree::unique_pid::UniquePid, Format};
+use crate::{cli::{Command, Format}, pstree::unique_pid::UniquePid};
 
 use super::Cli;
 
 pub(crate) fn display_pstree(cli: &Cli) -> anyhow::Result<()> {
     match &cli.command {
-        crate::analyze::Command::PsTree {
+        Command::PsTree {
             username,
             evtx_file,
             format

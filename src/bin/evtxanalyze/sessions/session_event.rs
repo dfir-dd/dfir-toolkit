@@ -1,12 +1,12 @@
 use std::io::Write;
 
-use eventdata::{
+use dfirtk_eventdata::{
     EventId, EventProvider, SessionId
 };
 use evtx::SerializedEvtxRecord;
 use serde_json::Value;
 
-use eventdata::SessionEventInfo;
+use dfirtk_eventdata::SessionEventInfo;
 use super::EventAsCsv;
 use super::session_event_templates::*;
 

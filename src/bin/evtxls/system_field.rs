@@ -1,13 +1,13 @@
 use std::fmt::Display;
 
 use clap::ValueEnum;
-use eventdata::{EvtxFieldView, EventId, EventRecordId, ActivityId, RelatedActivityId, ProcessId, PROCESS_ID_MAX_LENGTH};
+use dfirtk_eventdata::{EvtxFieldView, EventId, EventRecordId, ActivityId, RelatedActivityId, ProcessId, PROCESS_ID_MAX_LENGTH};
 use evtx::SerializedEvtxRecord;
 use serde_json::Value;
 
 #[derive(ValueEnum, Clone)]
 #[allow(clippy::enum_variant_names)]
-pub (crate) enum SystemField {
+pub enum SystemField {
     /// The identifier that the provider used to identify the event
     EventId,
 
@@ -24,7 +24,7 @@ pub (crate) enum SystemField {
     ProcessId
 }
 
-pub (crate) trait FilterBySystemField {
+pub trait FilterBySystemField {
     fn filter_fields<'a>(record: &'a Self, fields: &[SystemField], ) -> anyhow::Result<Vec<Box<dyn EvtxFieldView + 'a>>>;
 }
 

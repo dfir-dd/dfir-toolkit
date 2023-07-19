@@ -1,12 +1,12 @@
-use eventdata::{
+use dfirtk_eventdata::{
     EventId, EventProvider, NoSessionId, SessionId, SessionIdGenerator, SessionNameInActivityId,
     SessionNameInLogonId,
 };
 use evtx::SerializedEvtxRecord;
 use serde_json::Value;
-use sessionevent_derive::SessionEvent;
+use dfirtk_sessionevent_derive::SessionEvent;
 
-use eventdata::SessionEventInfo;
+use dfirtk_eventdata::SessionEventInfo;
 
 #[derive(SessionEvent, Default)]
 #[event_data(

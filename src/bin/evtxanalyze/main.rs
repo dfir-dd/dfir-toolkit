@@ -1,7 +1,7 @@
 use clap::Parser;
+use cli::{Cli, Command};
+use pstree::display_pstree;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
-
-use crate::analyze::{pstree::display_pstree, Cli};
 
 mod cli;
 mod pstree;
@@ -19,8 +19,8 @@ fn main() -> anyhow::Result<()> {
 
     match &cli.command {
         //TODO: move `display_pstree` into `impl Cli`
-        analyze::Command::PsTree { .. } => display_pstree(&cli),
-        analyze::Command::Sessions { .. } => cli.display_sessions(),
-        analyze::Command::Session { .. } => cli.display_single_session(),
+        Command::PsTree { .. } => display_pstree(&cli),
+        Command::Sessions { .. } => cli.display_sessions(),
+        Command::Session { .. } => cli.display_single_session(),
     }
 }
