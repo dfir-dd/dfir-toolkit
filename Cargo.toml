@@ -9,26 +9,32 @@ license = "GPL-3.0"
 
 [[bin]]
 name = "mactime2"
+path = "src/bin/mactime2/main.rs"
 required-features = ["mactime2"]
 
 [[bin]]
 name = "evtxscan"
+path = "src/bin/evtxscan/main.rs"
 required-features = ["evtxscan"]
 
 [[bin]]
 name = "evtxcat"
+path = "src/bin/evtxcat/main.rs"
 required-features = ["evtxcat"]
 
 [[bin]]
 name = "evtxls"
+path = "src/bin/evtxls/main.rs"
 required-features = ["evtxls"]
 
 [[bin]]
 name = "evtxanalyze"
+path = "src/bin/evtxanalyze/main.rs"
 required-features = ["evtxanalyze"]
 
 [[bin]]
 name = "pol_export"
+path = "src/bin/pol_export/main.rs"
 required-features = ["pol_export"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
