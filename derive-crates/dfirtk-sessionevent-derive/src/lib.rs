@@ -1,5 +1,5 @@
 use darling::FromDeriveInput;
-use eventdata::{EventId, EventProvider};
+use dfirtk_eventdata::{EventProvider, EventId};
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, DeriveInput};
@@ -29,7 +29,7 @@ fn create_getter(path: &Option<String>, function_name: TokenStream) -> TokenStre
                 None
             }),
         Some(path) => {
-            let parts: Vec<_> = path.split("/").map(|part| quote!([#part])).collect();
+            let parts: Vec<_> = path.split('/').map(|part| quote!([#part])).collect();
             quote!(
                 fn #function_name (&self, record: &SerializedEvtxRecord<Value>) -> Option<String> {
                     record.data #(#parts)* .as_str().map(|s|s.to_owned())
@@ -67,7 +67,7 @@ pub fn derive_session_event(input: proc_macro::TokenStream) -> proc_macro::Token
             fn provider(&self) -> EventProvider {
                 #provider
             }
-            fn generate_id(&self, record: &SerializedEvtxRecord<Value>) -> ::dfirtk-eventdata::SessionId {
+            fn generate_id(&self, record: &SerializedEvtxRecord<Value>) -> dfirtk_eventdata::SessionId {
                 #session_id_type::session_id_of(record)
             }
             #username_getter
