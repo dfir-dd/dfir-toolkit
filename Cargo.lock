@@ -581,7 +581,7 @@ dependencies = [
 
 [[package]]
 name = "dfir-toolkit"
-version = "0.3.0-dev"
+version = "0.3.0"
 dependencies = [
  "anyhow",
  "binread",
@@ -619,9 +619,9 @@ dependencies = [
 
 [[package]]
 name = "dfirtk-eventdata"
-version = "0.1.1"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "787d4724f3c33cef62ddabb762c84df2407b319fad9f57c94df7e602e1254922"
+checksum = "efc96511560e4661da0ada6debede9ed1dc63d8ac2ad8cefc00434e351a8b509"
 dependencies = [
  "anyhow",
  "darling 0.20.3",

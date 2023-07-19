@@ -1,6 +1,6 @@
 [package]
 name = "dfir-toolkit"
-version = "0.3.0-dev"
+version = "0.3.0"
 edition = "2021"
 authors = ["Jan Starke <Jan.Starke@telekom.de>"]
 description = "CLI tools for digital forensics and incident response"
@@ -68,7 +68,7 @@ bitflags = {version="2", optional=true}
 encoding_rs_io = {version="0.1", optional=true}
 
 # evtxtools
-dfirtk-eventdata = {version="0.1", optional=true}
+dfirtk-eventdata = {version="0.1.2", optional=true}
 dfirtk-sessionevent-derive = {version="0.1", optional=true}
 evtx={version="0.8", optional=true}
 colored_json = {version="3", optional=true}

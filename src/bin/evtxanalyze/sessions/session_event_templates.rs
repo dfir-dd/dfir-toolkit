@@ -1,5 +1,5 @@
 use dfirtk_eventdata::{
-    EventId, EventProvider, NoSessionId, SessionId, SessionIdGenerator, SessionNameInActivityId,
+    EventId, EventProvider, NoSessionId, SessionIdGenerator, SessionNameInActivityId,
     SessionNameInLogonId,
 };
 use evtx::SerializedEvtxRecord;
