@@ -8,6 +8,35 @@ cargo install dfir-toolkit
 
 # Tools
 
+## `evtx2bodyfile`
+
+### Usage
+
+```
+Usage: evtx2bodyfile [OPTIONS] [EVTX_FILES]...
+
+Arguments:
+  [EVTX_FILES]...  names of the evtx files
+
+Options:
+  -J, --json        output json for elasticsearch instead of bodyfile
+  -S, --strict      fail upon read error
+  -v, --verbose...  More output per occurrence
+  -q, --quiet...    Less output per occurrence
+  -h, --help        Print help
+  -V, --version     Print version
+```
+
+### Example
+
+```shell
+# convert to bodyfile only
+evtx2bodyfile Security.evtx >Security.bodyfile
+
+# create a complete timeline
+evtx2bodyfile *.evtx | mactime2 -d -b >evtx_timeline.csv
+```
+
 ## `evtxanalyze`
 
 Analyze evtx files

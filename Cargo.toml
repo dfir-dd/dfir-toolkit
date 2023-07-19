@@ -1,6 +1,6 @@
 [package]
 name = "dfir-toolkit"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 authors = ["Jan Starke <Jan.Starke@telekom.de>"]
 description = "CLI tools for digital forensics and incident response"
@@ -33,6 +33,11 @@ path = "src/bin/evtxanalyze/main.rs"
 required-features = ["evtxanalyze"]
 
 [[bin]]
+name = "evtx2bodyfile"
+path = "src/bin/evtx2bodyfile/main.rs"
+required-features = ["evtx2bodyfile"]
+
+[[bin]]
 name = "pol_export"
 path = "src/bin/pol_export/main.rs"
 required-features = ["pol_export"]
@@ -43,12 +48,13 @@ default = ["pol_export", "mactime2", "evtxtools"]
 mactime2 = ["gzip", "elastic", "chrono-tz", "thiserror", "bitflags", "encoding_rs_io"]
 gzip = ["flate2"]
 elastic = ["es4forensics", "serde_json"]
-evtxtools = ["evtxscan", "evtxcat", "evtxls", "evtxanalyze"]
+evtxtools = ["evtxscan", "evtxcat", "evtxls", "evtxanalyze", "evtx2bodyfile"]
 pol_export = []
 evtxscan = ["evtx"]
 evtxcat = ["evtx", "colored_json", "term-table", "termsize"]
 evtxls = ["evtx", "colored", "lazy-regex", "regex", "sigpipe", "dfirtk-eventdata"]
 evtxanalyze = ["evtx", "dfirtk-sessionevent-derive", "dfirtk-eventdata"]
+evtx2bodyfile = ["evtx", "getset", "ouroboros", "indicatif"]
 
 [dependencies]
 anyhow = "1.0"
@@ -85,6 +91,11 @@ colored = {version = "2", optional=true}
 lazy-regex = {version = "3.0.0", optional=true}
 sigpipe = {version = "0", optional=true}
 phf = {version = "0.11", optional=true}
+
+# evtx2bodyfile
+indicatif = {version="0.17", optional=true}
+getset = {version="0.1", optional=true}
+ouroboros = {version="0.17", optional=true}
 
 [dev-dependencies]
 
