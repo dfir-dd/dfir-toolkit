@@ -81,7 +81,7 @@ impl quote::ToTokens for ProcessId {
         let me = self.0;
         tokens.extend(quote!(
             {
-                use eventdata::ProcessId;
+                use dfirtk_eventdata::ProcessId;
                 ProcessId(#me)
             }
         ))

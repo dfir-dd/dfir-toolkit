@@ -84,7 +84,7 @@ impl quote::ToTokens for EventId {
         let me = self.0;
         tokens.extend(quote!(
             {
-                use eventdata::EventId;
+                use dfirtk_eventdata::EventId;
                 EventId(#me)
             }
         ))

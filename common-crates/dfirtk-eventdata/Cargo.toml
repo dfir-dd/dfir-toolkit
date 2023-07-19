@@ -1,6 +1,6 @@
 [package]
 name = "dfirtk-eventdata"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2018"
 authors = ["Jan Starke <Jan.Starke@telekom.de>"]
 description = "CLI tools for digital forensics and incident response"
