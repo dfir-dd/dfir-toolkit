@@ -1,18 +1,44 @@
 [package]
 name = "dfir-toolkit"
-version = "0.2.1"
+version = "0.3.0-dev"
 edition = "2021"
 authors = ["Jan Starke <Jan.Starke@telekom.de>"]
 description = "CLI tools for digital forensics and incident response"
 homepage = "https://www.github.com/janstarke/dfir_toolkit"
 license = "GPL-3.0"
 
+[[bin]]
+name = "mactime2"
+required-features = ["mactime2"]
+
+[[bin]]
+name = "evtxscan"
+required-features = ["evtxscan"]
+
+[[bin]]
+name = "evtxcat"
+required-features = ["evtxcat"]
+
+[[bin]]
+name = "evtxls"
+required-features = ["evtxls"]
+
+[[bin]]
+name = "evtxanalyze"
+required-features = ["evtxanalyze"]
+
+[[bin]]
+name = "pol_export"
+required-features = ["pol_export"]
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
-default = ["pol_export", "mactime2"]
-mactime2 = ["gzip", "elastic", "chrono_tz", "thiserror", "bitflags", "encoding_rs_io"]
+default = ["pol_export", "mactime2", "evtxtools"]
+mactime2 = ["gzip", "elastic", "chrono-tz", "thiserror", "bitflags", "encoding_rs_io"]
 gzip = ["flate2"]
 elastic = ["es4forensics", "serde_json"]
+evtxtools = ["evtx"]
+pol_export = []
 
 [dependencies]
 anyhow = "1.0"
@@ -36,6 +62,18 @@ flate2 = {version="1", optional=true}
 thiserror = {version="1", optional=true}
 bitflags = {version="2", optional=true}
 encoding_rs_io = {version="0.1", optional=true}
+
+# evtxtools
+#sessionevent-derive = {path="derive-crates/sessionevent-derive", optional=true}
+evtx={version="0.8", optional=true}
+colored_json = {version="3", optional=true}
+term-table = {version = "1.3", optional=true}
+termsize = {version = "0.1", optional=true}
+regex = {version = "1", optional=true}
+colored = {version = "2", optional=true}
+lazy-regex = {version = "3.0.0", optional=true}
+sigpipe = {version = "0", optional=true}
+phf = {version = "0.11", optional=true}
 
 [dev-dependencies]
 

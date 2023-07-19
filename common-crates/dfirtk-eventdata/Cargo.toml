@@ -1,0 +1,12 @@
+[package]
+name = "dfirtk-eventdata"
+version = "0.1.0"
+edition = "2018"
+authors = ["Jan Starke <Jan.Starke@telekom.de>"]
+description = "CLI tools for digital forensics and incident response"
+homepage = "https://www.github.com/janstarke/dfir_toolkit"
+license = "GPL-3.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
