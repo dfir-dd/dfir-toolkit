@@ -1,5 +1,8 @@
 # DFIR Toolkit
 
+
+<img src="https://github.com/janstarke/dfir-toolkit/blob/master/doc/images/tools.svg">
+
 ## Installation
 
 ```bash
