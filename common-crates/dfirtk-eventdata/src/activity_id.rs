@@ -1,4 +1,4 @@
-use std::fmt::Display;
+use std::{fmt::Display, convert::TryFrom};
 
 use evtx::SerializedEvtxRecord;
 use serde_json::Value;
@@ -36,6 +36,6 @@ impl<'a> EvtxFieldView for ActivityId<'a> {
 
 impl<'a> ActivityId<'a> {
     pub fn value(&self) -> &Value {
-        &self.0
+        self.0
     }
 }

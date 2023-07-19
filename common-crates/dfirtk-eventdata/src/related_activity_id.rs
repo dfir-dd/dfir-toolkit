@@ -1,4 +1,4 @@
-use std::fmt::Display;
+use std::{fmt::Display, convert::TryFrom};
 
 use evtx::SerializedEvtxRecord;
 use serde_json::Value;

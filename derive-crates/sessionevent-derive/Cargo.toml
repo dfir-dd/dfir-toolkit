@@ -15,4 +15,4 @@ quote = "1"
 syn = "2"
 proc-macro2 = "1"
 darling = "0.20"
-# eventdata = {path="../eventdata"}
+dfirtk-eventdata = "0"

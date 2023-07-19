@@ -1,4 +1,4 @@
-use std::fmt::Display;
+use std::{convert::TryFrom, fmt::Display};
 
 use anyhow::bail;
 use darling::FromMeta;
@@ -24,7 +24,7 @@ impl TryFrom<&SerializedEvtxRecord<Value>> for ProcessId {
         };
 
         if let Some(process_id) = process_id.as_u64() {
-            let id: u64 = process_id.try_into()?;
+            let id: u64 = process_id;
             Ok(Self(id))
         } else {
             bail!("event id cannot be converted to u64: {process_id}")

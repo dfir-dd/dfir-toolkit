@@ -1,4 +1,4 @@
-use std::fmt::Display;
+use std::{fmt::Display, convert::TryFrom};
 
 use darling::FromMeta;
 use evtx::SerializedEvtxRecord;

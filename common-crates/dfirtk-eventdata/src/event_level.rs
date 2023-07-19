@@ -1,4 +1,4 @@
-use std::fmt::{Display, Write};
+use std::{fmt::{Display, Write}, convert::TryFrom};
 
 use anyhow::anyhow;
 use evtx::SerializedEvtxRecord;

@@ -1,4 +1,5 @@
 use std::sync::Mutex;
+use std::convert::TryFrom;
 
 use crate::ActivityId;
 use evtx::SerializedEvtxRecord;
@@ -88,7 +89,8 @@ impl SessionIdGenerator for SessionNameInLogonId {
             for child in children {
                 if child.0.to_lowercase() == "targetlogonid" {
                     return SessionId::LogonId(child.1.as_str().unwrap().to_owned())
-                }if child.0.to_lowercase() == "logonid" {
+                }
+                if child.0.to_lowercase() == "logonid" {
                     return SessionId::LogonId(child.1.as_str().unwrap().to_owned())
                 }
             }

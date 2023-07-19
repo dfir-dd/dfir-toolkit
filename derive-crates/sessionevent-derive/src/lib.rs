@@ -1,4 +1,5 @@
 use darling::FromDeriveInput;
+use eventdata::{EventId, EventProvider};
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, DeriveInput};
@@ -66,7 +67,7 @@ pub fn derive_session_event(input: proc_macro::TokenStream) -> proc_macro::Token
             fn provider(&self) -> EventProvider {
                 #provider
             }
-            fn generate_id(&self, record: &SerializedEvtxRecord<Value>) -> ::dfir_toolkit::eventdata::SessionId {
+            fn generate_id(&self, record: &SerializedEvtxRecord<Value>) -> ::dfirtk-eventdata::SessionId {
                 #session_id_type::session_id_of(record)
             }
             #username_getter
