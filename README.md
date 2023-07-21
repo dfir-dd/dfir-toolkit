@@ -1,9 +1,31 @@
 # DFIR Toolkit
 
+# Table of contents
+
+- [Installation](#installation)
+- [Tools](#tools)
+  - [x] [`evtx2bodyfile`](#evtx2bodyfile)
+  - [x] [`evtx2analyze`](#evtx2analyze)
+  - [x] [`evtxscan`](#evtxscan)
+  - [x] [`evtxcat`](#evtxcat)
+  - [x] [`evtxls`](#evtxls)
+  - [ ] [`hivescan`](https://github.com/janstarke/nt_hive2)
+  - [ ] [`ipgrep`](https://github.com/janstarke/ipgrep)
+  - [ ] [`lnk2bodyfile`](https://github.com/janstarke/lnk2bodyfile)
+  - [x] [`mactime2`](#mactime2)
+  - [ ] [`mft2bodyfile`](https://github.com/janstarke/mft2bodyfile)
+  - [ ] [`ntdsextract2`](https://github.com/janstarke/ntdsextract2)
+  - [x] [`pol_export`](#pol_export)
+  - [ ] [`procbins`](https://github.com/janstarke/procbins)
+  - [ ] [`regdump`](https://github.com/janstarke/nt_hive2)
+  - [ ] [`regls`](https://github.com/janstarke/regls)
+  - [ ] [`regview`](https://github.com/janstarke/regview)
+  - [ ] [`ts2date`](https://github.com/janstarke/ts2date)
+  - [ ] [`usnjrnl_dump`](https://github.com/janstarke/usnjrnl)
 
 <img src="https://github.com/janstarke/dfir-toolkit/blob/master/doc/images/tools.svg">
 
-## Installation
+# Installation
 
 ```bash
 cargo install dfir-toolkit
@@ -181,10 +203,6 @@ Options:
   -V, --version
           Print version
 ```
-
-## evtx2bodyfile
-
-yet to be come
 
 ## mactime2
 
