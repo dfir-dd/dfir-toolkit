@@ -3,6 +3,7 @@
 # Table of contents
 
 - [Installation](#installation)
+- [Overview of timelining tools](#overview-of-timelining-tools)
 - [Tools](#tools)
   - [x] [`evtx2bodyfile`](#evtx2bodyfile)
   - [x] [`evtx2analyze`](#evtx2analyze)
@@ -22,6 +23,8 @@
   - [ ] [`regview`](https://github.com/janstarke/regview)
   - [ ] [`ts2date`](https://github.com/janstarke/ts2date)
   - [ ] [`usnjrnl_dump`](https://github.com/janstarke/usnjrnl)
+
+# Overview of timelining tools
 
 <img src="https://github.com/janstarke/dfir-toolkit/blob/master/doc/images/tools.svg">
 
