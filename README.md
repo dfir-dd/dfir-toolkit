@@ -6,7 +6,7 @@
 - [Overview of timelining tools](#overview-of-timelining-tools)
 - [Tools](#tools)
   - [x] [`evtx2bodyfile`](#evtx2bodyfile)
-  - [x] [`evtx2analyze`](#evtx2analyze)
+  - [x] [`evtxanalyze`](#evtxanalyze)
   - [x] [`evtxscan`](#evtxscan)
   - [x] [`evtxcat`](#evtxcat)
   - [x] [`evtxls`](#evtxls)
