@@ -7,9 +7,11 @@ use serde_json::Value;
 use super::{CustomizableField, ecs_object::EcsObject};
 
 #[derive(Serialize)]
+#[derive(Default)]
 pub enum Kind {
     Alert,
     Enrichment,
+    #[default]
     Event,
     Metric,
     State,
@@ -17,11 +19,7 @@ pub enum Kind {
     Signal,
 }
 
-impl Default for Kind {
-    fn default() -> Self {
-        Kind::Event
-    }
-}
+
 
 #[derive(Serialize)]
 pub enum Category {

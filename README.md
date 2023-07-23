@@ -10,7 +10,7 @@
   - [x] [`evtxscan`](#evtxscan)
   - [x] [`evtxcat`](#evtxcat)
   - [x] [`evtxls`](#evtxls)
-  - [ ] [`es4forensics`](https://github.com/janstarke/es4forensics)
+  - [x] [`es4forensics`](https://github.com/janstarke/es4forensics)
   - [ ] [`hivescan`](https://github.com/janstarke/nt_hive2)
   - [ ] [`ipgrep`](https://github.com/janstarke/ipgrep)
   - [ ] [`lnk2bodyfile`](https://github.com/janstarke/lnk2bodyfile)
