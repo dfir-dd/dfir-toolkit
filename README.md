@@ -5,13 +5,14 @@
 - [Installation](#installation)
 - [Overview of timelining tools](#overview-of-timelining-tools)
 - [Tools](#tools)
+  - [x] [`cleanhive`](#cleanhive)
   - [x] [`evtx2bodyfile`](#evtx2bodyfile)
   - [x] [`evtxanalyze`](#evtxanalyze)
   - [x] [`evtxscan`](#evtxscan)
   - [x] [`evtxcat`](#evtxcat)
   - [x] [`evtxls`](#evtxls)
-  - [x] [`es4forensics`](https://github.com/janstarke/es4forensics)
-  - [ ] [`hivescan`](https://github.com/janstarke/nt_hive2)
+  - [x] [`es4forensics`](#es4forensics)
+  - [x] [`hivescan`](#hivescan)
   - [ ] [`ipgrep`](https://github.com/janstarke/ipgrep)
   - [ ] [`lnk2bodyfile`](https://github.com/janstarke/lnk2bodyfile)
   - [x] [`mactime2`](#mactime2)
@@ -19,7 +20,7 @@
   - [ ] [`ntdsextract2`](https://github.com/janstarke/ntdsextract2)
   - [x] [`pol_export`](#pol_export)
   - [ ] [`procbins`](https://github.com/janstarke/procbins)
-  - [ ] [`regdump`](https://github.com/janstarke/nt_hive2)
+  - [x] [`regdump`](#regdump)
   - [ ] [`regls`](https://github.com/janstarke/regls)
   - [ ] [`regview`](https://github.com/janstarke/regview)
   - [ ] [`ts2date`](https://github.com/janstarke/ts2date)
@@ -36,6 +37,27 @@ cargo install dfir-toolkit
 ```
 
 # Tools
+
+## `cleanhive`
+
+merges logfiles into a hive file
+
+### Usage
+
+```
+Usage: cleanhive [OPTIONS] --output <DST_HIVE> <HIVE_FILE>
+
+Arguments:
+  <HIVE_FILE>  name of the file to dump
+
+Options:
+  -L, --log <LOGFILES>     transaction LOG file(s). This argument can be specified one or two times
+  -v, --verbose...         More output per occurrence
+  -q, --quiet...           Less output per occurrence
+  -O, --output <DST_HIVE>  name of the file to which the cleaned hive will be written
+  -h, --help               Print help
+  -V, --version            Print version
+```
 
 ## `evtx2bodyfile`
 
@@ -208,7 +230,55 @@ Options:
           Print version
 ```
 
-## mactime2
+## `es4forensics`
+
+### Usage
+
+```
+Usage: es4forensics [OPTIONS] --index <INDEX_NAME> --password <PASSWORD> <COMMAND>
+
+Commands:
+  create-index  
+  import        
+  help          Print this message or the help of the given subcommand(s)
+
+Options:
+  -v, --verbose...           More output per occurrence
+  -q, --quiet...             Less output per occurrence
+      --strict               strict mode: do not only warn, but abort if an error occurs
+  -I, --index <INDEX_NAME>   name of the elasticsearch index
+  -H, --host <HOST>          server name or IP address of elasticsearch server [default: localhost]
+  -P, --port <PORT>          API port number of elasticsearch server [default: 9200]
+      --proto <PROTOCOL>     protocol to be used to connect to elasticsearch [default: https] [possible values: http, https]
+  -k, --insecure             omit certificate validation
+  -U, --username <USERNAME>  username for elasticsearch server [default: elastic]
+  -W, --password <PASSWORD>  password for authenticating at elasticsearch
+  -h, --help                 Print help
+  -V, --version              Print version
+```
+## `hivescan`
+
+scans a registry hive file for deleted entries
+
+### Usage
+
+```
+Usage: hivescan [OPTIONS] <HIVE_FILE>
+
+Arguments:
+  <HIVE_FILE>  name of the file to scan
+
+Options:
+  -L, --log <LOGFILES>  transaction LOG file(s). This argument can be specified one or two times
+  -v, --verbose...      More output per occurrence
+  -q, --quiet...        Less output per occurrence
+  -b                    output as bodyfile format
+  -h, --help            Print help
+  -V, --version         Print version
+
+```
+
+## `mactime2`
 
 Replacement for `mactime`
 
@@ -266,3 +336,24 @@ OPTIONS:
 ### More information
 
  - <https://docs.microsoft.com/en-us/previous-versions/windows/desktop/policy/registry-policy-file-format>
+
+## `regdump`
+
+### Usage
+
+```
+Usage: regdump [OPTIONS] <HIVE_FILE>
+
+Arguments:
+  <HIVE_FILE>  name of the file to dump
+
+Options:
+  -L, --log <LOGFILES>     transaction LOG file(s). This argument can be specified one or two times
+  -b, --bodyfile           print as bodyfile format
+  -I, --ignore-base-block  ignore the base block (e.g. if it was encrypted by some ransomware)
+  -T, --hide-timestamps    hide timestamps, if output is in reg format
+  -v, --verbose...         More output per occurrence
+  -q, --quiet...           Less output per occurrence
+  -h, --help               Print help
+  -V, --version            Print version
+```

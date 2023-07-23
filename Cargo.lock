@@ -631,7 +631,7 @@ version = "0.6.0"
 dependencies = [
  "anyhow",
  "assert-json-diff",
- "base64 0.11.0",
+ "base64 0.21.2",
  "binread",
  "bitflags 2.3.3",
  "chrono",
