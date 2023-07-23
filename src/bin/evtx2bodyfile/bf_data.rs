@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
 use anyhow::{anyhow, bail, Result};
-use bodyfile::Bodyfile3Line;
+use dfir_toolkit::common::Bodyfile3Line;
 use chrono::{DateTime, Utc};
-use es4forensics::{objects::WindowsEvent, TimelineObject};
+use dfir_toolkit::es4forensics::{objects::WindowsEvent, TimelineObject};
 use evtx::SerializedEvtxRecord;
 use getset::{Getters, Setters};
 use serde::Serialize;

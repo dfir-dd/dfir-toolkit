@@ -1,8 +1,8 @@
-use crate::apps::mactime2::filter::{Filter, Joinable, RunOptions, Provider, Consumer};
-use std::sync::mpsc::{self, Sender, Receiver};
-use std::thread::{JoinHandle};
-use bodyfile::Bodyfile3Line;
+use crate::apps::mactime2::filter::{Consumer, Filter, Joinable, Provider, RunOptions};
+use crate::common::Bodyfile3Line;
 use std::convert::TryFrom;
+use std::sync::mpsc::{self, Receiver, Sender};
+use std::thread::JoinHandle;
 
 pub struct BodyfileDecoder {
     worker: Option<JoinHandle<()>>,
@@ -13,11 +13,15 @@ impl Filter<String, Bodyfile3Line, ()> for BodyfileDecoder {
     fn worker(reader: Receiver<String>, tx: Sender<Bodyfile3Line>, options: RunOptions) {
         loop {
             let mut line = match reader.recv() {
-                Err(_) => {break;}
-                Ok(l) => l
+                Err(_) => {
+                    break;
+                }
+                Ok(l) => l,
             };
 
-            if line.starts_with('#') { continue; }
+            if line.starts_with('#') {
+                continue;
+            }
             Self::trim_newline(&mut line);
 
             let bf_line = match Bodyfile3Line::try_from(line.as_ref()) {
@@ -32,7 +36,7 @@ impl Filter<String, Bodyfile3Line, ()> for BodyfileDecoder {
                     }
                     continue;
                 }
-                Ok(l) => l
+                Ok(l) => l,
             };
 
             if tx.send(bf_line).is_err() {
@@ -46,7 +50,6 @@ impl Provider<Bodyfile3Line, ()> for BodyfileDecoder {
     fn get_receiver(&mut self) -> Receiver<Bodyfile3Line> {
         self.rx.take().unwrap()
     }
-
 }
 
 impl Consumer<String> for BodyfileDecoder {

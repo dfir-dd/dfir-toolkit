@@ -42,7 +42,7 @@ mod tests {
     use chrono_tz::TZ_VARIANTS;
     use chrono_tz::Tz;
     use std::sync::Arc;
-    use bodyfile::Bodyfile3Line;
+    use crate::common::Bodyfile3Line;
 
     fn random_tz() -> Tz {
         let index = rand::random::<usize>() % TZ_VARIANTS.len();

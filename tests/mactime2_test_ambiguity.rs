@@ -1,6 +1,6 @@
-use ::bodyfile::Bodyfile3Line;
 use dfir_toolkit::apps::mactime2::bodyfile::{BodyfileDecoder, BodyfileSorter, Mactime2Writer, ListEntry};
 use dfir_toolkit::apps::mactime2::filter::{RunOptions, Joinable, Consumer, Provider, Runnable};
+use dfir_toolkit::common::Bodyfile3Line;
 use std::borrow::Borrow;
 use std::collections::HashSet;
 use std::sync::mpsc::{self, Sender, Receiver};
@@ -27,7 +27,7 @@ fn test_ambiguity1() {
 
     let ts1 = random_ts();
     let ts2 = ts1 + 1;
-    let bf = ::bodyfile::Bodyfile3Line::new()
+    let bf = Bodyfile3Line::new()
         .with_name("sample1.txt")
         .with_atime(ts1)
         .with_mtime(ts1)
@@ -35,7 +35,7 @@ fn test_ambiguity1() {
         .with_crtime(ts1);
     tx.send(bf.to_string()).unwrap();
 
-    let bf = ::bodyfile::Bodyfile3Line::new()
+    let bf = Bodyfile3Line::new()
         .with_name("sample1.txt")
         .with_atime(ts2)
         .with_mtime(ts2)

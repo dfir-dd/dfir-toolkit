@@ -1,5 +1,6 @@
 use dfir_toolkit::apps::mactime2::bodyfile::{BodyfileDecoder, BodyfileSorter, Mactime2Writer, ListEntry};
 use dfir_toolkit::apps::mactime2::filter::{RunOptions, Joinable, Consumer, Provider, Runnable};
+use dfir_toolkit::common::Bodyfile3Line;
 use std::sync::mpsc::{self, Sender, Receiver};
 use std::cell::RefCell;
 
@@ -23,91 +24,91 @@ fn test_sorted() {
     sorter.run();
     for day in 0..364 {
         for hour in 0..23 {
-            let bf = ::bodyfile::Bodyfile3Line::new()
+            let bf = Bodyfile3Line::new()
                 .with_name(&format!("sample_{}_{}_{}", day, hour, 1))
                 .with_atime(random_ts());
             tx.send(bf.to_string()).unwrap();
 
-            let bf = ::bodyfile::Bodyfile3Line::new()
+            let bf = Bodyfile3Line::new()
                 .with_name(&format!("sample_{}_{}_{}", day, hour, 2))
                 .with_mtime(random_ts());
             tx.send(bf.to_string()).unwrap();
 
-            let bf = ::bodyfile::Bodyfile3Line::new()
+            let bf = Bodyfile3Line::new()
                 .with_name(&format!("sample_{}_{}_{}", day, hour, 3))
                 .with_ctime(random_ts());
             tx.send(bf.to_string()).unwrap();
 
-            let bf = ::bodyfile::Bodyfile3Line::new()
+            let bf = Bodyfile3Line::new()
                 .with_name(&format!("sample_{}_{}_{}", day, hour, 4))
                 .with_crtime(random_ts());
             tx.send(bf.to_string()).unwrap();
 
-            let bf = ::bodyfile::Bodyfile3Line::new()
+            let bf = Bodyfile3Line::new()
                 .with_name(&format!("sample_{}_{}_{}", day, hour, 5))
                 .with_atime(random_ts())
                 .with_mtime(random_ts());
             tx.send(bf.to_string()).unwrap();
 
-            let bf = ::bodyfile::Bodyfile3Line::new()
+            let bf = Bodyfile3Line::new()
                 .with_name(&format!("sample_{}_{}_{}", day, hour, 6))
                 .with_atime(random_ts())
                 .with_ctime(random_ts());
             tx.send(bf.to_string()).unwrap();
 
-            let bf = ::bodyfile::Bodyfile3Line::new()
+            let bf = Bodyfile3Line::new()
                 .with_name(&format!("sample_{}_{}_{}", day, hour, 7))
                 .with_atime(random_ts())
                 .with_crtime(random_ts());
             tx.send(bf.to_string()).unwrap();
 
-            let bf = ::bodyfile::Bodyfile3Line::new()
+            let bf = Bodyfile3Line::new()
                 .with_name(&format!("sample_{}_{}_{}", day, hour, 8))
                 .with_mtime(random_ts())
                 .with_ctime(random_ts());
             tx.send(bf.to_string()).unwrap();
 
-            let bf = ::bodyfile::Bodyfile3Line::new()
+            let bf = Bodyfile3Line::new()
                 .with_name(&format!("sample_{}_{}_{}", day, hour, 9))
                 .with_mtime(random_ts())
                 .with_crtime(random_ts());
             tx.send(bf.to_string()).unwrap();
 
-            let bf = ::bodyfile::Bodyfile3Line::new()
+            let bf = Bodyfile3Line::new()
                 .with_name(&format!("sample_{}_{}_{}", day, hour, 10))
                 .with_ctime(random_ts())
                 .with_crtime(random_ts());
             tx.send(bf.to_string()).unwrap();
 
-            let bf = ::bodyfile::Bodyfile3Line::new()
+            let bf = Bodyfile3Line::new()
                 .with_name(&format!("sample_{}_{}_{}", day, hour, 11))
                 .with_atime(random_ts())
                 .with_mtime(random_ts())
                 .with_ctime(random_ts());
             tx.send(bf.to_string()).unwrap();
 
-            let bf = ::bodyfile::Bodyfile3Line::new()
+            let bf = Bodyfile3Line::new()
                 .with_name(&format!("sample_{}_{}_{}", day, hour, 12))
                 .with_atime(random_ts())
                 .with_mtime(random_ts())
                 .with_crtime(random_ts());
             tx.send(bf.to_string()).unwrap();
 
-            let bf = ::bodyfile::Bodyfile3Line::new()
+            let bf = Bodyfile3Line::new()
                 .with_name(&format!("sample_{}_{}_{}", day, hour, 13))
                 .with_atime(random_ts())
                 .with_ctime(random_ts())
                 .with_crtime(random_ts());
             tx.send(bf.to_string()).unwrap();
 
-            let bf = ::bodyfile::Bodyfile3Line::new()
+            let bf = Bodyfile3Line::new()
                 .with_name(&format!("sample_{}_{}_{}", day, hour, 14))
                 .with_mtime(random_ts())
                 .with_ctime(random_ts())
                 .with_crtime(random_ts());
             tx.send(bf.to_string()).unwrap();
 
-            let bf = ::bodyfile::Bodyfile3Line::new()
+            let bf = Bodyfile3Line::new()
                 .with_name(&format!("sample_{}_{}_{}", day, hour, 15))
                 .with_atime(random_ts())
                 .with_mtime(random_ts())

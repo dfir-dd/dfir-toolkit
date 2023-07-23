@@ -5,9 +5,9 @@ use std::{
     thread::JoinHandle,
 };
 
-use bodyfile::Bodyfile3Line;
+use crate::common::Bodyfile3Line;
 use chrono_tz::Tz;
-use es4forensics::{objects::PosixFile, TimelineObject, Timestamp};
+use crate::es4forensics::{objects::PosixFile, TimelineObject, Timestamp};
 use std::convert::TryFrom;
 
 use crate::apps::mactime2::{
