@@ -1,6 +1,6 @@
 [package]
 name = "dfir-toolkit"
-version = "0.5.0"
+version = "0.6.0"
 edition = "2021"
 authors = ["Jan Starke <Jan.Starke@telekom.de>"]
 description = "CLI tools for digital forensics and incident response"
@@ -47,9 +47,24 @@ name = "es4forensics"
 path = "src/bin/es4forensics/main.rs"
 required-features = ["elastic"]
 
+[[bin]]
+name = "regdump"
+path = "src/bin/regdump/main.rs"
+required-features = ["regdump"]
+
+[[bin]]
+name = "hivescan"
+path = "src/bin/hivescan/main.rs"
+required-features = ["hivescan"]
+
+[[bin]]
+name = "cleanhive"
+path = "src/bin/cleanhive/main.rs"
+required-features = ["cleanhive"]
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
-default = ["pol_export", "mactime2", "evtxtools"]
+default = ["pol_export", "mactime2", "evtxtools", "regdump", "hivescan", "cleanhive"]
 mactime2 = ["gzip", "elastic", "chrono-tz", "thiserror", "bitflags", "encoding_rs_io"]
 gzip = ["flate2"]
 elastic = ["elasticsearch", "tokio", "futures", "serde_json", "sha2", "base64", "num-traits", "num-derive", "strum", "strum_macros", "tokio-async-drop"]
@@ -60,6 +75,10 @@ evtxcat = ["evtx", "colored_json", "term-table", "termsize"]
 evtxls = ["evtx", "colored", "lazy-regex", "regex", "sigpipe", "dfirtk-eventdata"]
 evtxanalyze = ["evtx", "dfirtk-sessionevent-derive", "dfirtk-eventdata"]
 evtx2bodyfile = ["evtx", "getset", "ouroboros", "indicatif"]
+
+regdump = ["marvin32", "derive-getters", "memoverlay"]
+hivescan = ["marvin32", "derive-getters", "memoverlay"]
+cleanhive = ["marvin32", "derive-getters", "memoverlay"]
 
 [dependencies]
 anyhow = "1.0"
@@ -116,6 +135,11 @@ num-traits = {version="0.2", optional=true}
 num-derive = {version="0", optional=true}
 strum = { version = "0", features = ["derive"], optional=true }
 strum_macros = {version="0", optional=true}
+
+# nt-hive2
+marvin32 = {version="0.1.0", optional=true}
+derive-getters = {version="0.3", optional=true}
+memoverlay = {version=">=0.1.2", optional=true}
 
 [dev-dependencies]
 

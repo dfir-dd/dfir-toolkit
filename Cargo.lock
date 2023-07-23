@@ -615,12 +615,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "derive-getters"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7a2c35ab6e03642397cdda1dd58abbc05d418aef8e36297f336d5aba060fe8df"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
+]
+
+[[package]]
 name = "dfir-toolkit"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "assert-json-diff",
- "base64 0.21.2",
+ "base64 0.11.0",
  "binread",
  "bitflags 2.3.3",
  "chrono",
@@ -630,6 +641,7 @@ dependencies = [
  "colored",
  "colored_json",
  "csv",
+ "derive-getters",
  "dfirtk-eventdata",
  "dfirtk-sessionevent-derive",
  "duplicate",
@@ -643,7 +655,9 @@ dependencies = [
  "indicatif",
  "lazy-regex",
  "log",
+ "marvin32",
  "matches",
+ "memoverlay",
  "more-asserts",
  "num-derive",
  "num-traits",
@@ -1418,6 +1432,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b06a4cde4c0f271a446782e3eff8de789548ce57dbc8eca9292c27f4a42004b4"
 
 [[package]]
+name = "marvin32"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d2640fe001a51ed474f1acf7a4523f0516ca459da42050db42abfe27cd2ff22f"
+dependencies = [
+ "byteorder",
+]
+
+[[package]]
 name = "matches"
 version = "0.1.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1436,6 +1459,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5a634b1c61a95585bd15607c6ab0c4e5b226e695ff2800ba0cdccddf208c406c"
 dependencies = [
  "autocfg",
+]
+
+[[package]]
+name = "memoverlay"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "320146b1366d0d61e342c22290a727191a4e4b5335ac7127314e03bed1274cab"
+dependencies = [
+ "thiserror",
 ]
 
 [[package]]
