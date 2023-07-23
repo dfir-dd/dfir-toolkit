@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use anyhow::{anyhow, bail, Result};
-use dfir_toolkit::common::Bodyfile3Line;
+use dfir_toolkit::common::bodyfile::Bodyfile3Line;
 use chrono::{DateTime, Utc};
 use dfir_toolkit::es4forensics::{objects::WindowsEvent, TimelineObject};
 use evtx::SerializedEvtxRecord;

@@ -5,7 +5,7 @@ use std::{
     thread::JoinHandle,
 };
 
-use crate::common::Bodyfile3Line;
+use crate::common::bodyfile::Bodyfile3Line;
 use chrono_tz::Tz;
 use crate::es4forensics::{objects::PosixFile, TimelineObject, Timestamp};
 use std::convert::TryFrom;

@@ -4,8 +4,8 @@
 //! 
 //! # Creating Indices
 //! ```
-//! use es4forensics::IndexBuilder;
-//! use es4forensics::WithHost;
+//! use dfir_toolkit::es4forensics::IndexBuilder;
+//! use dfir_toolkit::es4forensics::WithHost;
 //! use elasticsearch::auth::Credentials;
 //! 
 //!# #[tokio::main]
@@ -29,8 +29,8 @@
 //! into a [`ecs::objects::PosixFile`]-Object, which can then be added to an Index:
 //! 
 //! ```
-//! use es4forensics::objects::PosixFile;
-//!# use es4forensics::Index;
+//! use dfir_toolkit::es4forensics::objects::PosixFile;
+//!# use dfir_toolkit::es4forensics::Index;
 //! 
 //!# fn foo(mut index: Index) {
 //! let str_line = "0|/Users/Administrator ($FILE_NAME)|93552-48-2|d/drwxrwxrwx|0|0|92|1577092511|1577092511|1577092511|-1";
@@ -50,11 +50,11 @@
 //! iterator over [`serde_json::Value`]
 //! 
 //! ```
-//! use es4forensics::objects::PosixFile;
-//! use es4forensics::Timestamp;
-//! use crate::es4forensics::TimelineObject;
+//! use dfir_toolkit::es4forensics::objects::PosixFile;
+//! use dfir_toolkit::es4forensics::Timestamp;
+//! use dfir_toolkit::es4forensics::TimelineObject;
 //! use serde_json::Value;
-//!# use es4forensics::Index;
+//!# use dfir_toolkit::es4forensics::Index;
 //! 
 //!# fn foo(mut index: Index) {
 //! let str_line = "0|/Users/Administrator ($FILE_NAME)|93552-48-2|d/drwxrwxrwx|0|0|92|1577092511|1577092511|1577092511|-1";

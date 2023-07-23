@@ -1,5 +1,5 @@
 use crate::apps::mactime2::filter::{Consumer, Filter, Joinable, Provider, RunOptions};
-use crate::common::Bodyfile3Line;
+use crate::common::bodyfile::Bodyfile3Line;
 use std::convert::TryFrom;
 use std::sync::mpsc::{self, Receiver, Sender};
 use std::thread::JoinHandle;

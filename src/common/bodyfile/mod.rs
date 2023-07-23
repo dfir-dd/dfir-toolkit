@@ -27,7 +27,7 @@
 //!
 //! # Example
 //! ```
-//! use bodyfile::Bodyfile3Line;
+//! use dfir_toolkit::common::bodyfile::Bodyfile3Line;
 //! use std::convert::TryFrom;
 //! 
 //! let str_line = "0|/Users/Administrator ($FILE_NAME)|93552-48-2|d/drwxrwxrwx|0|0|92|1577092511|1577092511|1577092511|-1";
@@ -41,7 +41,7 @@
 //! need to be able to handle this also:
 //! 
 //! ```
-//! use bodyfile::Bodyfile3Line;
+//! use dfir_toolkit::common::bodyfile::Bodyfile3Line;
 //! use std::convert::TryFrom;
 //! 
 //! let str_line = "0|command was ls -l | wc |93552-48-2|d/drwxrwxrwx|0|0|92|1577092511|1577092511|1577092511|-1";

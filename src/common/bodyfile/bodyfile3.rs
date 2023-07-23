@@ -26,7 +26,7 @@ impl Bodyfile3Line {
     ///
     /// # Example
     /// ```
-    /// use bodyfile::Bodyfile3Line;
+    /// use dfir_toolkit::common::bodyfile::Bodyfile3Line;
     ///
     /// let bf = Bodyfile3Line::new();
     /// assert_eq!(bf.get_md5(), "0");
@@ -61,7 +61,7 @@ impl Bodyfile3Line {
     ///
     /// # Example
     /// ```
-    /// use bodyfile::Bodyfile3Line;
+    /// use dfir_toolkit::common::bodyfile::Bodyfile3Line;
     ///
     /// let bf = Bodyfile3Line::from_values(
     ///                 "4bad420da66571dac7f1ace995cc55c6".to_owned(),
@@ -175,7 +175,7 @@ impl fmt::Display for Bodyfile3Line {
     ///
     /// # Example
     /// ```
-    /// use bodyfile::Bodyfile3Line;
+    /// use dfir_toolkit::common::bodyfile::Bodyfile3Line;
     ///
     /// let bf = Bodyfile3Line::new()
     ///             .with_md5("4bad420da66571dac7f1ace995cc55c6")
@@ -216,7 +216,7 @@ pub enum Bodyfile3ParserError {
     /// # Examples
     /// ```
     /// extern crate matches;
-    /// use bodyfile::{Bodyfile3Line, Bodyfile3ParserError};
+    /// use dfir_toolkit::common::bodyfile::{Bodyfile3Line, Bodyfile3ParserError};
     /// use std::convert::TryFrom;
     /// use matches::assert_matches;
     ///
@@ -232,7 +232,7 @@ pub enum Bodyfile3ParserError {
     /// # Examples
     /// ```
     /// extern crate matches;
-    /// use bodyfile::{Bodyfile3Line, Bodyfile3ParserError};
+    /// use dfir_toolkit::common::bodyfile::{Bodyfile3Line, Bodyfile3ParserError};
     /// use std::convert::TryFrom;
     /// use matches::assert_matches;
     ///
@@ -248,7 +248,7 @@ pub enum Bodyfile3ParserError {
     /// # Examples
     /// ```
     /// extern crate matches;
-    /// use bodyfile::{Bodyfile3Line, Bodyfile3ParserError};
+    /// use dfir_toolkit::common::bodyfile::{Bodyfile3Line, Bodyfile3ParserError};
     /// use std::convert::TryFrom;
     /// use matches::assert_matches;
     ///
@@ -264,7 +264,7 @@ pub enum Bodyfile3ParserError {
     /// # Examples
     /// ```
     /// extern crate matches;
-    /// use bodyfile::{Bodyfile3Line, Bodyfile3ParserError};
+    /// use dfir_toolkit::common::bodyfile::{Bodyfile3Line, Bodyfile3ParserError};
     /// use std::convert::TryFrom;
     /// use matches::assert_matches;
     ///
@@ -280,7 +280,7 @@ pub enum Bodyfile3ParserError {
     /// # Examples
     /// ```
     /// extern crate matches;
-    /// use bodyfile::{Bodyfile3Line, Bodyfile3ParserError};
+    /// use dfir_toolkit::common::bodyfile::{Bodyfile3Line, Bodyfile3ParserError};
     /// use std::convert::TryFrom;
     /// use matches::assert_matches;
     ///
@@ -296,7 +296,7 @@ pub enum Bodyfile3ParserError {
     /// # Examples
     /// ```
     /// extern crate matches;
-    /// use bodyfile::{Bodyfile3Line, Bodyfile3ParserError};
+    /// use dfir_toolkit::common::bodyfile::{Bodyfile3Line, Bodyfile3ParserError};
     /// use std::convert::TryFrom;
     /// use matches::assert_matches;
     ///
@@ -312,7 +312,7 @@ pub enum Bodyfile3ParserError {
     /// # Examples
     /// ```
     /// extern crate matches;
-    /// use bodyfile::{Bodyfile3Line, Bodyfile3ParserError};
+    /// use dfir_toolkit::common::bodyfile::{Bodyfile3Line, Bodyfile3ParserError};
     /// use std::convert::TryFrom;
     /// use matches::assert_matches;
     ///
@@ -328,7 +328,7 @@ pub enum Bodyfile3ParserError {
     /// # Examples
     /// ```
     /// extern crate matches;
-    /// use bodyfile::{Bodyfile3Line, Bodyfile3ParserError};
+    /// use dfir_toolkit::common::bodyfile::{Bodyfile3Line, Bodyfile3ParserError};
     /// use std::convert::TryFrom;
     /// use matches::assert_matches;
     ///
@@ -344,7 +344,7 @@ pub enum Bodyfile3ParserError {
 /// 
 /// # Example
 /// ```
-/// use bodyfile::Bodyfile3ParserError;
+/// use dfir_toolkit::common::bodyfile::Bodyfile3ParserError;
 /// 
 /// let myerror = Bodyfile3ParserError::IllegalCRTime;
 /// assert_eq!(myerror.to_string(), "IllegalCRTime")
@@ -364,7 +364,7 @@ impl TryFrom<&str> for Bodyfile3Line {
     /// 
     /// # Example
     /// ```
-    /// use bodyfile::{Bodyfile3Line, Bodyfile3ParserError};
+    /// use dfir_toolkit::common::bodyfile::{Bodyfile3Line, Bodyfile3ParserError};
     /// use std::convert::TryFrom;
     /// let bf_line = Bodyfile3Line::try_from("0|ls -l |wc|1|2|3|4|5|6|7|8|9").unwrap();
     /// assert_eq!(bf_line.get_md5(), "0");

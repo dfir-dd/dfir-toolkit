@@ -1,4 +1,4 @@
-use crate::common::Bodyfile3Line;
+use crate::common::bodyfile::Bodyfile3Line;
 use std::borrow::Borrow;
 use std::cmp::Ordering;
 use std::collections::{BTreeMap, HashSet};

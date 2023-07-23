@@ -49,7 +49,7 @@ mod tests {
     use chrono_tz::TZ_VARIANTS;
     use chrono_tz::Tz;
     use std::sync::Arc;
-    use crate::common::Bodyfile3Line;
+    use crate::common::bodyfile::Bodyfile3Line;
     use crate::apps::mactime2::bodyfile::{MACBFlags, ListEntry, Mactime2Writer};
 
     fn random_tz() -> Tz {

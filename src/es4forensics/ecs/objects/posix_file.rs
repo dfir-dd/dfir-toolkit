@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use anyhow::Result;
 
-use crate::common::Bodyfile3Line;
+use crate::common::bodyfile::Bodyfile3Line;
 use chrono_tz::Tz;
 use serde::Serialize;
 
