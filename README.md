@@ -2,7 +2,7 @@
 
 # Table of contents
 
-<img src="https://github.com/janstarke/dfir-toolkit/blob/master/doc/images/fuchs_blau_q.png?raw=true" style="float: right;  max-width: 300px">
+<img src="https://github.com/janstarke/dfir-toolkit/blob/master/doc/images/fuchs_blau_q.png?raw=true" style="float: right;  max-width: 100px">
 
 - [Installation](#installation)
 - [Overview of timelining tools](#overview-of-timelining-tools)
