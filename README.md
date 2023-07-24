@@ -1,5 +1,7 @@
 # DFIR Toolkit
 
+<img src="https://github.com/janstarke/dfir-toolkit/blob/master/doc/images/fuchs_blau_q.svg?raw=true">
+
 # Table of contents
 
 - [Installation](#installation)
@@ -28,7 +30,7 @@
 
 # Overview of timelining tools
 
-<img src="https://github.com/janstarke/dfir-toolkit/blob/master/doc/images/tools.svg">
+<img src="https://github.com/janstarke/dfir-toolkit/blob/master/doc/images/tools.svg?raw=true">
 
 # Installation
 
