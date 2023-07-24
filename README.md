@@ -1,8 +1,8 @@
 # DFIR Toolkit
 
-<img src="https://github.com/janstarke/dfir-toolkit/blob/master/doc/images/fuchs_blau_q.svg?raw=true">
-
 # Table of contents
+
+<img src="https://github.com/janstarke/dfir-toolkit/blob/master/doc/images/fuchs_blau_q.png?raw=true" style="float: right;  max-width: 300px">
 
 - [Installation](#installation)
 - [Overview of timelining tools](#overview-of-timelining-tools)
