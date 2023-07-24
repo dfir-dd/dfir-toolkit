@@ -1,10 +1,10 @@
 [package]
 name = "dfir-toolkit"
-version = "0.6.1"
+version = "0.6.2"
 edition = "2021"
-authors = ["Jan Starke <Jan.Starke@telekom.de>"]
+authors = ["Jan Starke <jan.starke@posteo.de>"]
 description = "CLI tools for digital forensics and incident response"
-homepage = "https://www.github.com/janstarke/dfir_toolkit"
+homepage = "https://www.github.com/dfir-dd/dfir_toolkit"
 license = "GPL-3.0"
 
 [[bin]]

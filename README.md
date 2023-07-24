@@ -1,8 +1,10 @@
+
+<img align="right" width="50%" src="https://github.com/dfir-dd/dfir-toolkit/blob/master/doc/images/fuchs_blau_q.png?raw=true">
+
 # DFIR Toolkit
 
 # Table of contents
 
-<img align="right" width="150" height="150" src="https://github.com/janstarke/dfir-toolkit/blob/master/doc/images/fuchs_blau_q.png?raw=true">
 
 - [Installation](#installation)
 - [Overview of timelining tools](#overview-of-timelining-tools)
@@ -30,7 +32,7 @@
 
 # Overview of timelining tools
 
-<img src="https://github.com/janstarke/dfir-toolkit/blob/master/doc/images/tools.svg?raw=true">
+<img src="https://github.com/dfir-dd/dfir-toolkit/blob/master/doc/images/tools.svg?raw=true">
 
 # Installation
 
