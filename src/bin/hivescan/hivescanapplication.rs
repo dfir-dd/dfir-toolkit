@@ -1,6 +1,6 @@
 use std::time::Duration;
 use dfir_toolkit::common::bodyfile::Bodyfile3Line;
-use dfir_toolkit::registry::*;
+use nt_hive2::*;
 use crate::regtreeentry::RegTreeEntry;
 use std::{fs::File, path::PathBuf};
 use anyhow::Result;

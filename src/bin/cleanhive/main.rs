@@ -5,7 +5,7 @@ use std::{
 
 use anyhow::{bail, Result};
 use clap::Parser;
-use dfir_toolkit::registry::{Hive, HiveParseMode, ContainsHive};
+use nt_hive2::{Hive, HiveParseMode, ContainsHive};
 use simplelog::{Config, SimpleLogger};
 
 /// merges logfiles into a hive file

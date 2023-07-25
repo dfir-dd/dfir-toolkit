@@ -5,7 +5,7 @@ use std::{
 };
 
 use binread::BinReaderExt;
-use dfir_toolkit::registry::{CleanHive, Hive, KeyNode, Offset};
+use nt_hive2::{CleanHive, Hive, KeyNode, Offset};
 
 use crate::regtreeentry::*;
 

@@ -1,6 +1,6 @@
 [package]
 name = "dfir-toolkit"
-version = "0.6.2"
+version = "0.6.3"
 edition = "2021"
 authors = ["Jan Starke <jan.starke@posteo.de>"]
 description = "CLI tools for digital forensics and incident response"
@@ -76,9 +76,9 @@ evtxls = ["evtx", "colored", "lazy-regex", "regex", "sigpipe", "dfirtk-eventdata
 evtxanalyze = ["evtx", "dfirtk-sessionevent-derive", "dfirtk-eventdata"]
 evtx2bodyfile = ["evtx", "getset", "ouroboros", "indicatif"]
 
-regdump = ["marvin32", "derive-getters", "memoverlay"]
-hivescan = ["marvin32", "derive-getters", "memoverlay"]
-cleanhive = ["marvin32", "derive-getters", "memoverlay"]
+regdump = ["nt_hive2"]
+hivescan = ["nt_hive2"]
+cleanhive = ["nt_hive2"]
 
 [dependencies]
 anyhow = "1.0"
@@ -137,9 +137,7 @@ strum = { version = "0", features = ["derive"], optional=true }
 strum_macros = {version="0", optional=true}
 
 # nt-hive2
-marvin32 = {version="0.1.0", optional=true}
-derive-getters = {version="0.3", optional=true}
-memoverlay = {version=">=0.1.2", optional=true}
+nt_hive2 = {version="4", optional=true}
 
 [dev-dependencies]
 

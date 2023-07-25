@@ -1,6 +1,6 @@
 use anyhow::{bail, Result};
 use clap::Parser;
-use dfir_toolkit::registry::{Hive, HiveParseMode, ContainsHive};
+use nt_hive2::{ContainsHive, Hive, HiveParseMode};
 use simplelog::{Config, SimpleLogger};
 use std::fs::File;
 

@@ -1,5 +1,5 @@
 use std::{rc::Rc, cell::{RefCell, Ref}, slice::Iter};
-use dfir_toolkit::registry::{Offset, KeyNode};
+use nt_hive2::{Offset, KeyNode};
 
 pub (crate) struct RegTreeEntry {
     offset: Offset,
