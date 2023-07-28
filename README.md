@@ -1,5 +1,4 @@
-
-<img align="right" width="50%" src="https://github.com/dfir-dd/dfir-toolkit/blob/master/doc/images/fuchs_blau_q.png?raw=true">
+<img align="right" width="50%" src="https://github.com/dfir-dd/pr/blob/main/images/fox/dfir_fox_ai.png?raw=true">
 
 # DFIR Toolkit
 
