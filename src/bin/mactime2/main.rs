@@ -15,13 +15,13 @@ fn main() -> Result<()> {
         TerminalMode::Stderr,
         ColorChoice::Auto);
 
-    match cli.src_zone().as_deref().map(|s| &s[..]) {
+    match cli.src_zone().as_deref() {
         Some("list") => {display_zones(); return Ok(());}
         Some(_) => {}
         _ => {}
     }
 
-    match cli.dst_zone().as_deref().map(|s| &s[..]) {
+    match cli.dst_zone().as_deref() {
         Some("list") => {display_zones(); return Ok(());}
         Some(_) => {}
         _ => {}
