@@ -19,12 +19,16 @@ fn main() -> Result<()> {
         TerminalMode::Stderr,
         ColorChoice::Auto);
 
-    let _list = "list".to_owned();
-    if matches!(cli.src_zone(), Some(_list)) {
-        display_zones(); return Ok(());
+    match cli.src_zone().as_deref() {
+        Some("list") => {display_zones(); return Ok(());}
+        Some(_) => {}
+        _ => {}
     }
-    if matches!(cli.dst_zone(), Some(_list)) {
-        display_zones(); return Ok(());
+
+    match cli.dst_zone().as_deref() {
+        Some("list") => {display_zones(); return Ok(());}
+        Some(_) => {}
+        _ => {}
     }
 
     let app: Mactime2Application = cli.into();
