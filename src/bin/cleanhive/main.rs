@@ -26,6 +26,10 @@ struct Args {
     /// name of the file to which the cleaned hive will be written.
     #[clap(short('O'), long("output"))]
     pub(crate) dst_hive: String,
+
+    /// print help in markdown format
+    #[arg(long, hide = true, exclusive=true)]
+    pub markdown_help: bool,
 }
 
 fn validate_file(s: &str) -> Result<PathBuf, String> {
@@ -38,7 +42,12 @@ fn validate_file(s: &str) -> Result<PathBuf, String> {
 }
 
 pub fn main() -> Result<()> {
+    if std::env::args().any(|a| &a == "--markdown-help") {
+        clap_markdown::print_help_markdown::<Args>();
+        return Ok(());
+    }
     let mut cli = Args::parse();
+
     let _ = SimpleLogger::init(cli.verbose.log_level_filter(), Config::default());
 
     let hive_file = PathBuf::from(&cli.hive_file);

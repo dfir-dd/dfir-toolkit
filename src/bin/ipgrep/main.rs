@@ -60,8 +60,16 @@ struct IPGrepApp {
 
     #[command(flatten)]
     pub(crate) verbose: clap_verbosity_flag::Verbosity,
+
+    /// print help in markdown format
+    #[arg(long, hide = true, exclusive=true)]
+    pub markdown_help: bool,
 }
 fn main() -> Result<()> {
+    if std::env::args().any(|a| &a == "--markdown-help") {
+        clap_markdown::print_help_markdown::<IPGrepApp>();
+        return Ok(());
+    }
     let app = IPGrepApp::parse();
 
     TermLogger::init(

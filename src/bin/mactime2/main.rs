@@ -7,6 +7,10 @@ use dfir_toolkit::apps::mactime2::Cli;
 use dfir_toolkit::apps::mactime2::Mactime2Application;
 
 fn main() -> Result<()> {
+    if std::env::args().any(|a| &a == "--markdown-help") {
+        clap_markdown::print_help_markdown::<Cli>();
+        return Ok(());
+    }
     let cli = Cli::parse();
 
     let _ = TermLogger::init(

@@ -8,6 +8,10 @@ mod pstree;
 mod sessions;
 
 fn main() -> anyhow::Result<()> {
+    if std::env::args().any(|a| &a == "--markdown-help") {
+        clap_markdown::print_help_markdown::<Cli>();
+        return Ok(());
+    }
     let cli = Cli::parse();
 
     TermLogger::init(

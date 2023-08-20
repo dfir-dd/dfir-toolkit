@@ -10,6 +10,10 @@ mod regtreeentry;
 use hivescanapplication::*;
 
 fn main() -> Result<()> {
+    if std::env::args().any(|a| &a == "--markdown-help") {
+        clap_markdown::print_help_markdown::<Args>();
+        return Ok(());
+    }
     let mut cli = Args::parse();
     let _ = SimpleLogger::init(cli.verbose.log_level_filter(), Config::default());
 

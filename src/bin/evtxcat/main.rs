@@ -37,6 +37,10 @@ struct Cli {
 
     #[clap(value_enum, short('F'), long("format"), default_value_t = OutputFormat::Xml)]
     format: OutputFormat,
+
+    /// print help in markdown format
+    #[arg(long, hide = true, exclusive=true)]
+    pub markdown_help: bool,
 }
 
 #[derive(clap::ValueEnum, Clone)]
@@ -170,6 +174,10 @@ impl RecordListFormatter for serde_json::Value {
 }
 
 fn main() -> Result<()> {
+    if std::env::args().any(|a| &a == "--markdown-help") {
+        clap_markdown::print_help_markdown::<Cli>();
+        return Ok(());
+    }
     let cli = Cli::parse();
 
     let path = PathBuf::try_from(&cli.evtx_file)?;

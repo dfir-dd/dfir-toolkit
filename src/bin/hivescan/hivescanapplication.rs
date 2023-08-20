@@ -26,7 +26,11 @@ pub (crate) struct Args {
 
     /// output as bodyfile format
     #[clap(short('b'))]
-    pub (crate) print_bodyfile: bool
+    pub (crate) print_bodyfile: bool,
+
+    /// print help in markdown format
+    #[arg(long, hide = true, exclusive=true)]
+    pub markdown_help: bool,
 }
 
 fn validate_file(s: &str) -> Result<PathBuf, String> {

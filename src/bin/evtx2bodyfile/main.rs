@@ -10,6 +10,10 @@ mod evtx_file;
 mod macros;
 
 fn main() -> Result<()> {
+    if std::env::args().any(|a| &a == "--markdown-help") {
+        clap_markdown::print_help_markdown::<Evtx2BodyfileApp>();
+        return Ok(());
+    }
     let cli = Evtx2BodyfileApp::parse();
 
     TermLogger::init(

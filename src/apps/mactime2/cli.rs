@@ -46,6 +46,10 @@ pub struct Cli {
 
     #[clap(flatten)]
     pub(crate) verbose: clap_verbosity_flag::Verbosity,
+
+    /// print help in markdown format
+    #[arg(long, hide = true, exclusive=true)]
+    pub markdown_help: bool,
 }
 
 impl Cli {

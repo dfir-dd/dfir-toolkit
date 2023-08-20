@@ -83,6 +83,10 @@ pub(crate) struct Cli {
     /// specifying '--base-fields' without any values (which is not allowed, that's why there is this flag)
     #[clap(short('B'), long("hide-base-fields"), default_value_t=false)]
     pub (crate) hide_base_fields: bool,
+
+    /// print help in markdown format
+    #[arg(long, hide = true, exclusive=true)]
+    pub markdown_help: bool,
 }
 
 
