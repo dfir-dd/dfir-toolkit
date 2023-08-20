@@ -1,9 +1,7 @@
-<img align="right" width="50%" src="https://github.com/dfir-dd/pr/blob/main/images/fox/dfir_fox_ai.png?raw=true">
 
 # DFIR Toolkit
 
 # Table of contents
-
 
 - [Installation](#installation)
 - [Overview of timelining tools](#overview-of-timelining-tools)
@@ -16,7 +14,7 @@
   - [x] [`evtxls`](#evtxls)
   - [x] [`es4forensics`](#es4forensics)
   - [x] [`hivescan`](#hivescan)
-  - [ ] [`ipgrep`](https://github.com/janstarke/ipgrep)
+  - [x] [`ipgrep`](#ipgrep)
   - [ ] [`lnk2bodyfile`](https://github.com/janstarke/lnk2bodyfile)
   - [x] [`mactime2`](#mactime2)
   - [ ] [`mft2bodyfile`](https://github.com/janstarke/mft2bodyfile)
@@ -40,323 +38,575 @@ cargo install dfir-toolkit
 ```
 
 # Tools
+# Command-Line Help for `cleanhive`
+
+This document contains the help content for the `cleanhive` command-line program.
+
+**Command Overview:**
+
+* [`cleanhive`↴](#cleanhive)
 
 ## `cleanhive`
 
 merges logfiles into a hive file
 
-### Usage
+**Usage:** `cleanhive [OPTIONS] --output <DST_HIVE> <HIVE_FILE>`
 
-```
-Usage: cleanhive [OPTIONS] --output <DST_HIVE> <HIVE_FILE>
+###### **Arguments:**
 
-Arguments:
-  <HIVE_FILE>  name of the file to dump
+* `<HIVE_FILE>` — name of the file to dump
 
-Options:
-  -L, --log <LOGFILES>     transaction LOG file(s). This argument can be specified one or two times
-  -v, --verbose...         More output per occurrence
-  -q, --quiet...           Less output per occurrence
-  -O, --output <DST_HIVE>  name of the file to which the cleaned hive will be written
-  -h, --help               Print help
-  -V, --version            Print version
-```
+###### **Options:**
 
-## `evtx2bodyfile`
+* `-L`, `--log <LOGFILES>` — transaction LOG file(s). This argument can be specified one or two times
+* `-v`, `--verbose` — More output per occurrence
+* `-q`, `--quiet` — Less output per occurrence
+* `-O`, `--output <DST_HIVE>` — name of the file to which the cleaned hive will be written
+* `--markdown-help` — print help in markdown format
 
-### Usage
 
-```
-Usage: evtx2bodyfile [OPTIONS] [EVTX_FILES]...
 
-Arguments:
-  [EVTX_FILES]...  names of the evtx files
+<hr/>
 
-Options:
-  -J, --json        output json for elasticsearch instead of bodyfile
-  -S, --strict      fail upon read error
-  -v, --verbose...  More output per occurrence
-  -q, --quiet...    Less output per occurrence
-  -h, --help        Print help
-  -V, --version     Print version
-```
+<small><i>
+    This document was generated automatically by
+    <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
+</i></small>
 
-### Example
+# Command-Line Help for `dfir-toolkit`
 
-```shell
-# convert to bodyfile only
-evtx2bodyfile Security.evtx >Security.bodyfile
+This document contains the help content for the `dfir-toolkit` command-line program.
 
-# create a complete timeline
-evtx2bodyfile *.evtx | mactime2 -d -b >evtx_timeline.csv
-```
+**Command Overview:**
 
-## `evtxanalyze`
+* [`dfir-toolkit`↴](#dfir-toolkit)
+* [`dfir-toolkit create-index`↴](#dfir-toolkit-create-index)
+* [`dfir-toolkit import`↴](#dfir-toolkit-import)
 
-Analyze evtx files
+## `dfir-toolkit`
 
-### Usage
+CLI tools for digital forensics and incident response
 
-```
-Usage: evtxanalyze [OPTIONS] <COMMAND>
+**Usage:** `dfir-toolkit [OPTIONS] --index <INDEX_NAME> --password <PASSWORD> <COMMAND>`
 
-Commands:
-  pstree    generate a process tree
-  sessions  display sessions
-  session   display one single session
-  help      Print this message or the help of the given subcommand(s)
+###### **Subcommands:**
 
-Options:
-  -v, --verbose...  More output per occurrence
-  -q, --quiet...    Less output per occurrence
-  -h, --help        Print help
-```
+* `create-index` — 
+* `import` — 
 
-## `evtxscan`
+###### **Options:**
 
-Finds time skews in an evtx file
+* `--strict` — strict mode: do not only warn, but abort if an error occurs
+* `-I`, `--index <INDEX_NAME>` — name of the elasticsearch index
+* `-H`, `--host <HOST>` — server name or IP address of elasticsearch server
 
-### Example
+  Default value: `localhost`
+* `-P`, `--port <PORT>` — API port number of elasticsearch server
 
-<img src="https://github.com/janstarke/evtxtools/blob/master/doc/img/evtxscan1.png?raw=true">
+  Default value: `9200`
+* `--proto <PROTOCOL>` — protocol to be used to connect to elasticsearch
 
-<img src="https://github.com/janstarke/evtxtools/blob/master/doc/img/evtxscan2.png?raw=true">
+  Default value: `https`
 
-### Usage
+  Possible values: `http`, `https`
 
-```
-Find time skews in an evtx file
+* `-k`, `--insecure` — omit certificate validation
 
-Usage: evtxscan [OPTIONS] <EVTX_FILE>
+  Default value: `false`
+* `-U`, `--username <USERNAME>` — username for elasticsearch server
 
-Arguments:
-  <EVTX_FILE>  name of the evtx file to scan
+  Default value: `elastic`
+* `-W`, `--password <PASSWORD>` — password for authenticating at elasticsearch
+* `-v`, `--verbose` — More output per occurrence
+* `-q`, `--quiet` — Less output per occurrence
+* `--markdown-help` — print help in markdown format
 
-Options:
-  -S, --show-records                             display also the contents of the records befor and after a time skew
-  -N, --negative-tolerance <NEGATIVE_TOLERANCE>  negative tolerance limit (in seconds): time skews to the past below this limit will be ignored [default: 5]
-  -h, --help                                     Print help
-  -V, --version                                  Print version
-```
+
+
+## `dfir-toolkit create-index`
+
+**Usage:** `dfir-toolkit create-index`
+
+
+
+## `dfir-toolkit import`
+
+**Usage:** `dfir-toolkit import [OPTIONS] [INPUT_FILE]`
+
+###### **Arguments:**
+
+* `<INPUT_FILE>` — path to input file or '-' for stdin (files ending with .gz will be treated as being gzipped)
+
+  Default value: `-`
+
+###### **Options:**
+
+* `--bulk-size <BULK_SIZE>` — number of timeline entries to combine in one bulk operation
+
+  Default value: `1000`
+
+
+
+<hr/>
+
+<small><i>
+    This document was generated automatically by
+    <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
+</i></small>
+
+# Command-Line Help for `dfir-toolkit`
+
+This document contains the help content for the `dfir-toolkit` command-line program.
+
+**Command Overview:**
+
+* [`dfir-toolkit`↴](#dfir-toolkit)
+
+## `dfir-toolkit`
+
+CLI tools for digital forensics and incident response
+
+**Usage:** `dfir-toolkit [OPTIONS] [EVTX_FILES]...`
+
+###### **Arguments:**
+
+* `<EVTX_FILES>` — names of the evtx files
+
+###### **Options:**
+
+* `-J`, `--json` — output json for elasticsearch instead of bodyfile
+* `-S`, `--strict` — fail upon read error
+* `-v`, `--verbose` — More output per occurrence
+* `-q`, `--quiet` — Less output per occurrence
+* `--markdown-help` — print help in markdown format
+
+
+
+<hr/>
+
+<small><i>
+    This document was generated automatically by
+    <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
+</i></small>
+
+# Command-Line Help for `dfir-toolkit`
+
+This document contains the help content for the `dfir-toolkit` command-line program.
+
+**Command Overview:**
+
+* [`dfir-toolkit`↴](#dfir-toolkit)
+* [`dfir-toolkit pstree`↴](#dfir-toolkit-pstree)
+* [`dfir-toolkit sessions`↴](#dfir-toolkit-sessions)
+* [`dfir-toolkit session`↴](#dfir-toolkit-session)
+
+## `dfir-toolkit`
+
+**Usage:** `dfir-toolkit [OPTIONS] <COMMAND>`
+
+###### **Subcommands:**
+
+* `pstree` — generate a process tree
+* `sessions` — display sessions
+* `session` — display one single session
+
+###### **Options:**
+
+* `-v`, `--verbose` — More output per occurrence
+* `-q`, `--quiet` — Less output per occurrence
+* `--markdown-help` — print help in markdown format
+
+
+
+## `dfir-toolkit pstree`
+
+generate a process tree
+
+**Usage:** `dfir-toolkit pstree [OPTIONS] <EVTX_FILE>`
+
+###### **Arguments:**
+
+* `<EVTX_FILE>` — Name of the evtx file to parse
+
+###### **Options:**
+
+* `-U`, `--username <USERNAME>` — display only processes of this user (case insensitive regex search)
+* `-F`, `--format <FORMAT>` — output format
+
+  Default value: `csv`
+
+  Possible values: `json`, `markdown`, `csv`, `latex`, `dot`
+
+
+
+
+## `dfir-toolkit sessions`
+
+display sessions
+
+**Usage:** `dfir-toolkit sessions [OPTIONS] <EVTX_FILES_DIR>`
+
+###### **Arguments:**
+
+* `<EVTX_FILES_DIR>` — Names of the evtx files to parse
+
+###### **Options:**
+
+* `--include-anonymous` — include anonymous sessions
+
+
+
+## `dfir-toolkit session`
+
+display one single session
+
+**Usage:** `dfir-toolkit session <EVTX_FILES_DIR> <SESSION_ID>`
+
+###### **Arguments:**
+
+* `<EVTX_FILES_DIR>` — Names of the evtx files to parse
+* `<SESSION_ID>` — Session ID
+
+
+
+<hr/>
+
+<small><i>
+    This document was generated automatically by
+    <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
+</i></small>
+
+# Command-Line Help for `evtxcat`
+
+This document contains the help content for the `evtxcat` command-line program.
+
+**Command Overview:**
+
+* [`evtxcat`↴](#evtxcat)
 
 ## `evtxcat`
 
 Display one or more events from an evtx file
 
-### Example
+**Usage:** `evtxcat [OPTIONS] <EVTX_FILE>`
 
-<img src="https://github.com/janstarke/evtxtools/blob/master/doc/img/evtxls.png?raw=true">
+###### **Arguments:**
 
-### Usage
-```
+* `<EVTX_FILE>` — Name of the evtx file to read from
 
-Usage: evtxcat [OPTIONS] <EVTX_FILE>
+###### **Options:**
 
-Arguments:
-  <EVTX_FILE>  Name of the evtx file to read from
+* `--min <MIN>` — filter: minimal event record identifier
+* `--max <MAX>` — filter: maximal event record identifier
+* `-i`, `--id <ID>` — show only the one event with this record identifier
+* `-T`, `--display-table` — don't display the records in a table format
+* `-F`, `--format <FORMAT>`
 
-Options:
-      --min <MIN>        filter: minimal event record identifier
-      --max <MAX>        filter: maximal event record identifier
-  -i, --id <ID>          show only the one event with this record identifier
-  -T, --display-table    don't display the records in a table format
-  -F, --format <FORMAT>  [default: xml] [possible values: json, xml]
-  -h, --help             Print help
-  -V, --version          Print version
+  Default value: `xml`
 
-```
+  Possible values: `json`, `xml`
 
-## `evtxls`
+* `--markdown-help` — print help in markdown format
 
-Display one or more events from an evtx file
 
-### Usage 
 
-```
-Usage: evtxls [OPTIONS] [EVTX_FILES]...
+<hr/>
 
-Arguments:
-  [EVTX_FILES]...
-          Name of the evtx files to read from
+<small><i>
+    This document was generated automatically by
+    <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
+</i></small>
 
-Options:
-  -d, --delimiter <DELIMITER>
-          use this delimiter instead of generating fixed space columns
+# Command-Line Help for `dfir-toolkit`
 
-  -i, --include <INCLUDED_EVENT_IDS>
-          List events with only the specified event ids, separated by ','
+This document contains the help content for the `dfir-toolkit` command-line program.
 
-  -x, --exclude <EXCLUDED_EVENT_IDS>
-          Exclude events with the specified event ids, separated by ','
+**Command Overview:**
 
-  -c, --colors
-          highlight interesting content using colors
+* [`dfir-toolkit`↴](#dfir-toolkit)
 
-  -f, --from <NOT_BEFORE>
-          hide events older than the specified date (hint: use RFC 3339 syntax)
+## `dfir-toolkit`
 
-  -t, --to <NOT_AFTER>
-          hide events newer than the specified date (hint: use RFC 3339 syntax)
+CLI tools for digital forensics and incident response
 
-  -r, --regex <HIGHLIGHT>
-          highlight event data based on this regular expression
+**Usage:** `dfir-toolkit [OPTIONS] [EVTX_FILES]...`
 
-  -s, --sort <SORT_ORDER>
-          sort order
-          
-          [default: storage]
+###### **Arguments:**
 
-          Possible values:
-          - storage:   don't change order, output records as they are stored
-          - record-id: sort by event record id
-          - time:      sort by date and time
+* `<EVTX_FILES>` — Name of the evtx files to read from
 
-  -b, --base-fields <DISPLAY_SYSTEM_FIELDS>
-          display fields common to all events. multiple values must be separated by ','
-          
-          [default: event-id event-record-id]
+###### **Options:**
 
-          Possible values:
-          - event-id:            The identifier that the provider used to identify the event
-          - event-record-id:     The record number assigned to the event when it was logged
-          - activity-id:         A globally unique identifier that identifies the current activity. The events that are published with this identifier are part of the same activity
-          - related-activity-id: A globally unique identifier that identifies the activity to which control was transferred to. The related events would then have this identifier as their ActivityID identifier
-          - process-id:          The ID of the process that created the event
+* `-d`, `--delimiter <DELIMITER>` — use this delimiter instead of generating fixed space columns
+* `-i`, `--include <INCLUDED_EVENT_IDS>` — List events with only the specified event ids, separated by ','
+* `-x`, `--exclude <EXCLUDED_EVENT_IDS>` — Exclude events with the specified event ids, separated by ','
+* `-c`, `--colors` — highlight interesting content using colors
+* `-f`, `--from <NOT_BEFORE>` — hide events older than the specified date (hint: use RFC 3339 syntax)
+* `-t`, `--to <NOT_AFTER>` — hide events newer than the specified date (hint: use RFC 3339 syntax)
+* `-r`, `--regex <HIGHLIGHT>` — highlight event data based on this regular expression
+* `-s`, `--sort <SORT_ORDER>` — sort order
 
-  -B, --hide-base-fields
-          don't display any common event fields at all. This corresponds to specifying '--base-fields' without any values (which is not allowed, that's why there is this flag)
+  Default value: `storage`
 
-  -h, --help
-          Print help (see a summary with '-h')
+  Possible values:
+  - `storage`:
+    don't change order, output records as they are stored
+  - `record-id`:
+    sort by event record id
+  - `time`:
+    sort by date and time
 
-  -V, --version
-          Print version
-```
+* `-b`, `--base-fields <DISPLAY_SYSTEM_FIELDS>` — display fields common to all events. multiple values must be separated by ','
 
-## `es4forensics`
+  Default values: `event-id`, `event-record-id`
 
-### Usage
+  Possible values:
+  - `event-id`:
+    The identifier that the provider used to identify the event
+  - `event-record-id`:
+    The record number assigned to the event when it was logged
+  - `activity-id`:
+    A globally unique identifier that identifies the current activity. The events that are published with this identifier are part of the same activity
+  - `related-activity-id`:
+    A globally unique identifier that identifies the activity to which control was transferred to. The related events would then have this identifier as their ActivityID identifier
+  - `process-id`:
+    The ID of the process that created the event
 
-```
-Usage: es4forensics [OPTIONS] --index <INDEX_NAME> --password <PASSWORD> <COMMAND>
+* `-B`, `--hide-base-fields` — don't display any common event fields at all. This corresponds to specifying '--base-fields' without any values (which is not allowed, that's why there is this flag)
 
-Commands:
-  create-index  
-  import        
-  help          Print this message or the help of the given subcommand(s)
+  Default value: `false`
+* `--markdown-help` — print help in markdown format
 
-Options:
-  -v, --verbose...           More output per occurrence
-  -q, --quiet...             Less output per occurrence
-      --strict               strict mode: do not only warn, but abort if an error occurs
-  -I, --index <INDEX_NAME>   name of the elasticsearch index
-  -H, --host <HOST>          server name or IP address of elasticsearch server [default: localhost]
-  -P, --port <PORT>          API port number of elasticsearch server [default: 9200]
-      --proto <PROTOCOL>     protocol to be used to connect to elasticsearch [default: https] [possible values: http, https]
-  -k, --insecure             omit certificate validation
-  -U, --username <USERNAME>  username for elasticsearch server [default: elastic]
-  -W, --password <PASSWORD>  password for authenticating at elasticsearch
-  -h, --help                 Print help
-  -V, --version              Print version
-```
-## `hivescan`
+
+
+<hr/>
+
+<small><i>
+    This document was generated automatically by
+    <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
+</i></small>
+
+# Command-Line Help for `evtxscan`
+
+This document contains the help content for the `evtxscan` command-line program.
+
+**Command Overview:**
+
+* [`evtxscan`↴](#evtxscan)
+
+## `evtxscan`
+
+Find time skews in an evtx file
+
+**Usage:** `evtxscan [OPTIONS] <EVTX_FILE>`
+
+###### **Arguments:**
+
+* `<EVTX_FILE>` — name of the evtx file to scan
+
+###### **Options:**
+
+* `-S`, `--show-records` — display also the contents of the records befor and after a time skew
+* `-N`, `--negative-tolerance <NEGATIVE_TOLERANCE>` — negative tolerance limit (in seconds): time skews to the past below this limit will be ignored
+
+  Default value: `5`
+* `--markdown-help` — print help in markdown format
+
+
+
+<hr/>
+
+<small><i>
+    This document was generated automatically by
+    <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
+</i></small>
+
+# Command-Line Help for `dfir-toolkit`
+
+This document contains the help content for the `dfir-toolkit` command-line program.
+
+**Command Overview:**
+
+* [`dfir-toolkit`↴](#dfir-toolkit)
+
+## `dfir-toolkit`
 
 scans a registry hive file for deleted entries
 
-### Usage
+**Usage:** `dfir-toolkit [OPTIONS] <HIVE_FILE>`
 
-```
-Usage: hivescan [OPTIONS] <HIVE_FILE>
+###### **Arguments:**
 
-Arguments:
-  <HIVE_FILE>  name of the file to scan
+* `<HIVE_FILE>` — name of the file to scan
 
-Options:
-  -L, --log <LOGFILES>  transaction LOG file(s). This argument can be specified one or two times
-  -v, --verbose...      More output per occurrence
-  -q, --quiet...        Less output per occurrence
-  -b                    output as bodyfile format
-  -h, --help            Print help
-  -V, --version         Print version
+###### **Options:**
 
-```
+* `-L`, `--log <LOGFILES>` — transaction LOG file(s). This argument can be specified one or two times
+* `-v`, `--verbose` — More output per occurrence
+* `-q`, `--quiet` — Less output per occurrence
+* `-b` — output as bodyfile format
+* `--markdown-help` — print help in markdown format
 
-## `mactime2`
 
-Replacement for `mactime`
 
-### Changes to original `mactime`
+<hr/>
 
- - no implicit conversion of timestamp to local date/time
- - possibility of explicit timezone correction
- - other datetime format (RFC3339) which always includes the timezone offset
- - faster
+<small><i>
+    This document was generated automatically by
+    <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
+</i></small>
 
-### Usage
+# Command-Line Help for `dfir-toolkit`
 
-```
-Usage: mactime2 [OPTIONS]
+This document contains the help content for the `dfir-toolkit` command-line program.
 
-Options:
-  -v, --verbose...                More output per occurrence
-  -q, --quiet...                  Less output per occurrence
-  -b <INPUT_FILE>                 path to input file or '-' for stdin (files ending with .gz will be treated as being gzipped) [default: -]
-  -f, --from-timezone <SRC_ZONE>  name of offset of source timezone (or 'list' to display all possible values
-  -t, --to-timezone <DST_ZONE>    name of offset of destination timezone (or 'list' to display all possible values
-      --strict                    strict mode: do not only warn, but abort if an error occurs
-  -F, --format <OUTPUT_FORMAT>    output format, if not specified, default value is 'txt' [possible values: csv, txt, json, elastic]
-  -d                              output as CSV instead of TXT. This is a conveniance option, which is identical to `--format=csv` and will be removed in a future release.
-                                  If you specified `--format` and `-d`, the latter will be ignored
-  -j                              output as JSON instead of TXT. This is a conveniance option, which is identical to `--format=json` and will be removed in a future release.
-                                  If you specified `--format` and `-j`, the latter will be ignored
-  -h, --help                      Print help information
-  -V, --version                   Print version information
+**Command Overview:**
 
-```
+* [`dfir-toolkit`↴](#dfir-toolkit)
 
-## mft2bodyfile
+## `dfir-toolkit`
 
-yet to be come
+CLI tools for digital forensics and incident response
 
-## pol_export
+**Usage:** `dfir-toolkit [OPTIONS] [FILE]...`
 
-Exporter for Windows Registry Policy Files
+###### **Arguments:**
 
-### Usage
+* `<FILE>`
 
-```bash
-USAGE:
-    pol_export <POLFILE>
+###### **Options:**
 
-ARGS:
-    <POLFILE>    Name of the file to read
+* `-i`, `--include <INCLUDE>` — display only lines who match ALL of the specified criteria. Values are delimited with comma
 
-OPTIONS:
-    -h, --help       Print help information
-    -V, --version    Print version information
-```
+  Possible values: `ipv4`, `ipv6`, `public`, `private`, `loopback`
 
-### More information
+* `-x`, `--exclude <EXCLUDE>` — hide lines who match ANY of the specified criteria. Values are delimited with comma
 
- - <https://docs.microsoft.com/en-us/previous-versions/windows/desktop/policy/registry-policy-file-format>
+  Possible values: `ipv4`, `ipv6`, `public`, `private`, `loopback`
+
+* `-I`, `--ignore-ips <IGNORE_IPS>` — ignore any of the specified IP addresses. Values are delimited with comma
+* `-c`, `--colors` — highlight interesting content using colors
+* `-v`, `--verbose` — More output per occurrence
+* `-q`, `--quiet` — Less output per occurrence
+* `--markdown-help` — print help in markdown format
+
+
+
+<hr/>
+
+<small><i>
+    This document was generated automatically by
+    <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
+</i></small>
+
+# Command-Line Help for `dfir-toolkit`
+
+This document contains the help content for the `dfir-toolkit` command-line program.
+
+**Command Overview:**
+
+* [`dfir-toolkit`↴](#dfir-toolkit)
+
+## `dfir-toolkit`
+
+CLI tools for digital forensics and incident response
+
+**Usage:** `dfir-toolkit [OPTIONS]`
+
+###### **Options:**
+
+* `-b <INPUT_FILE>` — path to input file or '-' for stdin (files ending with .gz will be treated as being gzipped)
+
+  Default value: `-`
+* `-F`, `--format <OUTPUT_FORMAT>` — output format, if not specified, default value is 'txt'
+
+  Possible values: `csv`, `txt`, `json`, `elastic`
+
+* `-d` — output as CSV instead of TXT. This is a conveniance option, which is identical to `--format=csv` and will be removed in a future release. If you specified `--format` and `-d`, the latter will be ignored
+* `-j` — output as JSON instead of TXT. This is a conveniance option, which is identical to `--format=json` and will be removed in a future release. If you specified `--format` and `-j`, the latter will be ignored
+* `-f`, `--from-timezone <SRC_ZONE>` — name of offset of source timezone (or 'list' to display all possible values
+* `-t`, `--to-timezone <DST_ZONE>` — name of offset of destination timezone (or 'list' to display all possible values
+* `--strict` — strict mode: do not only warn, but abort if an error occurs
+* `-v`, `--verbose` — More output per occurrence
+* `-q`, `--quiet` — Less output per occurrence
+* `--markdown-help` — print help in markdown format
+
+
+
+<hr/>
+
+<small><i>
+    This document was generated automatically by
+    <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
+</i></small>
+
+# Command-Line Help for `dfir-toolkit`
+
+This document contains the help content for the `dfir-toolkit` command-line program.
+
+**Command Overview:**
+
+* [`dfir-toolkit`↴](#dfir-toolkit)
+
+## `dfir-toolkit`
+
+CLI tools for digital forensics and incident response
+
+**Usage:** `dfir-toolkit [OPTIONS] <POLFILE>`
+
+###### **Arguments:**
+
+* `<POLFILE>` — Name of the file to read
+
+###### **Options:**
+
+* `-v`, `--verbose` — More output per occurrence
+* `-q`, `--quiet` — Less output per occurrence
+* `--markdown-help` — print help in markdown format
+
+
+
+<hr/>
+
+<small><i>
+    This document was generated automatically by
+    <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
+</i></small>
+
+# Command-Line Help for `regdump`
+
+This document contains the help content for the `regdump` command-line program.
+
+**Command Overview:**
+
+* [`regdump`↴](#regdump)
 
 ## `regdump`
 
-### Usage
+CLI tools for digital forensics and incident response
 
-```
-Usage: regdump [OPTIONS] <HIVE_FILE>
+**Usage:** `regdump [OPTIONS] <HIVE_FILE>`
 
-Arguments:
-  <HIVE_FILE>  name of the file to dump
+###### **Arguments:**
 
-Options:
-  -L, --log <LOGFILES>     transaction LOG file(s). This argument can be specified one or two times
-  -b, --bodyfile           print as bodyfile format
-  -I, --ignore-base-block  ignore the base block (e.g. if it was encrypted by some ransomware)
-  -T, --hide-timestamps    hide timestamps, if output is in reg format
-  -v, --verbose...         More output per occurrence
-  -q, --quiet...           Less output per occurrence
-  -h, --help               Print help
-  -V, --version            Print version
-```
+* `<HIVE_FILE>` — name of the file to dump
+
+###### **Options:**
+
+* `-L`, `--log <LOGFILES>` — transaction LOG file(s). This argument can be specified one or two times
+* `-b`, `--bodyfile` — print as bodyfile format
+* `-I`, `--ignore-base-block` — ignore the base block (e.g. if it was encrypted by some ransomware)
+* `-T`, `--hide-timestamps` — hide timestamps, if output is in reg format
+* `-v`, `--verbose` — More output per occurrence
+* `-q`, `--quiet` — Less output per occurrence
+* `--markdown-help` — print help in markdown format
+
+
+
+<hr/>
+
+<small><i>
+    This document was generated automatically by
+    <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
+</i></small>
+
