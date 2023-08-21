@@ -1,11 +1,10 @@
-use std::{
-    fs::File,
-    path::PathBuf,
-};
+use std::{fs::File, path::PathBuf};
 
 use anyhow::{bail, Result};
-use clap::Parser;
-use nt_hive2::{Hive, HiveParseMode, ContainsHive};
+use clap::{value_parser, CommandFactory, Parser};
+use clap_complete::{Generator, Shell};
+use dfir_toolkit::common::FancyParser;
+use nt_hive2::{ContainsHive, Hive, HiveParseMode};
 use simplelog::{Config, SimpleLogger};
 
 /// merges logfiles into a hive file
@@ -26,10 +25,6 @@ struct Args {
     /// name of the file to which the cleaned hive will be written.
     #[clap(short('O'), long("output"))]
     pub(crate) dst_hive: String,
-
-    /// print help in markdown format
-    #[arg(long, hide = true, exclusive=true)]
-    pub markdown_help: bool,
 }
 
 fn validate_file(s: &str) -> Result<PathBuf, String> {
@@ -42,11 +37,7 @@ fn validate_file(s: &str) -> Result<PathBuf, String> {
 }
 
 pub fn main() -> Result<()> {
-    if std::env::args().any(|a| &a == "--markdown-help") {
-        clap_markdown::print_help_markdown::<Args>();
-        return Ok(());
-    }
-    let mut cli = Args::parse();
+    let mut cli = Args::parse_cli(env!("CARGO_BIN_NAME"));
 
     let _ = SimpleLogger::init(cli.verbose.log_level_filter(), Config::default());
 
@@ -58,21 +49,18 @@ pub fn main() -> Result<()> {
     let hive_file = File::open(hive_file)?;
     let hive = Hive::new(hive_file, HiveParseMode::NormalWithBaseBlock).unwrap();
 
-    let mut clean_hive = 
-    match cli.logfiles.len() {
+    let mut clean_hive = match cli.logfiles.len() {
         0 => {
             log::warn!("no log files provided, treating hive as if it was clean");
             hive.treat_hive_as_clean()
         }
-        1 => {
-            hive.with_transaction_log(File::open(cli.logfiles.pop().unwrap())?.try_into()?)?
-            .apply_logs()
-        }
-        2 => {
-            hive.with_transaction_log(File::open(cli.logfiles.pop().unwrap())?.try_into()?)?
+        1 => hive
             .with_transaction_log(File::open(cli.logfiles.pop().unwrap())?.try_into()?)?
-            .apply_logs()
-        }
+            .apply_logs(),
+        2 => hive
+            .with_transaction_log(File::open(cli.logfiles.pop().unwrap())?.try_into()?)?
+            .with_transaction_log(File::open(cli.logfiles.pop().unwrap())?.try_into()?)?
+            .apply_logs(),
         _ => {
             bail!("more than two transaction log files are not supported")
         }
@@ -82,4 +70,3 @@ pub fn main() -> Result<()> {
     std::io::copy(&mut clean_hive, &mut dst)?;
     Ok(())
 }
-

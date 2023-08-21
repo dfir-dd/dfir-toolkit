@@ -398,6 +398,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "clap_complete"
+version = "4.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5fc443334c81a804575546c5a8a79b4913b50e28d69232903604cada1de817ce"
+dependencies = [
+ "clap 4.3.11",
+]
+
+[[package]]
 name = "clap_derive"
 version = "4.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -669,6 +678,7 @@ dependencies = [
  "clap 4.3.11",
  "clap-markdown",
  "clap-verbosity-flag",
+ "clap_complete",
  "colored",
  "colored_json",
  "csv",
@@ -688,7 +698,7 @@ dependencies = [
  "matches",
  "more-asserts",
  "nt_hive2",
- "num-derive 0.3.3",
+ "num-derive 0.4.0",
  "num-traits",
  "ouroboros",
  "phf",
