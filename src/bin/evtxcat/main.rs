@@ -14,7 +14,7 @@ use term_table::{row::Row, table_cell::TableCell};
 
 /// Display one or more events from an evtx file
 #[derive(Parser)]
-#[clap(author,version,name=env!("CARGO_BIN_NAME"))]
+#[clap(name=env!("CARGO_BIN_NAME"),author,version,about)]
 struct Cli {
     /// Name of the evtx file to read from
     evtx_file: String,

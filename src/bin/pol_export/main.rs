@@ -15,7 +15,7 @@ use simplelog::{TermLogger, Config};
 
 
 #[derive(Parser, Debug)]
-#[clap(author, version, about, long_about = None)]
+#[clap(name=env!("CARGO_BIN_NAME"), author, version, about, long_about = None)]
 struct Args {
     /// Name of the file to read
     #[clap()]

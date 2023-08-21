@@ -7,7 +7,7 @@ use getset::Getters;
 use serde_json::Value;
 
 #[derive(Parser, Clone, Getters)]
-#[clap(author, version, about, long_about = None)]
+#[clap(name=env!("CARGO_BIN_NAME"), author, version, about, long_about = None)]
 pub(crate) struct Evtx2BodyfileApp {
     /// names of the evtx files
     evtx_files: Vec<String>,

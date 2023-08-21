@@ -17,7 +17,7 @@ mod ipv4_with_properties;
 use crate::format_ipv4::format_ipv4;
 
 #[derive(Parser)]
-#[clap(author,version,about,long_about=None)]
+#[clap(name=env!("CARGO_BIN_NAME"), author,version,about,long_about=None)]
 struct IPGrepApp {
     file: Vec<PathBuf>,
 

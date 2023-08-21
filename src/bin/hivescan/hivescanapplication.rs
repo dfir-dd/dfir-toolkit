@@ -11,7 +11,7 @@ use crate::regtreebuilder::RegTreeBuilder;
 
 /// scans a registry hive file for deleted entries
 #[derive(Parser)]
-#[clap(author, version)]
+#[clap(name=env!("CARGO_BIN_NAME"), author, version)]
 pub (crate) struct Args {
     /// name of the file to scan
     pub (crate) hive_file: String,

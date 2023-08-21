@@ -19,7 +19,7 @@ pub(crate) enum SortOrder {
 
 /// Display one or more events from an evtx file
 #[derive(Parser)]
-#[clap(author,version,about,long_about=None)]
+#[clap(name=env!("CARGO_BIN_NAME"), author,version,about,long_about=None)]
 pub(crate) struct Cli {
     /// Name of the evtx files to read from
     pub(crate) evtx_files: Vec<String>,

@@ -1,5 +1,5 @@
 
-use clap::{Parser};
+use clap::Parser;
 
 use super::OutputFormat;
 
@@ -9,7 +9,7 @@ const BODYFILE_HELP: &str = "path to input file or '-' for stdin (files ending w
 const BODYFILE_HELP: &str = "path to input file or '-' for stdin";
 
 #[derive(Parser)]
-#[clap(author, version, about, long_about = None)]
+#[clap(name="mactime2", author, version, about, long_about = None)]
 pub struct Cli {
     #[clap(short('b'), default_value="-", help=BODYFILE_HELP, display_order(100))]
     pub(crate) input_file: String,

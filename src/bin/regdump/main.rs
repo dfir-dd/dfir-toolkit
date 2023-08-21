@@ -8,7 +8,7 @@ use std::io::{Read, Seek};
 use std::path::PathBuf;
 
 #[derive(Parser)]
-#[clap(name="regdump", author, version, about, long_about = None)]
+#[clap(name=env!("CARGO_BIN_NAME"), author, version, about, long_about = None)]
 struct Args {
     /// name of the file to dump
     #[arg(value_parser = validate_file)]

@@ -23,7 +23,7 @@ pub (crate) enum Action {
 }
 
 #[derive(Parser)]
-#[clap(author, version, about, long_about = None)]
+#[clap(name=env!("CARGO_BIN_NAME"), author, version, about, long_about = None)]
 pub struct Cli {
     #[command(subcommand)]
     pub(crate) action: Action,

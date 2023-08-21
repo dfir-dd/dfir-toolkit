@@ -56,6 +56,7 @@ pub enum Command {
 }
 
 #[derive(Parser)]
+#[clap(name=env!("CARGO_BIN_NAME"), author, version, about, long_about = None)]
 pub(crate) struct Cli {
     #[command(subcommand)]
     pub(crate) command: Command,

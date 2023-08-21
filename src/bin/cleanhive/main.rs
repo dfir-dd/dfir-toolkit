@@ -10,7 +10,7 @@ use simplelog::{Config, SimpleLogger};
 
 /// merges logfiles into a hive file
 #[derive(Parser)]
-#[clap(name="cleanhive", author, version)]
+#[clap(name=env!("CARGO_BIN_NAME"), author, version)]
 struct Args {
     /// name of the file to dump
     pub(crate) hive_file: String,
