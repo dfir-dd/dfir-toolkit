@@ -73,21 +73,21 @@ merges logfiles into a hive file
     <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
 </i></small>
 
-# Command-Line Help for `dfir-toolkit`
+# Command-Line Help for `es4forensics`
 
-This document contains the help content for the `dfir-toolkit` command-line program.
+This document contains the help content for the `es4forensics` command-line program.
 
 **Command Overview:**
 
-* [`dfir-toolkit`↴](#dfir-toolkit)
-* [`dfir-toolkit create-index`↴](#dfir-toolkit-create-index)
-* [`dfir-toolkit import`↴](#dfir-toolkit-import)
+* [`es4forensics`↴](#es4forensics)
+* [`es4forensics create-index`↴](#es4forensics-create-index)
+* [`es4forensics import`↴](#es4forensics-import)
 
-## `dfir-toolkit`
+## `es4forensics`
 
 CLI tools for digital forensics and incident response
 
-**Usage:** `dfir-toolkit [OPTIONS] --index <INDEX_NAME> --password <PASSWORD> <COMMAND>`
+**Usage:** `es4forensics [OPTIONS] --index <INDEX_NAME> --password <PASSWORD> <COMMAND>`
 
 ###### **Subcommands:**
 
@@ -123,15 +123,15 @@ CLI tools for digital forensics and incident response
 
 
 
-## `dfir-toolkit create-index`
+## `es4forensics create-index`
 
-**Usage:** `dfir-toolkit create-index`
+**Usage:** `es4forensics create-index`
 
 
 
-## `dfir-toolkit import`
+## `es4forensics import`
 
-**Usage:** `dfir-toolkit import [OPTIONS] [INPUT_FILE]`
+**Usage:** `es4forensics import [OPTIONS] [INPUT_FILE]`
 
 ###### **Arguments:**
 
@@ -154,19 +154,19 @@ CLI tools for digital forensics and incident response
     <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
 </i></small>
 
-# Command-Line Help for `dfir-toolkit`
+# Command-Line Help for `evtx2bodyfile`
 
-This document contains the help content for the `dfir-toolkit` command-line program.
+This document contains the help content for the `evtx2bodyfile` command-line program.
 
 **Command Overview:**
 
-* [`dfir-toolkit`↴](#dfir-toolkit)
+* [`evtx2bodyfile`↴](#evtx2bodyfile)
 
-## `dfir-toolkit`
+## `evtx2bodyfile`
 
 CLI tools for digital forensics and incident response
 
-**Usage:** `dfir-toolkit [OPTIONS] [EVTX_FILES]...`
+**Usage:** `evtx2bodyfile [OPTIONS] [EVTX_FILES]...`
 
 ###### **Arguments:**
 
@@ -189,20 +189,22 @@ CLI tools for digital forensics and incident response
     <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
 </i></small>
 
-# Command-Line Help for `dfir-toolkit`
+# Command-Line Help for `evtxanalyze`
 
-This document contains the help content for the `dfir-toolkit` command-line program.
+This document contains the help content for the `evtxanalyze` command-line program.
 
 **Command Overview:**
 
-* [`dfir-toolkit`↴](#dfir-toolkit)
-* [`dfir-toolkit pstree`↴](#dfir-toolkit-pstree)
-* [`dfir-toolkit sessions`↴](#dfir-toolkit-sessions)
-* [`dfir-toolkit session`↴](#dfir-toolkit-session)
+* [`evtxanalyze`↴](#evtxanalyze)
+* [`evtxanalyze pstree`↴](#evtxanalyze-pstree)
+* [`evtxanalyze sessions`↴](#evtxanalyze-sessions)
+* [`evtxanalyze session`↴](#evtxanalyze-session)
 
-## `dfir-toolkit`
+## `evtxanalyze`
 
-**Usage:** `dfir-toolkit [OPTIONS] <COMMAND>`
+CLI tools for digital forensics and incident response
+
+**Usage:** `evtxanalyze [OPTIONS] <COMMAND>`
 
 ###### **Subcommands:**
 
@@ -218,11 +220,11 @@ This document contains the help content for the `dfir-toolkit` command-line prog
 
 
 
-## `dfir-toolkit pstree`
+## `evtxanalyze pstree`
 
 generate a process tree
 
-**Usage:** `dfir-toolkit pstree [OPTIONS] <EVTX_FILE>`
+**Usage:** `evtxanalyze pstree [OPTIONS] <EVTX_FILE>`
 
 ###### **Arguments:**
 
@@ -240,11 +242,11 @@ generate a process tree
 
 
 
-## `dfir-toolkit sessions`
+## `evtxanalyze sessions`
 
 display sessions
 
-**Usage:** `dfir-toolkit sessions [OPTIONS] <EVTX_FILES_DIR>`
+**Usage:** `evtxanalyze sessions [OPTIONS] <EVTX_FILES_DIR>`
 
 ###### **Arguments:**
 
@@ -256,11 +258,11 @@ display sessions
 
 
 
-## `dfir-toolkit session`
+## `evtxanalyze session`
 
 display one single session
 
-**Usage:** `dfir-toolkit session <EVTX_FILES_DIR> <SESSION_ID>`
+**Usage:** `evtxanalyze session <EVTX_FILES_DIR> <SESSION_ID>`
 
 ###### **Arguments:**
 
@@ -286,7 +288,7 @@ This document contains the help content for the `evtxcat` command-line program.
 
 ## `evtxcat`
 
-Display one or more events from an evtx file
+CLI tools for digital forensics and incident response
 
 **Usage:** `evtxcat [OPTIONS] <EVTX_FILE>`
 
@@ -317,19 +319,19 @@ Display one or more events from an evtx file
     <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
 </i></small>
 
-# Command-Line Help for `dfir-toolkit`
+# Command-Line Help for `evtxls`
 
-This document contains the help content for the `dfir-toolkit` command-line program.
+This document contains the help content for the `evtxls` command-line program.
 
 **Command Overview:**
 
-* [`dfir-toolkit`↴](#dfir-toolkit)
+* [`evtxls`↴](#evtxls)
 
-## `dfir-toolkit`
+## `evtxls`
 
 CLI tools for digital forensics and incident response
 
-**Usage:** `dfir-toolkit [OPTIONS] [EVTX_FILES]...`
+**Usage:** `evtxls [OPTIONS] [EVTX_FILES]...`
 
 ###### **Arguments:**
 
@@ -396,7 +398,7 @@ This document contains the help content for the `evtxscan` command-line program.
 
 ## `evtxscan`
 
-Find time skews in an evtx file
+CLI tools for digital forensics and incident response
 
 **Usage:** `evtxscan [OPTIONS] <EVTX_FILE>`
 
@@ -421,19 +423,19 @@ Find time skews in an evtx file
     <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
 </i></small>
 
-# Command-Line Help for `dfir-toolkit`
+# Command-Line Help for `hivescan`
 
-This document contains the help content for the `dfir-toolkit` command-line program.
+This document contains the help content for the `hivescan` command-line program.
 
 **Command Overview:**
 
-* [`dfir-toolkit`↴](#dfir-toolkit)
+* [`hivescan`↴](#hivescan)
 
-## `dfir-toolkit`
+## `hivescan`
 
 scans a registry hive file for deleted entries
 
-**Usage:** `dfir-toolkit [OPTIONS] <HIVE_FILE>`
+**Usage:** `hivescan [OPTIONS] <HIVE_FILE>`
 
 ###### **Arguments:**
 
@@ -456,19 +458,19 @@ scans a registry hive file for deleted entries
     <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
 </i></small>
 
-# Command-Line Help for `dfir-toolkit`
+# Command-Line Help for `ipgrep`
 
-This document contains the help content for the `dfir-toolkit` command-line program.
+This document contains the help content for the `ipgrep` command-line program.
 
 **Command Overview:**
 
-* [`dfir-toolkit`↴](#dfir-toolkit)
+* [`ipgrep`↴](#ipgrep)
 
-## `dfir-toolkit`
+## `ipgrep`
 
 CLI tools for digital forensics and incident response
 
-**Usage:** `dfir-toolkit [OPTIONS] [FILE]...`
+**Usage:** `ipgrep [OPTIONS] [FILE]...`
 
 ###### **Arguments:**
 
@@ -499,19 +501,19 @@ CLI tools for digital forensics and incident response
     <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
 </i></small>
 
-# Command-Line Help for `dfir-toolkit`
+# Command-Line Help for `mactime2`
 
-This document contains the help content for the `dfir-toolkit` command-line program.
+This document contains the help content for the `mactime2` command-line program.
 
 **Command Overview:**
 
-* [`dfir-toolkit`↴](#dfir-toolkit)
+* [`mactime2`↴](#mactime2)
 
-## `dfir-toolkit`
+## `mactime2`
 
 CLI tools for digital forensics and incident response
 
-**Usage:** `dfir-toolkit [OPTIONS]`
+**Usage:** `mactime2 [OPTIONS]`
 
 ###### **Options:**
 
@@ -540,19 +542,19 @@ CLI tools for digital forensics and incident response
     <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
 </i></small>
 
-# Command-Line Help for `dfir-toolkit`
+# Command-Line Help for `pol_export`
 
-This document contains the help content for the `dfir-toolkit` command-line program.
+This document contains the help content for the `pol_export` command-line program.
 
 **Command Overview:**
 
-* [`dfir-toolkit`↴](#dfir-toolkit)
+* [`pol_export`↴](#pol_export)
 
-## `dfir-toolkit`
+## `pol_export`
 
 CLI tools for digital forensics and incident response
 
-**Usage:** `dfir-toolkit [OPTIONS] <POLFILE>`
+**Usage:** `pol_export [OPTIONS] <POLFILE>`
 
 ###### **Arguments:**
 
