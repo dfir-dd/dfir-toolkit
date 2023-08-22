@@ -1,7 +1,7 @@
 use std::{fs::File, path::PathBuf};
 
 use anyhow::{bail, Result};
-use clap::Parser;
+use clap::{Parser, ValueHint};
 use dfir_toolkit::common::FancyParser;
 use nt_hive2::{ContainsHive, Hive, HiveParseMode};
 use simplelog::{Config, SimpleLogger};
@@ -11,18 +11,18 @@ use simplelog::{Config, SimpleLogger};
 #[clap(name=env!("CARGO_BIN_NAME"), author, version)]
 struct Args {
     /// name of the file to dump
-    #[arg(num_args=1)]
+    #[arg(num_args=1, value_hint=ValueHint::FilePath)]
     pub(crate) hive_file: String,
 
     /// transaction LOG file(s). This argument can be specified one or two times.
-    #[arg(short('L'), long("log"), num_args=0.., value_parser = validate_file)]
+    #[arg(short('L'), long("log"), num_args=0.., value_parser = validate_file, value_hint=ValueHint::FilePath)]
     logfiles: Vec<PathBuf>,
 
     #[clap(flatten)]
     pub(crate) verbose: clap_verbosity_flag::Verbosity,
 
     /// name of the file to which the cleaned hive will be written.
-    #[arg(short('O'), long("output"), num_args=1)]
+    #[arg(short('O'), long("output"), num_args=1, value_hint=ValueHint::FilePath)]
     pub(crate) dst_hive: String,
 }
 
