@@ -11,18 +11,18 @@ use simplelog::{Config, SimpleLogger};
 #[clap(name=env!("CARGO_BIN_NAME"), author, version)]
 struct Args {
     /// name of the file to dump
+    #[arg(num_args=1)]
     pub(crate) hive_file: String,
 
     /// transaction LOG file(s). This argument can be specified one or two times.
-    #[clap(short('L'), long("log"))]
-    #[arg(value_parser = validate_file)]
+    #[arg(short('L'), long("log"), num_args=0.., value_parser = validate_file)]
     logfiles: Vec<PathBuf>,
 
     #[clap(flatten)]
     pub(crate) verbose: clap_verbosity_flag::Verbosity,
 
     /// name of the file to which the cleaned hive will be written.
-    #[clap(short('O'), long("output"))]
+    #[arg(short('O'), long("output"), num_args=1)]
     pub(crate) dst_hive: String,
 }
 
