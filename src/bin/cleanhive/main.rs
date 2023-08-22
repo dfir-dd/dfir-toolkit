@@ -1,8 +1,7 @@
 use std::{fs::File, path::PathBuf};
 
 use anyhow::{bail, Result};
-use clap::{value_parser, CommandFactory, Parser};
-use clap_complete::{Generator, Shell};
+use clap::Parser;
 use dfir_toolkit::common::FancyParser;
 use nt_hive2::{ContainsHive, Hive, HiveParseMode};
 use simplelog::{Config, SimpleLogger};
