@@ -1,4 +1,4 @@
-use std::{default, process::exit};
+use std::process::exit;
 
 use clap::{value_parser, Arg, ArgAction, Parser};
 use clap_complete::{Generator, Shell};
