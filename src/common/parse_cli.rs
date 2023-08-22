@@ -4,19 +4,19 @@ use clap::{value_parser, Arg, ArgAction, Parser};
 use clap_complete::{Generator, Shell};
 
 pub trait FancyParser<P: Parser> {
-    fn parse_cli(bin_name: &str) -> P;
+    fn parse_cli() -> P;
 
     fn parse_markdown_help();
-    fn parse_autocomplete(bin_name: &str);
+    fn parse_autocomplete();
 }
 
 impl<P> FancyParser<P> for P
 where
     P: Parser,
 {
-    fn parse_cli(bin_name: &str) -> P {
+    fn parse_cli() -> P {
         Self::parse_markdown_help();
-        Self::parse_autocomplete(bin_name);
+        Self::parse_autocomplete();
         P::parse()
     }
 
@@ -32,8 +32,9 @@ where
         }
     }
 
-    fn parse_autocomplete(bin_name: &str) {
-        let matches = P::command()
+    fn parse_autocomplete() {
+        let cmd = P::command();
+        let matches = cmd.clone()
             .ignore_errors(true)
             .arg(
                 Arg::new("autocomplete")
@@ -44,7 +45,7 @@ where
             .get_matches();
 
         if let Some(generator) = matches.get_one::<Shell>("autocomplete") {
-            generator.generate(&P::command().bin_name(bin_name), &mut std::io::stdout());
+            generator.generate(&P::command().bin_name(cmd.get_name()), &mut std::io::stdout());
             exit(0);
         }
     }

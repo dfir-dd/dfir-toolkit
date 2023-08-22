@@ -36,7 +36,7 @@ fn validate_file(s: &str) -> Result<PathBuf, String> {
 }
 
 pub fn main() -> Result<()> {
-    let mut cli = Args::parse_cli(env!("CARGO_BIN_NAME"));
+    let mut cli = Args::parse_cli();
 
     let _ = SimpleLogger::init(cli.verbose.log_level_filter(), Config::default());
 
