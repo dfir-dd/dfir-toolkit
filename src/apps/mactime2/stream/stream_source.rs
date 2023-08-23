@@ -1,41 +1,23 @@
-use std::{io::{Read, BufReader}, fs::File};
-use anyhow::Result;
+use std::io::Read;
 
+use clio::Input;
 #[cfg(feature = "gzip")]
 use flate2::read::GzDecoder;
+pub(crate) struct StreamSource(Box<dyn Read + Send>);
 
-pub (crate) enum StreamSource {
-    Stdin,
-    File(Box<dyn Read + Send>),
+impl From<Input> for StreamSource {
+    fn from(input: Input) -> Self {
+        #[cfg(feature = "gzip")]
+        if input.path().ends_with(".gz") {
+            return Self(Box::new(GzDecoder::new(input)));
+        }
+
+        Self(Box::new(input))
+    }
 }
 
-impl StreamSource {
-    pub fn from(filename: &Option<String>) -> Result<Self> {
-        match filename {
-            None => Ok(StreamSource::Stdin),
-            Some(filename) =>  {
-                if filename == "-" { Ok(StreamSource::Stdin) }
-                else {
-                    let file = BufReader::new(File::open(filename)?);
-
-                    #[cfg(not(feature = "gzip"))]
-                    let reader: Box<dyn BufRead> = Box::new(file);
-
-                    #[cfg(feature = "gzip")]
-                    let reader = Self::open_gzip(filename, file);
-
-                    Ok(StreamSource::File(reader))
-                }
-            }
-        }
-    }
-
-    #[cfg(feature = "gzip")]
-    fn open_gzip<R: Read + Send + 'static>(filename: &str, file: R) -> Box<dyn Read + Send> {
-        if filename.ends_with(".gz") {
-            Box::new(GzDecoder::new(file))
-        } else {
-            Box::new(file)
-        }
+impl Read for StreamSource {
+    fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
+        self.0.read(buf)
     }
 }

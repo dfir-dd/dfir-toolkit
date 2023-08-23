@@ -1,55 +1,66 @@
+use clap::{Parser, ValueHint};
+use clio::Input;
+use log::LevelFilter;
 
-use clap::Parser;
+use crate::common::HasVerboseFlag;
 
 use super::OutputFormat;
 
 #[cfg(feature = "gzip")]
-const BODYFILE_HELP: &str = "path to input file or '-' for stdin (files ending with .gz will be treated as being gzipped)";
+const BODYFILE_HELP: &str =
+    "path to input file or '-' for stdin (files ending with .gz will be treated as being gzipped)";
 #[cfg(not(feature = "gzip"))]
 const BODYFILE_HELP: &str = "path to input file or '-' for stdin";
 
 #[derive(Parser)]
 #[clap(name="mactime2", author, version, about, long_about = None)]
 pub struct Cli {
-    #[clap(short('b'), default_value="-", help=BODYFILE_HELP, display_order(100))]
-    pub(crate) input_file: String,
+    #[clap(short('b'), num_args=1, value_parser, value_hint=ValueHint::FilePath, default_value="-", help=BODYFILE_HELP, display_order(100))]
+    pub(crate) input_file: Input,
 
     /// output format, if not specified, default value is 'txt'
-    #[clap(short('F'), long("format"), value_enum, display_order(600))]
+    #[clap(
+        short('F'),
+        num_args = 1,
+        long("format"),
+        value_enum,
+        display_order(600)
+    )]
     pub(crate) output_format: Option<OutputFormat>,
 
     /// output as CSV instead of TXT. This is a conveniance option, which is identical to `--format=csv`
     /// and will be removed in a future release. If you specified `--format` and `-d`, the latter will be ignored.
-    #[clap(short('d'), display_order(610))]
+    #[clap(short('d'), num_args = 0, display_order(610))]
     pub(crate) csv_format: bool,
 
     /// output as JSON instead of TXT. This is a conveniance option, which is identical to `--format=json`
     /// and will be removed in a future release. If you specified `--format` and `-j`, the latter will be ignored.
-    #[clap(short('j'), display_order(620))]
+    #[clap(short('j'), num_args = 0, display_order(620))]
     pub(crate) json_format: bool,
 
     /// name of offset of source timezone (or 'list' to display all possible values
-    #[clap(short('f'), long("from-timezone"), display_order(300))]
+    #[clap(short('f'), num_args = 1, long("from-timezone"), display_order(300))]
     pub(crate) src_zone: Option<String>,
 
     /// name of offset of destination timezone (or 'list' to display all possible values
-    #[clap(short('t'), long("to-timezone"), display_order(400))]
+    #[clap(short('t'), num_args = 1, long("to-timezone"), display_order(400))]
     pub(crate) dst_zone: Option<String>,
 
     // /// convert only, but do not sort
     // #[clap(short('c'), long("convert-only"), display_order(450))]
     // pub(crate) dont_sort: bool,
-
     /// strict mode: do not only warn, but abort if an error occurs
-    #[clap(long("strict"), display_order(500))]
+    #[clap(long("strict"), num_args = 0, display_order(500))]
     pub(crate) strict_mode: bool,
 
     #[clap(flatten)]
     pub(crate) verbose: clap_verbosity_flag::Verbosity,
+}
 
-    /// print help in markdown format
-    #[arg(long, hide = true, exclusive=true)]
-    pub markdown_help: bool,
+impl HasVerboseFlag for Cli {
+    fn log_level_filter(&self) -> LevelFilter {
+        self.verbose.log_level_filter()
+    }
 }
 
 impl Cli {

@@ -1,23 +1,12 @@
 use anyhow::Result;
-use clap::Parser;
-use simplelog::{TermLogger, Config, TerminalMode, ColorChoice};
 use chrono_tz::TZ_VARIANTS;
+use dfir_toolkit::common::FancyParser;
 
 use dfir_toolkit::apps::mactime2::Cli;
 use dfir_toolkit::apps::mactime2::Mactime2Application;
 
 fn main() -> Result<()> {
-    if std::env::args().any(|a| &a == "--markdown-help") {
-        clap_markdown::print_help_markdown::<Cli>();
-        return Ok(());
-    }
-    let cli = Cli::parse();
-
-    let _ = TermLogger::init(
-        cli.verbose().log_level_filter(),
-        Config::default(),
-        TerminalMode::Stderr,
-        ColorChoice::Auto);
+    let cli: Cli = Cli::parse_cli();
 
     match cli.src_zone().as_deref() {
         Some("list") => {display_zones(); return Ok(());}

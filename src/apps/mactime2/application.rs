@@ -1,8 +1,8 @@
-use anyhow::{Result};
 use chrono::offset::TimeZone;
 use chrono::{LocalResult, NaiveDateTime};
 use chrono_tz::Tz;
 use clap::ValueEnum;
+use clio::Input;
 
 use super::bodyfile::{BodyfileDecoder, BodyfileSorter, BodyfileReader};
 use super::cli::Cli;
@@ -32,7 +32,7 @@ pub enum OutputFormat {
 //#[derive(Builder)]
 pub struct Mactime2Application {
     format: OutputFormat,
-    bodyfile: Option<String>,
+    bodyfile: Input,
     src_zone: Tz,
     dst_zone: Tz,
     strict_mode: bool,
@@ -60,13 +60,13 @@ impl Mactime2Application {
         }
     }
 
-    pub fn run(&self) -> Result<()> {
+    pub fn run(&self) -> anyhow::Result<()> {
         let options = RunOptions {
             strict_mode: self.strict_mode,
             src_zone: self.src_zone,
         };
 
-        let mut reader = <BodyfileReader as StreamReader<String, ()>>::from(&self.bodyfile)?;
+        let mut reader = <BodyfileReader as StreamReader<String, ()>>::from(self.bodyfile.clone())?;
         let mut decoder = BodyfileDecoder::with_receiver(reader.get_receiver(), options);
         let mut sorter = self.create_sorter(&mut decoder);
         sorter.run();
@@ -112,7 +112,7 @@ impl From<Cli> for Mactime2Application {
 
         Self {
             format,
-            bodyfile: Some(cli.input_file),
+            bodyfile: cli.input_file,
             src_zone: cli
                 .src_zone
                 .map(|tz| tz.parse().unwrap())
@@ -122,18 +122,6 @@ impl From<Cli> for Mactime2Application {
                 .map(|tz| tz.parse().unwrap())
                 .unwrap_or(Tz::UTC),
             strict_mode: cli.strict_mode,
-        }
-    }
-}
-
-impl Default for Mactime2Application {
-    fn default() -> Self {
-        Self {
-            format: OutputFormat::CSV,
-            bodyfile: None,
-            src_zone: Tz::UTC,
-            dst_zone: Tz::UTC,
-            strict_mode: false,
         }
     }
 }
