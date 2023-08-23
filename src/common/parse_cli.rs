@@ -2,6 +2,12 @@ use std::process::exit;
 
 use clap::{value_parser, Arg, ArgAction, Parser};
 use clap_complete::{Generator, Shell};
+use log::LevelFilter;
+use simplelog::{SimpleLogger, Config};
+
+pub trait HasVerboseFlag {
+    fn log_level_filter(&self)-> LevelFilter;
+}
 
 pub trait FancyParser<P: Parser> {
     fn parse_cli() -> P;
@@ -12,12 +18,15 @@ pub trait FancyParser<P: Parser> {
 
 impl<P> FancyParser<P> for P
 where
-    P: Parser,
+    P: Parser + HasVerboseFlag,
 {
     fn parse_cli() -> P {
         Self::parse_markdown_help();
         Self::parse_autocomplete();
-        P::parse()
+        let cli = P::parse();
+
+        let _ = SimpleLogger::init(cli.log_level_filter(), Config::default());
+        cli
     }
 
     fn parse_markdown_help() {

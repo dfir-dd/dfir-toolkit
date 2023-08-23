@@ -90,7 +90,7 @@ cleanhive = ["nt_hive2"]
 anyhow = "1.0"
 binread = "2.2.0"
 chrono = "0.4"
-clap = {version = "4.3", features = ["derive", "wrap_help", "cargo"] }
+clap = {version = "4", features = ["derive", "wrap_help", "cargo"] }
 clap-verbosity-flag = "2.0.0"
 csv = "1.2.2"
 encoding_rs = "0.8"
@@ -101,6 +101,8 @@ winstructs = "0.3.0"
 
 clap-markdown = "0.1.3"
 clap_complete = "4"
+clio = {version="0.3", features=["clap-parse"] }
+#clio = {path="../clio", features=["clap-parse"]}
 
 # mactime2
 chrono-tz = {version="0.8", optional=true}
@@ -146,7 +148,7 @@ strum = { version = "0", features = ["derive"], optional=true }
 strum_macros = {version="0", optional=true}
 
 # nt-hive2
-nt_hive2 = {version="4", optional=true}
+nt_hive2 = {version="4.0.1", optional=true}
 
 [dev-dependencies]
 
