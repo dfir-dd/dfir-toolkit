@@ -8,17 +8,12 @@ use dfir_toolkit::apps::mactime2::Mactime2Application;
 fn main() -> Result<()> {
     let cli: Cli = Cli::parse_cli();
 
-    match cli.src_zone().as_deref() {
-        Some("list") => {display_zones(); return Ok(());}
-        Some(_) => {}
-        _ => {}
+    if cli.src_zone.is_list() || cli.dst_zone.is_list() {
+        display_zones();
+        return Ok(());
     }
-
-    match cli.dst_zone().as_deref() {
-        Some("list") => {display_zones(); return Ok(());}
-        Some(_) => {}
-        _ => {}
-    }
+    debug_assert!(cli.dst_zone.is_tz());
+    debug_assert!(cli.src_zone.is_tz());
 
     let app: Mactime2Application = cli.into();
 

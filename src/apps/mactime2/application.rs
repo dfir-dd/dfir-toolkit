@@ -4,11 +4,11 @@ use chrono_tz::Tz;
 use clap::ValueEnum;
 use clio::Input;
 
-use super::bodyfile::{BodyfileDecoder, BodyfileSorter, BodyfileReader};
+use super::bodyfile::{BodyfileDecoder, BodyfileReader, BodyfileSorter};
 use super::cli::Cli;
 use super::error::MactimeError;
-use super::filter::{Sorter, RunOptions, Consumer, Provider, Joinable};
-use super::output::{JsonSorter, CsvOutput, TxtOutput};
+use super::filter::{Consumer, Joinable, Provider, RunOptions, Sorter};
+use super::output::{CsvOutput, JsonSorter, TxtOutput};
 use super::stream::StreamReader;
 
 #[derive(ValueEnum, Clone)]
@@ -39,8 +39,10 @@ pub struct Mactime2Application {
 }
 
 impl Mactime2Application {
-
-    fn create_sorter(&self, decoder: &mut BodyfileDecoder) -> Box<dyn Sorter<Result<(), MactimeError>>> {
+    fn create_sorter(
+        &self,
+        decoder: &mut BodyfileDecoder,
+    ) -> Box<dyn Sorter<Result<(), MactimeError>>> {
         let options = RunOptions {
             strict_mode: self.strict_mode,
             src_zone: self.src_zone,
@@ -49,7 +51,8 @@ impl Mactime2Application {
         if matches!(self.format, OutputFormat::JSON) {
             Box::new(JsonSorter::with_receiver(decoder.get_receiver(), options))
         } else {
-            let mut sorter = BodyfileSorter::default().with_receiver(decoder.get_receiver(), options);
+            let mut sorter =
+                BodyfileSorter::default().with_receiver(decoder.get_receiver(), options);
 
             sorter = sorter.with_output(match self.format {
                 OutputFormat::CSV => Box::new(CsvOutput::new(self.src_zone, self.dst_zone)),
@@ -79,14 +82,15 @@ impl Mactime2Application {
 
     pub fn format_date(unix_ts: i64, src_zone: &Tz, dst_zone: &Tz) -> String {
         if unix_ts >= 0 {
-            let src_timestamp =
-                match src_zone.from_local_datetime(&NaiveDateTime::from_timestamp_opt(unix_ts, 0).unwrap()) {
-                    LocalResult::None => {
-                        return "INVALID DATETIME".to_owned();
-                    }
-                    LocalResult::Single(t) => t,
-                    LocalResult::Ambiguous(t1, _t2) => t1,
-                };
+            let src_timestamp = match src_zone
+                .from_local_datetime(&NaiveDateTime::from_timestamp_opt(unix_ts, 0).unwrap())
+            {
+                LocalResult::None => {
+                    return "INVALID DATETIME".to_owned();
+                }
+                LocalResult::Single(t) => t,
+                LocalResult::Ambiguous(t1, _t2) => t1,
+            };
             let dst_timestamp = src_timestamp.with_timezone(dst_zone);
             dst_timestamp.to_rfc3339()
         } else {
@@ -113,14 +117,8 @@ impl From<Cli> for Mactime2Application {
         Self {
             format,
             bodyfile: cli.input_file,
-            src_zone: cli
-                .src_zone
-                .map(|tz| tz.parse().unwrap())
-                .unwrap_or(Tz::UTC),
-            dst_zone: cli
-                .dst_zone
-                .map(|tz| tz.parse().unwrap())
-                .unwrap_or(Tz::UTC),
+            src_zone: cli.src_zone.into_tz().unwrap(),
+            dst_zone: cli.dst_zone.into_tz().unwrap(),
             strict_mode: cli.strict_mode,
         }
     }

@@ -1,10 +1,11 @@
 use clap::{Parser, ValueHint};
 use clio::Input;
 use log::LevelFilter;
+use chrono_tz::Tz;
 
 use crate::common::HasVerboseFlag;
 
-use super::OutputFormat;
+use super::{OutputFormat, TzArgument};
 
 #[cfg(feature = "gzip")]
 const BODYFILE_HELP: &str =
@@ -14,6 +15,7 @@ const BODYFILE_HELP: &str = "path to input file or '-' for stdin";
 
 #[derive(Parser)]
 #[clap(name="mactime2", author, version, about, long_about = None)]
+
 pub struct Cli {
     #[clap(short('b'), num_args=1, value_parser, value_hint=ValueHint::FilePath, default_value="-", help=BODYFILE_HELP, display_order(100))]
     pub(crate) input_file: Input,
@@ -39,12 +41,12 @@ pub struct Cli {
     pub(crate) json_format: bool,
 
     /// name of offset of source timezone (or 'list' to display all possible values
-    #[clap(short('f'), num_args = 1, long("from-timezone"), display_order(300))]
-    pub(crate) src_zone: Option<String>,
+    #[clap(short('f'), num_args = 1, long("from-timezone"), display_order(300), default_value_t=TzArgument::Tz(Tz::UTC))]
+    pub src_zone: TzArgument,
 
     /// name of offset of destination timezone (or 'list' to display all possible values
-    #[clap(short('t'), num_args = 1, long("to-timezone"), display_order(400))]
-    pub(crate) dst_zone: Option<String>,
+    #[clap(short('t'), num_args = 1, long("to-timezone"), display_order(400), default_value_t=TzArgument::Tz(Tz::UTC))]
+    pub dst_zone: TzArgument,
 
     // /// convert only, but do not sort
     // #[clap(short('c'), long("convert-only"), display_order(450))]
@@ -60,19 +62,5 @@ pub struct Cli {
 impl HasVerboseFlag for Cli {
     fn log_level_filter(&self) -> LevelFilter {
         self.verbose.log_level_filter()
-    }
-}
-
-impl Cli {
-    pub fn verbose(&self) -> &clap_verbosity_flag::Verbosity {
-        &self.verbose
-    }
-
-    pub fn src_zone(&self) -> &Option<String> {
-        &self.src_zone
-    }
-
-    pub fn dst_zone(&self) -> &Option<String> {
-        &self.dst_zone
     }
 }
