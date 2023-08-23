@@ -32,7 +32,7 @@ where
     fn parse_markdown_help() {
         let matches = P::command()
             .ignore_errors(true)
-            .arg(Arg::new("markdown-help").long("markdown-help"))
+            .arg(Arg::new("markdown-help").long("markdown-help").hide(true))
             .get_matches();
 
         if matches.contains_id("markdown-help") {
@@ -49,6 +49,7 @@ where
                 Arg::new("autocomplete")
                     .long("autocomplete")
                     .action(ArgAction::Set)
+                    .hide(true)
                     .value_parser(value_parser!(Shell)),
             )
             .get_matches();
