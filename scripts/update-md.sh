@@ -42,6 +42,14 @@ cat >README.md <<'EOF'
 cargo install dfir-toolkit
 ```
 
+To generate autocompletion scripts for your shell, invoke the tool with the `--autocomplete` option, e.g.
+
+```bash
+mactime2 --autocomplete bash | sudo tee /etc/bash_completion.d/mactime2
+```
+
+would install a autocompletion script in `/etc/bash_completion.d/mactime2`.
+
 # Tools
 EOF
 

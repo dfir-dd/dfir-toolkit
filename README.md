@@ -37,6 +37,14 @@
 cargo install dfir-toolkit
 ```
 
+To generate autocompletion scripts for your shell, invoke the tool with the `--autocomplete` option, e.g.
+
+```bash
+mactime2 --autocomplete bash | sudo tee /etc/bash_completion.d/mactime2
+```
+
+would install a autocompletion script in `/etc/bash_completion.d/mactime2`.
+
 # Tools
 # Command-Line Help for `cleanhive`
 
@@ -50,7 +58,7 @@ This document contains the help content for the `cleanhive` command-line program
 
 merges logfiles into a hive file
 
-**Usage:** `cleanhive [OPTIONS] --output <DST_HIVE> <HIVE_FILE>`
+**Usage:** `cleanhive [OPTIONS] <HIVE_FILE>`
 
 ###### **Arguments:**
 
@@ -62,7 +70,8 @@ merges logfiles into a hive file
 * `-v`, `--verbose` — More output per occurrence
 * `-q`, `--quiet` — Less output per occurrence
 * `-O`, `--output <DST_HIVE>` — name of the file to which the cleaned hive will be written
-* `--markdown-help` — print help in markdown format
+
+  Default value: `-`
 
 
 
@@ -531,7 +540,6 @@ CLI tools for digital forensics and incident response
 * `--strict` — strict mode: do not only warn, but abort if an error occurs
 * `-v`, `--verbose` — More output per occurrence
 * `-q`, `--quiet` — Less output per occurrence
-* `--markdown-help` — print help in markdown format
 
 
 
