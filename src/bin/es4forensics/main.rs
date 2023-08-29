@@ -7,16 +7,12 @@ use anyhow::{Result, anyhow};
 use cli::{Cli, Action};
 use elasticsearch::auth::Credentials;
 use dfir_toolkit::es4forensics::*;
-use clap::Parser;
+use dfir_toolkit::common::FancyParser;
 use simplelog::{TermLogger, Config, ColorChoice, TerminalMode};
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    if std::env::args().any(|a| &a == "--markdown-help") {
-        clap_markdown::print_help_markdown::<Cli>();
-        return Ok(());
-    }
-    let cli = Cli::parse();
+    let cli: Cli = Cli::parse_cli();
 
     let _ = TermLogger::init(
         cli.verbose.log_level_filter(),

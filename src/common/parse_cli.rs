@@ -55,6 +55,10 @@ where
             .get_matches();
 
         if let Some(generator) = matches.get_one::<Shell>("autocomplete") {
+            let bin_name = cmd.get_name();
+            let mut cmd = P::command().bin_name(bin_name);
+            //let _ = cmd.get_subcommands_mut().map(|s|s.set_bin_name(bin_name));
+            
             generator.generate(&P::command().bin_name(cmd.get_name()), &mut std::io::stdout());
             exit(0);
         }
