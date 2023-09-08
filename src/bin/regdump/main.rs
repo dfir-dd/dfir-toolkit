@@ -1,97 +1,21 @@
 use anyhow::{bail, Result};
-use clap::Parser;
+
 use dfir_toolkit::common::bodyfile::Bodyfile3Line;
+use dfir_toolkit::common::FancyParser;
 use nt_hive2::*;
 use simplelog::{Config, SimpleLogger};
 use std::fs::File;
 use std::io::{Read, Seek};
-use std::path::PathBuf;
 
-#[derive(Parser)]
-#[clap(name=env!("CARGO_BIN_NAME"), author, version, about, long_about = None)]
-struct Args {
-    /// name of the file to dump
-    #[arg(value_parser = validate_file)]
-    pub(crate) hive_file: PathBuf,
+use crate::cli::Cli;
 
-    /// transaction LOG file(s). This argument can be specified one or two times.
-    #[clap(short('L'), long("log"))]
-    #[arg(value_parser = validate_file)]
-    logfiles: Vec<PathBuf>,
-
-    /// print as bodyfile format
-    #[clap(short('b'), long("bodyfile"))]
-    display_bodyfile: bool,
-
-    /// ignore the base block (e.g. if it was encrypted by some ransomware)
-    #[clap(short('I'), long)]
-    ignore_base_block: bool,
-
-    /// hide timestamps, if output is in reg format
-    #[clap(short('T'), long)]
-    hide_timestamps: bool,
-
-    #[clap(flatten)]
-    pub(crate) verbose: clap_verbosity_flag::Verbosity,
-
-    /// print help in markdown format
-    #[arg(long, hide = true, exclusive=true)]
-    pub markdown_help: bool,
-}
-
-impl Args {
-    pub fn parse_mode(&self) -> HiveParseMode {
-        if self.ignore_base_block {
-            match File::open(&self.hive_file) {
-                Ok(data) => {
-                    let hive = Hive::new(data, HiveParseMode::Raw).unwrap();
-                    let offset = match hive.find_root_celloffset() {
-                        Some(offset) => offset,
-                        None => {
-                            log::error!("scan found no root cell offset, aborting...");
-                            std::process::exit(-1);
-                        }
-                    };
-                    println!("found offset at {}", offset.0);
-                    HiveParseMode::Normal(offset)
-                }
-                Err(why) => {
-                    log::error!(
-                        "unable to open '{}': {}",
-                        self.hive_file.to_string_lossy(),
-                        why
-                    );
-                    std::process::exit(-1);
-                }
-            }
-        } else {
-            HiveParseMode::NormalWithBaseBlock
-        }
-    }
-}
-
-fn validate_file(s: &str) -> Result<PathBuf, String> {
-    let pb = PathBuf::from(s);
-    if pb.is_file() && pb.exists() {
-        Ok(pb)
-    } else {
-        Err(format!("unable to read file: '{s}'"))
-    }
-}
+mod cli;
 
 fn main() -> Result<()> {
-    if std::env::args().any(|a| &a == "--markdown-help") {
-        clap_markdown::print_help_markdown::<Args>();
-        return Ok(());
-    }
-    let mut cli = Args::parse();
+    let mut cli = Cli::parse_cli();
     let _ = SimpleLogger::init(cli.verbose.log_level_filter(), Config::default());
 
-    fn do_print_key<RS>(
-        hive: &mut Hive<RS, CleanHive>,
-        root_key: &KeyNode,
-        cli: &Args,
-    ) -> Result<()>
+    fn do_print_key<RS>(hive: &mut Hive<RS, CleanHive>, root_key: &KeyNode, cli: &Cli) -> Result<()>
     where
         RS: Read + Seek,
     {
@@ -139,7 +63,7 @@ fn print_key<RS>(
     hive: &mut Hive<RS, CleanHive>,
     keynode: &KeyNode,
     path: &mut Vec<String>,
-    cli: &Args,
+    cli: &Cli,
 ) -> Result<()>
 where
     RS: Read + Seek,
