@@ -1,7 +1,6 @@
 use anyhow::Result;
-use clap::Parser;
 use evtx2bodyfile_app::Evtx2BodyfileApp;
-use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
+use dfir_toolkit::common::FancyParser;
 
 mod bf_data;
 mod evtx2bodyfile_app;
@@ -14,14 +13,7 @@ fn main() -> Result<()> {
         clap_markdown::print_help_markdown::<Evtx2BodyfileApp>();
         return Ok(());
     }
-    let cli = Evtx2BodyfileApp::parse();
-
-    TermLogger::init(
-        cli.verbose().log_level_filter(),
-        Config::default(),
-        TerminalMode::Stderr,
-        ColorChoice::Auto,
-    )?;
+    let cli = Evtx2BodyfileApp::parse_cli();
 
     cli.handle_evtx_files()
 }

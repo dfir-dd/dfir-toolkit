@@ -2,8 +2,10 @@
 use crate::{bf_data::*, evtx_file::EvtxFile};
 use anyhow::Result;
 use clap::Parser;
+use dfir_toolkit::common::HasVerboseFlag;
 use evtx::SerializedEvtxRecord;
 use getset::Getters;
+use log::LevelFilter;
 use serde_json::Value;
 
 #[derive(Parser, Clone, Getters)]
@@ -23,10 +25,6 @@ pub(crate) struct Evtx2BodyfileApp {
     #[clap(flatten)]
     #[getset(get = "pub (crate)")]
     verbose: clap_verbosity_flag::Verbosity,
-
-    /// print help in markdown format
-    #[arg(long, hide = true, exclusive=true)]
-    pub markdown_help: bool,
 }
 
 impl Evtx2BodyfileApp {
@@ -63,5 +61,12 @@ impl Evtx2BodyfileApp {
             Ok(line) => println!("{}", line),
         }
         Ok(())
+    }
+}
+
+
+impl HasVerboseFlag for Evtx2BodyfileApp {
+    fn log_level_filter(&self)-> LevelFilter {
+        self.verbose.log_level_filter()
     }
 }
