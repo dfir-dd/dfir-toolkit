@@ -1,6 +1,7 @@
 use clap::{Parser, ValueEnum};
 
-use dfir_toolkit::common::Rfc3339Datetime;
+use dfir_toolkit::common::{Rfc3339Datetime, HasVerboseFlag};
+use log::LevelFilter;
 use regex::Regex;
 
 use crate::system_field::SystemField;
@@ -84,9 +85,12 @@ pub(crate) struct Cli {
     #[clap(short('B'), long("hide-base-fields"), default_value_t=false)]
     pub (crate) hide_base_fields: bool,
 
-    /// print help in markdown format
-    #[arg(long, hide = true, exclusive=true)]
-    pub markdown_help: bool,
+    #[clap(flatten)]
+    verbose: clap_verbosity_flag::Verbosity,
 }
 
-
+impl HasVerboseFlag for Cli {
+    fn log_level_filter(&self)-> LevelFilter {
+        self.verbose.log_level_filter()
+    }
+}

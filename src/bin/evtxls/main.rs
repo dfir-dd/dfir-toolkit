@@ -16,7 +16,7 @@ use evtx::{EvtxParser, ParserSettings, SerializedEvtxRecord};
 use highlighted_string::HighlightedStringBuilder;
 use serde_json::Value;
 
-use clap::Parser;
+use dfir_toolkit::common::FancyParser;
 
 use crate::system_field::FilterBySystemField;
 
@@ -27,7 +27,7 @@ struct EvtxLs {
 
 impl EvtxLs {
     fn new() -> Self {
-        let cli = Cli::parse();
+        let cli = Cli::parse_cli();
         let hs_builder = HighlightedStringBuilder::new(cli.highlight.clone());
 
         Self { cli, hs_builder }
