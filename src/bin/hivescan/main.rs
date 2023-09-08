@@ -1,21 +1,17 @@
 use anyhow::{bail, Result};
-use clap::Parser;
+use cli::Cli;
+use dfir_toolkit::common::FancyParser;
 use nt_hive2::{ContainsHive, Hive, HiveParseMode};
-use simplelog::{Config, SimpleLogger};
 use std::fs::File;
 
 mod hivescanapplication;
 mod regtreebuilder;
 mod regtreeentry;
 use hivescanapplication::*;
+mod cli;
 
 fn main() -> Result<()> {
-    if std::env::args().any(|a| &a == "--markdown-help") {
-        clap_markdown::print_help_markdown::<Args>();
-        return Ok(());
-    }
-    let mut cli = Args::parse();
-    let _ = SimpleLogger::init(cli.verbose.log_level_filter(), Config::default());
+    let mut cli = Cli::parse_cli();
 
     match File::open(&cli.hive_file) {
         Ok(data) => {
