@@ -8,17 +8,10 @@ use cli::{Cli, Action};
 use elasticsearch::auth::Credentials;
 use dfir_toolkit::es4forensics::*;
 use dfir_toolkit::common::FancyParser;
-use simplelog::{TermLogger, Config, ColorChoice, TerminalMode};
 
 #[tokio::main]
 async fn main() -> Result<()> {
     let cli: Cli = Cli::parse_cli();
-
-    let _ = TermLogger::init(
-        cli.verbose.log_level_filter(),
-        Config::default(),
-        TerminalMode::Stderr,
-        ColorChoice::Auto);
         
     let e4f: Es4Forensics = cli.into();
     e4f.run().await
@@ -91,8 +84,6 @@ impl Es4Forensics {
         Ok(builder)
     }
 }
-
-// 0039 035958041 (146)
 
 impl From<Cli> for Es4Forensics {
     fn from(cli: Cli) -> Self {

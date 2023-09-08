@@ -3,7 +3,7 @@ use std::process::exit;
 use clap::{value_parser, Arg, ArgAction, Parser, Command};
 use clap_complete::{generate, Generator, Shell};
 use log::LevelFilter;
-use simplelog::{SimpleLogger, Config};
+use simplelog::{Config, TermLogger, TerminalMode, ColorChoice};
 
 pub trait HasVerboseFlag {
     fn log_level_filter(&self)-> LevelFilter;
@@ -25,7 +25,11 @@ where
         Self::parse_autocomplete();
         let cli = P::parse();
 
-        let _ = SimpleLogger::init(cli.log_level_filter(), Config::default());
+        let _ = TermLogger::init(
+            cli.log_level_filter(),
+            Config::default(),
+            TerminalMode::Stderr,
+            ColorChoice::Auto);
         cli
     }
 
