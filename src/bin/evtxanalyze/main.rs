@@ -1,7 +1,6 @@
-use clap::Parser;
 use cli::{Cli, Command};
 use pstree::display_pstree;
-use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
+use dfir_toolkit::common::FancyParser;
 
 mod cli;
 mod pstree;
@@ -12,14 +11,7 @@ fn main() -> anyhow::Result<()> {
         clap_markdown::print_help_markdown::<Cli>();
         return Ok(());
     }
-    let cli = Cli::parse();
-
-    TermLogger::init(
-        cli.verbose.log_level_filter(),
-        Config::default(),
-        TerminalMode::Stderr,
-        ColorChoice::Auto,
-    )?;
+    let cli = Cli::parse_cli();
 
     match &cli.command {
         //TODO: move `display_pstree` into `impl Cli`

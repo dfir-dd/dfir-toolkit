@@ -1,6 +1,8 @@
 use std::{io::stdout, path::PathBuf};
 
 use clap::{Parser, Subcommand, ValueEnum};
+use dfir_toolkit::common::HasVerboseFlag;
+use log::LevelFilter;
 
 use super::sessions::SessionStore;
 
@@ -63,10 +65,6 @@ pub(crate) struct Cli {
 
     #[command(flatten)]
     pub(crate) verbose: clap_verbosity_flag::Verbosity,
-
-    /// print help in markdown format
-    #[arg(long, hide = true, exclusive=true)]
-    pub markdown_help: bool,
 }
 
 impl Cli {
@@ -110,5 +108,12 @@ impl Cli {
             }
             _ => unreachable!(),
         }
+    }
+}
+
+
+impl HasVerboseFlag for Cli {
+    fn log_level_filter(&self)-> LevelFilter {
+        self.verbose.log_level_filter()
     }
 }
