@@ -1,10 +1,10 @@
 use encoding_rs_io::DecodeReaderBytesBuilder;
 use std::io::{BufRead, BufReader, Read};
 use std::sync::mpsc::{Receiver, Sender};
-use std::thread::{JoinHandle};
+use std::thread::JoinHandle;
 
-use crate::apps::mactime2::filter::{Provider, Joinable};
-use crate::apps::mactime2::stream::{StreamWorker, StreamReader};
+use crate::apps::mactime2::filter::{Joinable, Provider};
+use crate::apps::mactime2::stream::{StreamReader, StreamWorker};
 
 pub struct BodyfileReader {
     worker: Option<JoinHandle<()>>,
@@ -52,10 +52,10 @@ impl StreamWorker<String> for BodyfileReader {
 }
 
 impl StreamReader<String, ()> for BodyfileReader {
-    fn new (worker: JoinHandle<()>, rx: Receiver<String>) -> Self {
+    fn new(worker: JoinHandle<()>, rx: Receiver<String>) -> Self {
         Self {
             worker: Some(worker),
-            rx: Some(rx)
+            rx: Some(rx),
         }
     }
 }

@@ -1,7 +1,7 @@
 use std::process::exit;
 
-use clap::{value_parser, Arg, ArgAction, Parser};
-use clap_complete::{Generator, Shell};
+use clap::{value_parser, Arg, ArgAction, Parser, Command};
+use clap_complete::{generate, Generator, Shell};
 use log::LevelFilter;
 use simplelog::{SimpleLogger, Config};
 
@@ -55,12 +55,14 @@ where
             .get_matches();
 
         if let Some(generator) = matches.get_one::<Shell>("autocomplete") {
-            let bin_name = cmd.get_name();
-            let mut cmd = P::command().bin_name(bin_name);
-            //let _ = cmd.get_subcommands_mut().map(|s|s.set_bin_name(bin_name));
+            let mut cmd = P::command();
             
-            generator.generate(&P::command().bin_name(cmd.get_name()), &mut std::io::stdout());
+            print_completions(*generator, &mut cmd);
             exit(0);
         }
     }
+}
+
+fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
+    generate(gen, cmd, cmd.get_name().to_string(), &mut std::io::stdout());
 }

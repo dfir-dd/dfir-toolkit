@@ -8,18 +8,18 @@ use log::LevelFilter;
 #[clap(name=env!("CARGO_BIN_NAME"), author, version)]
 pub (crate) struct Cli {
     /// name of the file to dump
-    #[clap(num_args=1, value_parser, value_hint=ValueHint::FilePath)]
+    #[clap(value_parser, value_hint=ValueHint::FilePath)]
     pub(crate) hive_file: Input,
 
     /// transaction LOG file(s). This argument can be specified one or two times.
-    #[clap(short('L'), long("log"), num_args=0.., value_parser, value_hint=ValueHint::FilePath)]
+    #[clap(short('L'), long("log"), value_parser, value_hint=ValueHint::FilePath)]
     pub(crate) logfiles: Vec<InputPath>,
 
     #[clap(flatten)]
     verbose: clap_verbosity_flag::Verbosity,
 
     /// name of the file to which the cleaned hive will be written.
-    #[clap(short('O'), long("output"), default_value="-", num_args=1, value_hint=ValueHint::FilePath, value_parser)]
+    #[clap(short('O'), long("output"), default_value="-", value_hint=ValueHint::FilePath, value_parser)]
     pub(crate) dst_hive: Output,
 }
 
