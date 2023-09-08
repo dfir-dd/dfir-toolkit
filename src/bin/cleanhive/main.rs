@@ -7,7 +7,7 @@ mod cli;
 
 pub fn main() -> Result<()> {
     let mut cli: Cli = Cli::parse_cli();
-    
+
     let hive = Hive::new(&mut cli.hive_file, HiveParseMode::NormalWithBaseBlock).unwrap();
 
     let mut clean_hive = match cli.logfiles.len() {

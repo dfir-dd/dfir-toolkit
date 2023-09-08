@@ -4,8 +4,8 @@ use anyhow::Result;
 use dfir_toolkit::common::bodyfile::Bodyfile3Line;
 use indicatif::{ProgressBar, ProgressStyle};
 use nt_hive2::*;
+use std::fs::File;
 use std::time::Duration;
-use std::{fs::File};
 
 use crate::regtreebuilder::RegTreeBuilder;
 

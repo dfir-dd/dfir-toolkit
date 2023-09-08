@@ -6,7 +6,7 @@ use log::LevelFilter;
 /// merges logfiles into a hive file
 #[derive(Parser)]
 #[clap(name=env!("CARGO_BIN_NAME"), author, version)]
-pub (crate) struct Cli {
+pub(crate) struct Cli {
     /// name of the file to dump
     #[clap(value_parser, value_hint=ValueHint::FilePath)]
     pub(crate) hive_file: Input,
@@ -24,7 +24,7 @@ pub (crate) struct Cli {
 }
 
 impl HasVerboseFlag for Cli {
-    fn log_level_filter(&self)-> LevelFilter {
+    fn log_level_filter(&self) -> LevelFilter {
         self.verbose.log_level_filter()
     }
 }
