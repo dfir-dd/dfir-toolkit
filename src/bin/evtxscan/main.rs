@@ -2,38 +2,17 @@ use std::{collections::HashMap, path::PathBuf};
 
 use anyhow::Result;
 use chrono::Duration;
-use clap::Parser;
+use cli::Cli;
+use dfir_toolkit::common::FancyParser;
 use colored_json::to_colored_json_auto;
 use dfir_toolkit::evtx::{EventId, Range};
 use evtx::{EvtxParser, SerializedEvtxRecord};
 use term_table::{row::Row, table_cell::TableCell};
 
-/// Find time skews in an evtx file
-#[derive(Parser)]
-#[clap(name=env!("CARGO_BIN_NAME"), author, version, about)]
-struct Cli {
-    /// name of the evtx file to scan
-    evtx_file: String,
-
-    /// display also the contents of the records befor and after a time skew
-    #[clap(short = 'S', long)]
-    show_records: bool,
-
-    /// negative tolerance limit (in seconds): time skews to the past below this limit will be ignored
-    #[clap(short = 'N', long, default_value_t = 5)]
-    negative_tolerance: u32,
-
-    /// print help in markdown format
-    #[arg(long, hide = true, exclusive=true)]
-    pub markdown_help: bool,
-}
+mod cli;
 
 fn main() -> Result<()> {
-    if std::env::args().any(|a| &a == "--markdown-help") {
-        clap_markdown::print_help_markdown::<Cli>();
-        return Ok(());
-    }
-    let cli = Cli::parse();
+    let cli = Cli::parse_cli();
     let mut record_ids: Vec<EventId> = Vec::new();
     let mut records: HashMap<EventId, SerializedEvtxRecord<serde_json::Value>> = HashMap::new();
 
