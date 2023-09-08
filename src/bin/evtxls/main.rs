@@ -181,10 +181,6 @@ impl EvtxLs {
 }
 
 fn main() -> Result<()> {
-    if std::env::args().any(|a| &a == "--markdown-help") {
-        clap_markdown::print_help_markdown::<Cli>();
-        return Ok(());
-    }
     sigpipe::reset();
     EvtxLs::new().run()
 }

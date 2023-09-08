@@ -681,7 +681,7 @@ dependencies = [
 
 [[package]]
 name = "dfir-toolkit"
-version = "0.7.3"
+version = "0.7.4"
 dependencies = [
  "anyhow",
  "assert-json-diff",

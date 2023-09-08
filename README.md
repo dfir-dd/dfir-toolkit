@@ -128,7 +128,6 @@ CLI tools for digital forensics and incident response
 * `-W`, `--password <PASSWORD>` — password for authenticating at elasticsearch
 * `-v`, `--verbose` — More output per occurrence
 * `-q`, `--quiet` — Less output per occurrence
-* `--markdown-help` — print help in markdown format
 
 
 
@@ -187,7 +186,6 @@ CLI tools for digital forensics and incident response
 * `-S`, `--strict` — fail upon read error
 * `-v`, `--verbose` — More output per occurrence
 * `-q`, `--quiet` — Less output per occurrence
-* `--markdown-help` — print help in markdown format
 
 
 
@@ -225,7 +223,6 @@ CLI tools for digital forensics and incident response
 
 * `-v`, `--verbose` — More output per occurrence
 * `-q`, `--quiet` — Less output per occurrence
-* `--markdown-help` — print help in markdown format
 
 
 
@@ -311,13 +308,14 @@ CLI tools for digital forensics and incident response
 * `--max <MAX>` — filter: maximal event record identifier
 * `-i`, `--id <ID>` — show only the one event with this record identifier
 * `-T`, `--display-table` — don't display the records in a table format
-* `-F`, `--format <FORMAT>`
+* `-F`, `--format <FORMAT>` — output format
 
   Default value: `xml`
 
   Possible values: `json`, `xml`
 
-* `--markdown-help` — print help in markdown format
+* `-v`, `--verbose` — More output per occurrence
+* `-q`, `--quiet` — Less output per occurrence
 
 
 
@@ -386,7 +384,8 @@ CLI tools for digital forensics and incident response
 * `-B`, `--hide-base-fields` — don't display any common event fields at all. This corresponds to specifying '--base-fields' without any values (which is not allowed, that's why there is this flag)
 
   Default value: `false`
-* `--markdown-help` — print help in markdown format
+* `-v`, `--verbose` — More output per occurrence
+* `-q`, `--quiet` — Less output per occurrence
 
 
 
@@ -421,7 +420,8 @@ CLI tools for digital forensics and incident response
 * `-N`, `--negative-tolerance <NEGATIVE_TOLERANCE>` — negative tolerance limit (in seconds): time skews to the past below this limit will be ignored
 
   Default value: `5`
-* `--markdown-help` — print help in markdown format
+* `-v`, `--verbose` — More output per occurrence
+* `-q`, `--quiet` — Less output per occurrence
 
 
 
@@ -456,7 +456,6 @@ scans a registry hive file for deleted entries
 * `-v`, `--verbose` — More output per occurrence
 * `-q`, `--quiet` — Less output per occurrence
 * `-b` — output as bodyfile format
-* `--markdown-help` — print help in markdown format
 
 
 
@@ -499,7 +498,6 @@ CLI tools for digital forensics and incident response
 * `-c`, `--colors` — highlight interesting content using colors
 * `-v`, `--verbose` — More output per occurrence
 * `-q`, `--quiet` — Less output per occurrence
-* `--markdown-help` — print help in markdown format
 
 
 
@@ -536,7 +534,11 @@ CLI tools for digital forensics and incident response
 * `-d` — output as CSV instead of TXT. This is a conveniance option, which is identical to `--format=csv` and will be removed in a future release. If you specified `--format` and `-d`, the latter will be ignored
 * `-j` — output as JSON instead of TXT. This is a conveniance option, which is identical to `--format=json` and will be removed in a future release. If you specified `--format` and `-j`, the latter will be ignored
 * `-f`, `--from-timezone <SRC_ZONE>` — name of offset of source timezone (or 'list' to display all possible values
+
+  Default value: `UTC`
 * `-t`, `--to-timezone <DST_ZONE>` — name of offset of destination timezone (or 'list' to display all possible values
+
+  Default value: `UTC`
 * `--strict` — strict mode: do not only warn, but abort if an error occurs
 * `-v`, `--verbose` — More output per occurrence
 * `-q`, `--quiet` — Less output per occurrence
@@ -572,7 +574,6 @@ CLI tools for digital forensics and incident response
 
 * `-v`, `--verbose` — More output per occurrence
 * `-q`, `--quiet` — Less output per occurrence
-* `--markdown-help` — print help in markdown format
 
 
 
@@ -609,7 +610,6 @@ CLI tools for digital forensics and incident response
 * `-T`, `--hide-timestamps` — hide timestamps, if output is in reg format
 * `-v`, `--verbose` — More output per occurrence
 * `-q`, `--quiet` — Less output per occurrence
-* `--markdown-help` — print help in markdown format
 
 
 
