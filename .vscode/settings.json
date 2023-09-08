@@ -1,7 +1,0 @@
-{
-    "rust-analyzer.linkedProjects": [
-        "./Cargo.toml",
-        "./common-crates/dfirtk-eventdata/Cargo.toml",
-        "./derive-crates/dfirtk-sessionevent-derive/Cargo.toml",
-    ]
-}
