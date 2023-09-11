@@ -21,6 +21,12 @@ pub struct Bodyfile3Line {
     crtime: i64,
 }
 
+impl Default for Bodyfile3Line {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Bodyfile3Line {
     /// create a new empty bodyfile line
     ///
