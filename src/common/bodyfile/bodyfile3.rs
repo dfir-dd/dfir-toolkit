@@ -63,63 +63,6 @@ impl Bodyfile3Line {
         }
     }
 
-    /// create a new bodyfile line with concrete values
-    ///
-    /// # Example
-    /// ```
-    /// use dfir_toolkit::common::bodyfile::Bodyfile3Line;
-    ///
-    /// let bf = Bodyfile3Line::from_values(
-    ///                 "4bad420da66571dac7f1ace995cc55c6".to_owned(),
-    ///                 "sample.txt".to_owned(),
-    ///                 "87915-128-1".to_owned(),
-    ///                 "r/rrwxrwxrwx".to_owned(),
-    ///                 1003,
-    ///                 500,
-    ///                 126378,
-    ///                 12341,
-    ///                 12342,
-    ///                 12343,
-    ///                 12344);
-    /// assert_eq!(bf.get_md5(), "4bad420da66571dac7f1ace995cc55c6");
-    /// assert_eq!(bf.get_name(), "sample.txt");
-    /// assert_eq!(bf.get_inode(), "87915-128-1");
-    /// assert_eq!(bf.get_mode(), "r/rrwxrwxrwx");
-    /// assert_eq!(bf.get_uid(), 1003);
-    /// assert_eq!(bf.get_gid(), 500);
-    /// assert_eq!(bf.get_size(), 126378);
-    /// assert_eq!(bf.get_atime(), 12341);
-    /// assert_eq!(bf.get_mtime(), 12342);
-    /// assert_eq!(bf.get_ctime(), 12343);
-    /// assert_eq!(bf.get_crtime(), 12344);
-    pub fn from_values(
-        md5: String,
-        name: String,
-        inode: String,
-        mode_as_string: String,
-        uid: u64,
-        gid: u64,
-        size: u64,
-        atime: i64,
-        mtime: i64,
-        ctime: i64,
-        crtime: i64,
-    ) -> Self {
-        Self {
-            md5,
-            name,
-            inode,
-            mode_as_string,
-            uid,
-            gid,
-            size,
-            atime,
-            mtime,
-            ctime,
-            crtime,
-        }
-    }
-
     #[duplicate_item(
         method_name attribute_name;
         [with_md5]    [md5];
@@ -409,10 +352,18 @@ impl TryFrom<&str> for Bodyfile3Line {
         if ctime < -1 { return Err(Self::Error::IllegalCTime); }
         let crtime = str::parse::<i64>(parts[10 + name_chunks - 1]).or(Err(Self::Error::IllegalCRTime))?;
         if crtime < -1 { return Err(Self::Error::IllegalCRTime); }
-        Ok(Self::from_values(
-            md5.to_owned(),
-            name.to_owned(),
-            inode.to_owned(),
-            mode.to_owned(), uid, gid, size, atime, mtime, ctime, crtime))
+        Ok(Self {
+            md5: md5.to_owned(),
+            name: name.to_owned(),
+            inode: inode.to_owned(),
+            mode_as_string: mode.to_owned(),
+            uid,
+            gid,
+            size,
+            atime,
+            mtime,
+            ctime,
+            crtime,
+        })
     }
 }
