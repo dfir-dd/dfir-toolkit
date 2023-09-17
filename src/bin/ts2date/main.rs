@@ -1,4 +1,4 @@
-use std::io::BufReader;
+
 use std::io::{self, BufRead, Write};
 use chrono::{DateTime, Utc};
 use regex::Regex;
@@ -6,7 +6,7 @@ use anyhow::Result;
 use dfir_toolkit::common::UnixTimestamp;
 use dfir_toolkit::common::FancyParser;
 use cli::Cli;
-use clio::Input;
+
 
 mod cli;
 
