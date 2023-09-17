@@ -1,15 +1,13 @@
-use chrono::NaiveDateTime;
+use chrono::{DateTime, Utc};
 
 
-pub struct UnixTimestamp {
+pub trait UnixTimestamp {
+    fn ts2date(ts: i64) -> String;
 }
 
-impl UnixTimestamp {
-    pub fn ts2date(ts: i64) -> String {
-        let nt = NaiveDateTime::from_timestamp_opt(ts, 0);
-        match nt {
-            Some(_) => nt.unwrap().format("%Y-%m-%d %H:%M:%S").to_string(),
-            None => panic!("Something went wrong"),
-        }
+impl UnixTimestamp for DateTime<Utc> {
+    fn ts2date(ts: i64) -> String {
+        let dt = DateTime::<Utc>::from_timestamp(ts,0).expect("invalid timestamp");
+        dt.to_string()
     }
 }
