@@ -18,7 +18,11 @@ fn main() -> Result<()> {
     let re = Regex::new(r"^(?P<lhs>.*?)(?P<ts>\d{10})(?P<rhs>.*)$").unwrap();
     
     for line in input.lock().lines() {
-        let content = line?;
+        let content = match line {
+            Ok(line) => line,
+            Err(_) => panic!("content of input file need to be in UTF-8 (not in UTF-16)"),
+        };
+
         let out = match re.captures(&content) {
             Some(caps) => format!("{}{}{}", caps.name("lhs").unwrap().as_str(),
                                             DateTime::<Utc>::ts2date(caps.name("ts").unwrap().as_str().parse::<i64>().unwrap()),
