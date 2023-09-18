@@ -6,8 +6,9 @@ use log::LevelFilter;
 
 use crate::{ip_filter::IpFilter, format_ipv4};
 
+/// search for IP addresses in text files
 #[derive(Parser)]
-#[clap(name=env!("CARGO_BIN_NAME"), author,version,about,long_about=None)]
+#[clap(name=env!("CARGO_BIN_NAME"), author, version,long_about=None)]
 pub(crate) struct Cli {
     pub(crate) file: Vec<PathBuf>,
 

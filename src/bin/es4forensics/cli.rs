@@ -24,8 +24,9 @@ pub (crate) enum Action {
     }
 }
 
+/// This crates provides structs and functions to insert timeline data into an elasticsearch index.
 #[derive(Parser)]
-#[clap(name=env!("CARGO_BIN_NAME"), author, version, about, long_about = None)]
+#[clap(name=env!("CARGO_BIN_NAME"), author, version, long_about = None)]
 pub struct Cli {
     #[command(subcommand)]
     pub(crate) action: Action,
