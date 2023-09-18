@@ -10,7 +10,7 @@ use serde_json::Value;
 
 /// Parses a lot of evtx files and prints a bodyfile
 #[derive(Parser, Clone, Getters)]
-#[clap(name=env!("CARGO_BIN_NAME"), author, version, about, long_about = None)]
+#[clap(name=env!("CARGO_BIN_NAME"), author, version, long_about = None)]
 pub(crate) struct Evtx2BodyfileApp {
     /// names of the evtx files
     evtx_files: Vec<String>,

@@ -6,7 +6,7 @@ use crate::output_format::OutputFormat;
 
 /// Display one or more events from an evtx file
 #[derive(Parser)]
-#[clap(name=env!("CARGO_BIN_NAME"),author,version,about)]
+#[clap(name=env!("CARGO_BIN_NAME"), author, version)]
 pub (crate) struct Cli {
     /// Name of the evtx file to read from
     pub (crate) evtx_file: String,

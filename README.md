@@ -24,7 +24,7 @@
   - [x] [`regdump`](#regdump)
   - [ ] [`regls`](https://github.com/janstarke/regls)
   - [ ] [`regview`](https://github.com/janstarke/regview)
-  - [ ] [`ts2date`](https://github.com/janstarke/ts2date)
+  - [x] [`ts2date`](#ts2date)
   - [ ] [`usnjrnl_dump`](https://github.com/janstarke/usnjrnl)
 
 # Overview of timelining tools
@@ -94,7 +94,7 @@ This document contains the help content for the `es4forensics` command-line prog
 
 ## `es4forensics`
 
-CLI tools for digital forensics and incident response
+This crates provides structs and functions to insert timeline data into an elasticsearch index
 
 **Usage:** `es4forensics [OPTIONS] --index <INDEX_NAME> --password <PASSWORD> <COMMAND>`
 
@@ -172,7 +172,7 @@ This document contains the help content for the `evtx2bodyfile` command-line pro
 
 ## `evtx2bodyfile`
 
-CLI tools for digital forensics and incident response
+Parses a lot of evtx files and prints a bodyfile
 
 **Usage:** `evtx2bodyfile [OPTIONS] [EVTX_FILES]...`
 
@@ -209,7 +209,7 @@ This document contains the help content for the `evtxanalyze` command-line progr
 
 ## `evtxanalyze`
 
-CLI tools for digital forensics and incident response
+crate provide functions to analyze evtx files
 
 **Usage:** `evtxanalyze [OPTIONS] <COMMAND>`
 
@@ -294,7 +294,7 @@ This document contains the help content for the `evtxcat` command-line program.
 
 ## `evtxcat`
 
-CLI tools for digital forensics and incident response
+Display one or more events from an evtx file
 
 **Usage:** `evtxcat [OPTIONS] <EVTX_FILE>`
 
@@ -336,7 +336,7 @@ This document contains the help content for the `evtxls` command-line program.
 
 ## `evtxls`
 
-CLI tools for digital forensics and incident response
+Display one or more events from an evtx file
 
 **Usage:** `evtxls [OPTIONS] [EVTX_FILES]...`
 
@@ -406,7 +406,7 @@ This document contains the help content for the `evtxscan` command-line program.
 
 ## `evtxscan`
 
-CLI tools for digital forensics and incident response
+Find time skews in an evtx file
 
 **Usage:** `evtxscan [OPTIONS] <EVTX_FILE>`
 
@@ -476,7 +476,7 @@ This document contains the help content for the `ipgrep` command-line program.
 
 ## `ipgrep`
 
-CLI tools for digital forensics and incident response
+search for IP addresses in text files
 
 **Usage:** `ipgrep [OPTIONS] [FILE]...`
 
@@ -518,7 +518,7 @@ This document contains the help content for the `mactime2` command-line program.
 
 ## `mactime2`
 
-CLI tools for digital forensics and incident response
+replacement for `mactime`
 
 **Usage:** `mactime2 [OPTIONS]`
 
@@ -562,7 +562,7 @@ This document contains the help content for the `pol_export` command-line progra
 
 ## `pol_export`
 
-CLI tools for digital forensics and incident response
+Exporter for Windows Registry Policy Files
 
 **Usage:** `pol_export [OPTIONS] <POLFILE>`
 
@@ -594,7 +594,7 @@ This document contains the help content for the `regdump` command-line program.
 
 ## `regdump`
 
-CLI tools for digital forensics and incident response
+parses registry hive files and prints a bodyfile
 
 **Usage:** `regdump [OPTIONS] <HIVE_FILE>`
 
@@ -608,6 +608,43 @@ CLI tools for digital forensics and incident response
 * `-b`, `--bodyfile` — print as bodyfile format
 * `-I`, `--ignore-base-block` — ignore the base block (e.g. if it was encrypted by some ransomware)
 * `-T`, `--hide-timestamps` — hide timestamps, if output is in reg format
+* `-v`, `--verbose` — More output per occurrence
+* `-q`, `--quiet` — Less output per occurrence
+
+
+
+<hr/>
+
+<small><i>
+    This document was generated automatically by
+    <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
+</i></small>
+
+# Command-Line Help for `ts2date`
+
+This document contains the help content for the `ts2date` command-line program.
+
+**Command Overview:**
+
+* [`ts2date`↴](#ts2date)
+
+## `ts2date`
+
+replaces UNIX timestamps in a stream by a formatted date
+
+**Usage:** `ts2date [OPTIONS] [INPUT_FILE] [OUTPUT_FILE]`
+
+###### **Arguments:**
+
+* `<INPUT_FILE>` — name of the file to read (default from stdin)
+
+  Default value: `-`
+* `<OUTPUT_FILE>` — name of the file to write (default to stdout)
+
+  Default value: `-`
+
+###### **Options:**
+
 * `-v`, `--verbose` — More output per occurrence
 * `-q`, `--quiet` — Less output per occurrence
 
