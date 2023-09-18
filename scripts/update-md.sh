@@ -29,7 +29,7 @@ cat >README.md <<'EOF'
   - [x] [`regdump`](#regdump)
   - [ ] [`regls`](https://github.com/janstarke/regls)
   - [ ] [`regview`](https://github.com/janstarke/regview)
-  - [ ] [`ts2date`](https://github.com/janstarke/ts2date)
+  - [x] [`ts2date`](https://github.com/janstarke/ts2date)
   - [ ] [`usnjrnl_dump`](https://github.com/janstarke/usnjrnl)
 
 # Overview of timelining tools
