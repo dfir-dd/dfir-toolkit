@@ -1,18 +1,15 @@
-use std::{path::PathBuf, fs::File};
 use anyhow::Result;
-use evtx::{EvtxParser, SerializedEvtxRecord, err::EvtxError};
+use clio::Input;
+use evtx::{EvtxParser, SerializedEvtxRecord};
 use indicatif::{ProgressBar, ProgressDrawTarget, ProgressStyle};
 use serde_json::Value;
 use ouroboros::self_referencing;
 
-pub (crate) struct EvtxFile {
-    filename: String,
-    fp: PathBuf,
-}
+pub (crate) struct EvtxFile (Input);
 
 #[self_referencing()]
 pub (crate) struct EvtxFileIterator {
-    parser: EvtxParser<File>,
+    parser: EvtxParser<Input>,
     
     #[borrows(mut parser)]
     #[not_covariant]
@@ -35,39 +32,31 @@ impl Iterator for EvtxFileIterator {
     }
 }
 
-impl<'a> IntoIterator for &'a EvtxFile {
+impl IntoIterator for EvtxFile {
     type Item = SerializedEvtxRecord<Value>;
 
     type IntoIter = EvtxFileIterator;
 
     fn into_iter(self) -> Self::IntoIter {
-        let parser = EvtxParser::from_path(&self.fp).expect("unable to create parser");
+        let parser = EvtxParser::from_read_seek(self.0).expect("unable to create parser");
 
         EvtxFileIteratorBuilder {
             parser,
-            inner_iterator_builder: |parser: &mut EvtxParser<File>| Box::new(parser.records_json_value())
+            inner_iterator_builder: |parser: &mut EvtxParser<Input>| Box::new(parser.records_json_value())
         }.build()
     }
 }
 
-impl TryFrom<&str> for EvtxFile {
-    type Error = EvtxError;
-    fn try_from(file: &str) -> std::result::Result<Self, Self::Error> {
-        let fp = PathBuf::from(file);
-        let filename = fp.file_name().unwrap().to_str().unwrap().to_owned();
-
-        Ok(Self {
-            filename,
-            fp: PathBuf::from(file),
-        })
+impl From<Input> for EvtxFile {
+    fn from(file: Input) -> Self {
+        Self(file)
     }
-
 }
 
 
 impl EvtxFile {
     pub (crate) fn count_records(&self) -> Result<usize> {
-        let mut parser = EvtxParser::from_path(&self.fp)?;
+        let mut parser = EvtxParser::from_read_seek(self.0.clone())?;
         Ok(parser.serialized_records(|r| r.and(Ok(()))).count())
     }
 
@@ -77,7 +66,6 @@ impl EvtxFile {
         let bar = ProgressBar::new(count as u64);
         let target = ProgressDrawTarget::stderr_with_hz(10);
         bar.set_draw_target(target);
-        bar.set_message(self.filename.clone());
 
         let progress_style = ProgressStyle::default_bar()
             .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos:>9}/{len:9}({percent}%) {msg}")?

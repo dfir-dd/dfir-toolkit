@@ -1,7 +1,8 @@
 
 use crate::{bf_data::*, evtx_file::EvtxFile};
 use anyhow::Result;
-use clap::Parser;
+use clap::{Parser, ValueHint};
+use clio::Input;
 use dfir_toolkit::common::HasVerboseFlag;
 use evtx::SerializedEvtxRecord;
 use getset::Getters;
@@ -12,7 +13,8 @@ use serde_json::Value;
 #[clap(name=env!("CARGO_BIN_NAME"), author, version, about, long_about = None)]
 pub(crate) struct Evtx2BodyfileApp {
     /// names of the evtx files
-    evtx_files: Vec<String>,
+    #[clap(value_hint=ValueHint::FilePath)]
+    evtx_files: Vec<Input>,
 
     /// output json for elasticsearch instead of bodyfile
     #[clap(short('J'), long("json"))]
@@ -29,8 +31,8 @@ pub(crate) struct Evtx2BodyfileApp {
 
 impl Evtx2BodyfileApp {
     pub(crate) fn handle_evtx_files(&self) -> Result<()> {
-        for file in self.evtx_files.iter() {
-            self.handle_evtx_file((&file[..]).try_into()?);
+        for file in self.evtx_files.clone().into_iter() {
+            self.handle_evtx_file(file.into());
         }
         Ok(())
     }
