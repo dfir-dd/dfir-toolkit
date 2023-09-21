@@ -1,15 +1,15 @@
 use anyhow::Result;
-use evtx2bodyfile_app::Evtx2BodyfileApp;
+use cli::Cli;
 use dfir_toolkit::common::FancyParser;
 
 mod bf_data;
-mod evtx2bodyfile_app;
+mod cli;
 mod evtx_file;
 #[macro_use]
 mod macros;
 
 fn main() -> Result<()> {
-    let cli = Evtx2BodyfileApp::parse_cli();
+    let cli = Cli::parse_cli();
 
     cli.handle_evtx_files()
 }
