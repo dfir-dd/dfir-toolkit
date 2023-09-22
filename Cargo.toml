@@ -162,4 +162,4 @@ matches = "0.1"
 # es4forensics
 assert-json-diff = "2.0"
 
-assert_cmd = "1"
+assert_cmd = "2"
