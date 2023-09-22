@@ -1,7 +1,7 @@
 use std::io::{BufRead, Write};
 use chrono::{DateTime, Utc};
 use regex::Regex;
-use anyhow::Result;
+use anyhow::{bail, Result};
 use dfir_toolkit::common::UnixTimestamp;
 use dfir_toolkit::common::FancyParser;
 use cli::Cli;
