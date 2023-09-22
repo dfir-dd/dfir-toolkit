@@ -1,8 +1,8 @@
 use std::{fmt::Display, str::FromStr};
-
+use chrono_tz::TZ_VARIANTS;
 use chrono_tz::Tz;
 
-#[derive(Clone)]
+#[derive(Clone, Debug, Copy)]
 pub enum TzArgument {
     List,
     Tz(Tz),
@@ -29,6 +29,7 @@ impl Display for TzArgument {
     }
 }
 
+
 impl TzArgument {
     pub fn is_list(&self) -> bool {
         matches!(self, Self::List)
@@ -40,6 +41,11 @@ impl TzArgument {
         match self {
             TzArgument::List => None,
             TzArgument::Tz(tz) => Some(tz),
+        }
+    }
+    pub fn display_zones() {
+        for v in TZ_VARIANTS.iter() {
+            println!("{}", v);
         }
     }
 }

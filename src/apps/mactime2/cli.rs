@@ -3,9 +3,9 @@ use clio::Input;
 use log::LevelFilter;
 use chrono_tz::Tz;
 
-use crate::common::HasVerboseFlag;
+use crate::common::{HasVerboseFlag,TzArgument};
 
-use super::{OutputFormat, TzArgument};
+use super::OutputFormat;
 
 #[cfg(feature = "gzip")]
 const BODYFILE_HELP: &str =
