@@ -20,7 +20,7 @@ fn main() -> Result<()> {
     for line in input.lock().lines() {
         let content = match line {
             Ok(line) => line,
-            Err(_) => panic!("content of input file need to be in UTF-8 (not in UTF-16)"),
+            Err(_) => bail!("content of input file need to be in UTF-8 (not in UTF-16)"),
         };
 
         let out = match re.captures(&content) {
