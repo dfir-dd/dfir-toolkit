@@ -42,5 +42,5 @@ fn serialize_timestamp<S>(ts: &DateTime<Utc>, s: S) -> Result<S::Ok, S::Error>
 where
     S: Serializer,
 {
-    s.serialize_str(&ts.format("%Y-%m-%dT%H:%M:%S").to_string())
+    s.serialize_str(&ts.format("%Y-%m-%dT%H:%M:%S%z").to_string())
 }

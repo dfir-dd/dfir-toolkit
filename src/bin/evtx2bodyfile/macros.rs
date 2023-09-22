@@ -10,4 +10,4 @@ macro_rules! from_json {
     };
 }
 
-pub (crate) use from_json;
+pub(crate) use from_json;
