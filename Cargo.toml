@@ -1,6 +1,6 @@
 [package]
 name = "dfir-toolkit"
-version = "0.7.5-dev"
+version = "0.7.6-dev"
 edition = "2021"
 authors = ["Jan Starke <jan.starke@posteo.de>", "Deborah Mahn <deborah.mahn@dfir-dd.de>"]
 description = "CLI tools for digital forensics and incident response"
@@ -155,6 +155,9 @@ strum_macros = {version="0", optional=true}
 
 # nt-hive2
 nt_hive2 = {version="4.0.1", optional=true}
+
+# lnk2bodyfile
+lnk_parser = "0.4.0"
 
 [dev-dependencies]
 

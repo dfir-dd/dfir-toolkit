@@ -9,7 +9,7 @@ use clio::{Input,Output};
 pub (crate) struct Cli {
     /// Name of the LNK files to read from
     #[clap(value_parser, value_hint=ValueHint::FilePath, default_value="-", display_order(100))]
-    pub(crate) input_file: Input,
+    pub(crate) lnk_files: Vec<Input>,
 
     #[clap(flatten)]
     pub (crate) verbose: clap_verbosity_flag::Verbosity,
