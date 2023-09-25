@@ -53,4 +53,3 @@ mactime2 --autocomplete bash | sudo tee /etc/bash_completion.d/mactime2
 
 would install a autocompletion script in `/etc/bash_completion.d/mactime2`.
 
-# Tools
