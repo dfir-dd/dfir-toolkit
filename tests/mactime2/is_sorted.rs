@@ -1,8 +1,12 @@
-use std::{path::PathBuf, io::{BufReader, Cursor, BufRead}};
+use std::{
+    io::{BufRead, BufReader, Cursor},
+    path::PathBuf,
+};
 
 use assert_cmd::Command;
 use more_asserts::assert_le;
 
+/// tests if the result of `mactime2` is always sorted
 #[test]
 fn is_sorted() {
     let mut cmd = Command::cargo_bin("mactime2").unwrap();
