@@ -17,17 +17,17 @@ impl From<&str> for Rfc3339Datetime {
         }
         
         if let Ok(timestamp) = NaiveDateTime::parse_from_str(s, "%Y-%m-%dT%H:%M:%S") {
-            return Self{timestamp: DateTime::<Utc>::from_utc(timestamp, Utc)}
+            return Self{timestamp: DateTime::<Utc>::from_naive_utc_and_offset(timestamp, Utc)}
         }
 
         if let Ok(timestamp) = NaiveDateTime::parse_from_str(s, "%Y-%m-%d %H:%M:%S") {
-            return Self{timestamp: DateTime::<Utc>::from_utc(timestamp, Utc)}
+            return Self{timestamp: DateTime::<Utc>::from_naive_utc_and_offset(timestamp, Utc)}
         }
 
         if let Ok(timestamp) = NaiveDate::parse_from_str(s, "%Y-%m-%d") {
             let time = NaiveTime::from_hms_opt(0, 0, 0).unwrap();
             let timestamp = NaiveDateTime::new(timestamp, time);
-            return Self{timestamp: DateTime::<Utc>::from_utc(timestamp, Utc)}
+            return Self{timestamp: DateTime::<Utc>::from_naive_utc_and_offset(timestamp, Utc)}
         }
 
         panic!("invalid timestamp: '{s}'");

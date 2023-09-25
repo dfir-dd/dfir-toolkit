@@ -5,8 +5,9 @@ use dfir_toolkit::common::HasVerboseFlag;
 use getset::Getters;
 use log::LevelFilter;
 
+/// creates bodyfile from Windows evtx files
 #[derive(Parser, Clone, Getters)]
-#[clap(name=env!("CARGO_BIN_NAME"), author, version, about, long_about = None)]
+#[clap(name=env!("CARGO_BIN_NAME"), author, version, long_about = None)]
 #[getset(get = "pub (crate)")]
 pub(crate) struct Cli {
     /// names of the evtx files

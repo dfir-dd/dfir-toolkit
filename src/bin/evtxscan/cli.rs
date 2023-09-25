@@ -5,7 +5,7 @@ use log::LevelFilter;
 
 /// Find time skews in an evtx file
 #[derive(Parser)]
-#[clap(name=env!("CARGO_BIN_NAME"), author, version, about)]
+#[clap(name=env!("CARGO_BIN_NAME"), author, version)]
 pub (crate) struct Cli {
     /// name of the evtx file to scan
     pub (crate) evtx_file: String,

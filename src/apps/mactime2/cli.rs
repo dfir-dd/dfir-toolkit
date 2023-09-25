@@ -3,9 +3,9 @@ use clio::Input;
 use log::LevelFilter;
 use chrono_tz::Tz;
 
-use crate::common::HasVerboseFlag;
+use crate::common::{HasVerboseFlag,TzArgument};
 
-use super::{OutputFormat, TzArgument};
+use super::OutputFormat;
 
 #[cfg(feature = "gzip")]
 const BODYFILE_HELP: &str =
@@ -13,8 +13,9 @@ const BODYFILE_HELP: &str =
 #[cfg(not(feature = "gzip"))]
 const BODYFILE_HELP: &str = "path to input file or '-' for stdin";
 
+/// replacement for `mactime`
 #[derive(Parser)]
-#[clap(name="mactime2", author, version, about, long_about = None)]
+#[clap(name="mactime2", author, version, long_about = None)]
 
 pub struct Cli {
     #[clap(short('b'), value_parser, value_hint=ValueHint::FilePath, default_value="-", help=BODYFILE_HELP, display_order(100))]

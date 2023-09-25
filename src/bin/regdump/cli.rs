@@ -5,9 +5,9 @@ use dfir_toolkit::common::HasVerboseFlag;
 use log::LevelFilter;
 use nt_hive2::{HiveParseMode, Hive};
 
-
+/// parses registry hive files and prints a bodyfile
 #[derive(Parser)]
-#[clap(name=env!("CARGO_BIN_NAME"), author, version, about, long_about = None)]
+#[clap(name=env!("CARGO_BIN_NAME"), author, version, long_about = None)]
 pub (crate) struct Cli {
     /// name of the file to dump
     #[arg(value_parser = validate_file)]
