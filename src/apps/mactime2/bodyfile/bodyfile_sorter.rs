@@ -59,13 +59,13 @@ fn insert_timestamp(
     line: Arc<Bodyfile3Line>,
 ) {
     let timestamp = if flag.contains(MACBFlags::M) {
-        line.get_mtime()
+        *line.get_mtime()
     } else if flag.contains(MACBFlags::A) {
-        line.get_atime()
+        *line.get_atime()
     } else if flag.contains(MACBFlags::C) {
-        line.get_ctime()
+        *line.get_ctime()
     } else if flag.contains(MACBFlags::B) {
-        line.get_crtime()
+        *line.get_crtime()
     } else {
         -1
     };
@@ -140,10 +140,10 @@ impl BodyfileSorter {
             } // delete the borrow to line
 
             // we need *some* value in mactimes!
-            if line.get_mtime() == -1
-                && line.get_atime() == -1
-                && line.get_ctime() == -1
-                && line.get_crtime() == -1
+            if *line.get_mtime() == -1
+                && *line.get_atime() == -1
+                && *line.get_ctime() == -1
+                && *line.get_crtime() == -1
             {
                 insert_timestamp(&mut entries, MACBFlags::NONE, Arc::clone(&line));
                 continue;
@@ -151,17 +151,17 @@ impl BodyfileSorter {
 
             let mut flags: [MACBFlags; 4] = [MACBFlags::NONE; 4];
 
-            if line.get_mtime() != -1 {
+            if *line.get_mtime() != -1 {
                 flags[0] |= MACBFlags::M;
             }
-            if line.get_atime() != -1 {
+            if *line.get_atime() != -1 {
                 if line.get_mtime() == line.get_atime() {
                     flags[0] |= MACBFlags::A;
                 } else {
                     flags[1] |= MACBFlags::A;
                 }
             }
-            if line.get_ctime() != -1 {
+            if *line.get_ctime() != -1 {
                 if line.get_mtime() == line.get_ctime() {
                     flags[0] |= MACBFlags::C;
                 } else if line.get_atime() == line.get_ctime() {
@@ -170,7 +170,7 @@ impl BodyfileSorter {
                     flags[2] |= MACBFlags::C;
                 }
             }
-            if line.get_crtime() != -1 {
+            if *line.get_crtime() != -1 {
                 if line.get_mtime() == line.get_crtime() {
                     flags[0] |= MACBFlags::B;
                 } else if line.get_atime() == line.get_crtime() {

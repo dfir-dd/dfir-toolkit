@@ -134,7 +134,7 @@ phf = {version = "0.11", optional=true}
 # evtx2bodyfile
 indicatif = {version="0.17", optional=true}
 getset = {version="0.1", optional=true}
-ouroboros = {version="0.17", optional=true}
+ouroboros = {version="0.18", optional=true}
 
 # bodyfile, es4forensics
 duplicate = "1"
@@ -167,3 +167,5 @@ matches = "0.1"
 
 # es4forensics
 assert-json-diff = "2.0"
+
+assert_cmd = "2"

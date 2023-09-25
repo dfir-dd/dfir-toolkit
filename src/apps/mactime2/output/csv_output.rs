@@ -22,7 +22,7 @@ impl Mactime2Writer for CsvOutput {
             timestamp,
             entry.line.get_size(),
             entry.flags,
-            entry.line.get_mode(),
+            entry.line.get_mode_as_string(),
             entry.line.get_uid(),
             entry.line.get_gid(),
             entry.line.get_inode(),
