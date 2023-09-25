@@ -172,7 +172,7 @@ This document contains the help content for the `evtx2bodyfile` command-line pro
 
 ## `evtx2bodyfile`
 
-Parses a lot of evtx files and prints a bodyfile
+creates bodyfile from Windows evtx files
 
 **Usage:** `evtx2bodyfile [OPTIONS] [EVTX_FILES]...`
 
@@ -182,7 +182,12 @@ Parses a lot of evtx files and prints a bodyfile
 
 ###### **Options:**
 
-* `-J`, `--json` — output json for elasticsearch instead of bodyfile
+* `-F`, `--format <FORMAT>` — select output format
+
+  Default value: `bodyfile`
+
+  Possible values: `json`, `bodyfile`
+
 * `-S`, `--strict` — fail upon read error
 * `-v`, `--verbose` — More output per occurrence
 * `-q`, `--quiet` — Less output per occurrence
@@ -647,6 +652,12 @@ replaces UNIX timestamps in a stream by a formatted date
 
 * `-v`, `--verbose` — More output per occurrence
 * `-q`, `--quiet` — Less output per occurrence
+* `-f`, `--from-timezone <SRC_ZONE>` — name of offset of source timezone (or 'list' to display all possible values
+
+  Default value: `UTC`
+* `-t`, `--to-timezone <DST_ZONE>` — name of offset of destination timezone (or 'list' to display all possible values
+
+  Default value: `UTC`
 
 
 

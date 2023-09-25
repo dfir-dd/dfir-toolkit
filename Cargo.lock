@@ -706,7 +706,7 @@ dependencies = [
 
 [[package]]
 name = "dfir-toolkit"
-version = "0.7.5-dev"
+version = "0.8.0"
 dependencies = [
  "anyhow",
  "assert-json-diff",
@@ -740,7 +740,7 @@ dependencies = [
  "matches",
  "more-asserts",
  "nt_hive2",
- "num-derive 0.4.0",
+ "num-derive 0.3.3",
  "num-traits",
  "ouroboros",
  "phf",
