@@ -1,9 +1,5 @@
 on: [push]
 
-name: Run tests and calculate coverage
-
-on: [push]
-
 name: Code Coverage
 
 jobs:
