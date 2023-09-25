@@ -3,6 +3,7 @@ use chrono::{LocalResult, NaiveDateTime};
 use chrono_tz::Tz;
 use clap::ValueEnum;
 use clio::Input;
+use strum_macros::Display;
 
 use super::bodyfile::{BodyfileDecoder, BodyfileReader, BodyfileSorter};
 use super::cli::Cli;
@@ -11,22 +12,30 @@ use super::filter::{Consumer, Joinable, Provider, RunOptions, Sorter};
 use super::output::{CsvOutput, JsonSorter, TxtOutput};
 use super::stream::StreamReader;
 
-#[derive(ValueEnum, Clone)]
-pub enum InputFormat {
-    BODYFILE,
+#[derive(ValueEnum, Clone, Display)]
+enum InputFormat {
+    #[strum(serialize = "bodyfile")]
+    Bodyfile,
 
     #[cfg(feature = "elastic")]
-    JSON,
+    #[strum(serialize = "json")]
+    Json,
 }
 
-#[derive(ValueEnum, Clone)]
-pub enum OutputFormat {
-    CSV,
-    TXT,
-    JSON,
+#[derive(ValueEnum, Clone, Display)]
+pub (crate) enum OutputFormat {
+    #[strum(serialize = "csv")]
+    Csv,
+
+    #[strum(serialize = "txt")]
+    Txt,
+
+    #[strum(serialize = "json")]
+    Json,
 
     #[cfg(feature = "elastic")]
-    ELASTIC,
+    #[strum(serialize = "elastic")]
+    Elastic,
 }
 
 //#[derive(Builder)]
@@ -48,15 +57,15 @@ impl Mactime2Application {
             src_zone: self.src_zone,
         };
 
-        if matches!(self.format, OutputFormat::JSON) {
+        if matches!(self.format, OutputFormat::Json) {
             Box::new(JsonSorter::with_receiver(decoder.get_receiver(), options))
         } else {
             let mut sorter =
                 BodyfileSorter::default().with_receiver(decoder.get_receiver(), options);
 
             sorter = sorter.with_output(match self.format {
-                OutputFormat::CSV => Box::new(CsvOutput::new(self.src_zone, self.dst_zone)),
-                OutputFormat::TXT => Box::new(TxtOutput::new(self.src_zone, self.dst_zone)),
+                OutputFormat::Csv => Box::new(CsvOutput::new(self.src_zone, self.dst_zone)),
+                OutputFormat::Txt => Box::new(TxtOutput::new(self.src_zone, self.dst_zone)),
                 _ => panic!("invalid execution path"),
             });
             Box::new(sorter)
@@ -105,11 +114,11 @@ impl From<Cli> for Mactime2Application {
             Some(f) => f,
             None => {
                 if cli.csv_format {
-                    OutputFormat::CSV
+                    OutputFormat::Csv
                 } else if cli.json_format {
-                    OutputFormat::JSON
+                    OutputFormat::Json
                 } else {
-                    OutputFormat::TXT
+                    OutputFormat::Txt
                 }
             }
         };

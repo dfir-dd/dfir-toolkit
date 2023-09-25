@@ -5,12 +5,14 @@ use std::{
     thread::JoinHandle,
 };
 
-use crate::common::bodyfile::Bodyfile3Line;
 use chrono_tz::Tz;
-use crate::es4forensics::{objects::PosixFile, TimelineObject, Timestamp};
+use dfir_toolkit::{
+    common::bodyfile::Bodyfile3Line,
+    es4forensics::{objects::PosixFile, Timestamp, TimelineObject},
+};
 use std::convert::TryFrom;
 
-use crate::apps::mactime2::{
+use crate::{
     error::MactimeError,
     filter::RunOptions,
     filter::{Consumer, Joinable, Runnable, Sorter},

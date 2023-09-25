@@ -1,8 +1,16 @@
+mod application;
+mod stream;
+mod bodyfile;
+mod error;
+mod filter;
+mod output;
+mod cli;
+
+use application::*;
+use cli::*;
+
 use anyhow::Result;
 use dfir_toolkit::common::{FancyParser, TzArgument};
-
-use dfir_toolkit::apps::mactime2::Cli;
-use dfir_toolkit::apps::mactime2::Mactime2Application;
 
 fn main() -> Result<()> {
     let cli: Cli = Cli::parse_cli();

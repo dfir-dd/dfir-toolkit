@@ -1,4 +1,4 @@
-use crate::common::bodyfile::Bodyfile3Line;
+use dfir_toolkit::common::bodyfile::Bodyfile3Line;
 use std::borrow::Borrow;
 use std::cmp::Ordering;
 use std::collections::{BTreeMap, HashSet};
@@ -6,8 +6,8 @@ use std::sync::mpsc::Receiver;
 use std::sync::Arc;
 use std::thread::JoinHandle;
 
-use crate::apps::mactime2::error::MactimeError;
-use crate::apps::mactime2::filter::{Joinable, RunOptions, Runnable, Sorter};
+use crate::error::MactimeError;
+use crate::filter::{Joinable, RunOptions, Runnable, Sorter};
 
 use super::MACBFlags;
 
@@ -134,7 +134,6 @@ impl BodyfileSorter {
                         bf.get_name(),
                         bf.get_inode()
                     );
-                    //return Err(MactimeError::AmbiguousFilename(bf.get_name().to_owned()))
                 }
                 names.insert((bf.get_inode().to_owned(), bf.get_name().to_owned()));
             } // delete the borrow to line

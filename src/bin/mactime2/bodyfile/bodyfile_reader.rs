@@ -3,8 +3,8 @@ use std::io::{BufRead, BufReader, Read};
 use std::sync::mpsc::{Receiver, Sender};
 use std::thread::JoinHandle;
 
-use crate::apps::mactime2::filter::{Joinable, Provider};
-use crate::apps::mactime2::stream::{StreamReader, StreamWorker};
+use crate::filter::{Joinable, Provider};
+use crate::stream::{StreamReader, StreamWorker};
 
 pub struct BodyfileReader {
     worker: Option<JoinHandle<()>>,

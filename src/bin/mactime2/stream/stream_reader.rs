@@ -6,9 +6,13 @@ use std::{
 use anyhow::Result;
 use clio::Input;
 
-use crate::apps::mactime2::{stream::*, filter::{Joinable, Provider}};
+use crate::{
+    filter::{Joinable, Provider},
+    stream::*,
+};
 
-pub(crate) trait StreamReader<T, R>: Sized + StreamWorker<T> + Joinable<R> + Provider<T, R>
+pub(crate) trait StreamReader<T, R>:
+    Sized + StreamWorker<T> + Joinable<R> + Provider<T, R>
 where
     T: Send + 'static,
 {
