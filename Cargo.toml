@@ -67,11 +67,6 @@ name = "ipgrep"
 path = "src/bin/ipgrep/main.rs"
 required-features = ["ipgrep"]
 
-[[bin]]
-name = "lnk2bodyfile"
-path = "src/bin/lnk2bodyfile/main.rs"
-required-features = ["lnk2bodyfile"]
-
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
 default = ["pol_export", "mactime2", "evtxtools", "regdump", "hivescan", "cleanhive", "ipgrep"]
@@ -86,7 +81,6 @@ evtxls = ["evtx", "colored", "lazy-regex", "regex", "sigpipe", "dfirtk-eventdata
 evtxanalyze = ["evtx", "dfirtk-sessionevent-derive", "dfirtk-eventdata"]
 evtx2bodyfile = ["evtx", "getset", "ouroboros", "indicatif"]
 ipgrep = []
-lnk2bodyfile = []
 
 regdump = ["nt_hive2"]
 hivescan = ["nt_hive2"]
