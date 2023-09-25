@@ -1,5 +1,8 @@
 
 # DFIR Toolkit
+
+<img align="right" width="64px" src="https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/images/fuchs_blau_q.png?raw=true" />
+
 [![Crates.io](https://img.shields.io/crates/v/dfir-toolkit)](https://crates.io/crates/dfir-toolkit)
 [![Crates.io (latest)](https://img.shields.io/crates/dv/dfir-toolkit)](https://crates.io/crates/dfir-toolkit)
 ![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/dfir-dd/dfir-toolkit/cargo_test.yml)
@@ -34,7 +37,7 @@
 
 # Overview of timelining tools
 
-<img src="https://github.com/dfir-dd/dfir-toolkit/blob/master/doc/images/tools.svg?raw=true">
+<img src="https://raw.githubusercontent.com/dfir-dd/dfir-toolkit/main/doc/images/tools.svg">
 
 # Installation
 
