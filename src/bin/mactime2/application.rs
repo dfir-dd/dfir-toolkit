@@ -1,5 +1,3 @@
-use chrono::offset::TimeZone;
-use chrono::{LocalResult, NaiveDateTime};
 use chrono_tz::Tz;
 use clap::ValueEnum;
 use clio::Input;
@@ -87,24 +85,6 @@ impl Mactime2Application {
         let _ = decoder.join();
         sorter.join().unwrap()?;
         Ok(())
-    }
-
-    pub fn format_date(unix_ts: i64, src_zone: &Tz, dst_zone: &Tz) -> String {
-        if unix_ts >= 0 {
-            let src_timestamp = match src_zone
-                .from_local_datetime(&NaiveDateTime::from_timestamp_opt(unix_ts, 0).unwrap())
-            {
-                LocalResult::None => {
-                    return "INVALID DATETIME".to_owned();
-                }
-                LocalResult::Single(t) => t,
-                LocalResult::Ambiguous(t1, _t2) => t1,
-            };
-            let dst_timestamp = src_timestamp.with_timezone(dst_zone);
-            dst_timestamp.to_rfc3339()
-        } else {
-            "0000-00-00T00:00:00+00:00".to_owned()
-        }
     }
 }
 

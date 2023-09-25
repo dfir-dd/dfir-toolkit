@@ -1,11 +1,9 @@
 use chrono_tz::Tz;
+use dfir_toolkit::common::ForensicsTimestamp;
 
-use crate::{
-    bodyfile::{ListEntry, Mactime2Writer},
-    Mactime2Application,
-};
+use crate::bodyfile::{ListEntry, Mactime2Writer};
 
-pub (crate) struct CsvOutput {
+pub(crate) struct CsvOutput {
     src_zone: Tz,
     dst_zone: Tz,
 }
@@ -18,8 +16,7 @@ impl CsvOutput {
 
 impl Mactime2Writer for CsvOutput {
     fn fmt(&self, timestamp: &i64, entry: &ListEntry) -> String {
-        let timestamp =
-            Mactime2Application::format_date(*timestamp, &self.src_zone, &self.dst_zone);
+        let timestamp = ForensicsTimestamp::new(*timestamp, self.src_zone, self.dst_zone);
         format!(
             "{},{},{},{},{},{},{},\"{}\"",
             timestamp,
