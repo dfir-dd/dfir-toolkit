@@ -1,10 +1,8 @@
 use chrono_tz::Tz;
+use dfir_toolkit::common::ForensicsTimestamp;
 use std::cell::RefCell;
 
-use crate::{
-    bodyfile::{ListEntry, Mactime2Writer},
-    Mactime2Application,
-};
+use crate::bodyfile::{ListEntry, Mactime2Writer};
 
 pub struct TxtOutput {
     src_zone: Tz,
@@ -28,7 +26,7 @@ impl Mactime2Writer for TxtOutput {
     fn fmt(&self, timestamp: &i64, entry: &ListEntry) -> String {
         let ts = if *timestamp != *self.last_ts.0.borrow() {
             *self.last_ts.1.borrow_mut() =
-                Mactime2Application::format_date(*timestamp, &self.src_zone, &self.dst_zone);
+                ForensicsTimestamp::new(*timestamp, self.src_zone, self.dst_zone).to_string();
             *self.last_ts.0.borrow_mut() = *timestamp;
             self.last_ts.1.borrow()
         } else {
