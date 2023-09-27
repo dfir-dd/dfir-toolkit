@@ -1,6 +1,4 @@
-use std::{
-    fmt::Display,
-};
+use std::fmt::Display;
 
 use binread::{BinRead, BinReaderExt};
 use chrono::{DateTime, Utc};
@@ -51,7 +49,9 @@ impl BinRead for KeyValueData {
 
         Ok(match data_type {
             KeyValueDataType::RegNone => Self::RegNone,
-            KeyValueDataType::RegSZ => Self::RegSZ(reader.read_le_args::<RegistryString>(data_size)?.into()),
+            KeyValueDataType::RegSZ => {
+                Self::RegSZ(reader.read_le_args::<RegistryString>(data_size)?.into())
+            }
             KeyValueDataType::RegExpandSZ => {
                 Self::RegExpandSZ(reader.read_le_args::<RegistryString>(data_size)?.into())
             }
@@ -78,7 +78,9 @@ impl BinRead for KeyValueData {
                 }
                 Self::RegDWordBigEndian(reader.read_be()?)
             }
-            KeyValueDataType::RegLink => Self::RegLink(reader.read_le_args::<RegistryString>(data_size)?.into()),
+            KeyValueDataType::RegLink => {
+                Self::RegLink(reader.read_le_args::<RegistryString>(data_size)?.into())
+            }
             KeyValueDataType::RegMultiSZ => {
                 let bytes = super::read_vec(reader, data_size)?;
                 let strings = super::parse_reg_multi_sz(&bytes[..])?;
@@ -87,12 +89,12 @@ impl BinRead for KeyValueData {
             KeyValueDataType::RegResourceList => {
                 Self::RegResourceList(reader.read_le_args::<RegistryString>(data_size)?.into())
             }
-            KeyValueDataType::RegFullResourceDescriptor => {
-                Self::RegFullResourceDescriptor(reader.read_le_args::<RegistryString>(data_size)?.into())
-            }
-            KeyValueDataType::RegResourceRequirementsList => {
-                Self::RegResourceRequirementsList(reader.read_le_args::<RegistryString>(data_size)?.into())
-            }
+            KeyValueDataType::RegFullResourceDescriptor => Self::RegFullResourceDescriptor(
+                reader.read_le_args::<RegistryString>(data_size)?.into(),
+            ),
+            KeyValueDataType::RegResourceRequirementsList => Self::RegResourceRequirementsList(
+                reader.read_le_args::<RegistryString>(data_size)?.into(),
+            ),
             KeyValueDataType::RegQWord => {
                 if data_size != 8 {
                     return Err(binread::Error::AssertFail {
@@ -206,7 +208,7 @@ mod tests {
             .read_ne_args((KeyValueDataType::RegFileTime, 8))
             .unwrap();
 
-        let expected = DateTime::<Utc>::from_utc(
+        let expected = DateTime::<Utc>::from_naive_utc_and_offset(
             NaiveDate::from_ymd_opt(2014, 10, 2)
                 .unwrap()
                 .and_hms_opt(19, 29, 4)

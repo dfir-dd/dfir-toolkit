@@ -2,9 +2,9 @@ use clap::Parser;
 use dfir_toolkit::common::HasVerboseFlag;
 use log::LevelFilter;
 
-
+/// Exporter for Windows Registry Policy Files
 #[derive(Parser, Debug)]
-#[clap(name=env!("CARGO_BIN_NAME"), author, version, about, long_about = None)]
+#[clap(name=env!("CARGO_BIN_NAME"), author, version, long_about = None)]
 pub (crate) struct Cli {
     /// Name of the file to read
     #[clap()]

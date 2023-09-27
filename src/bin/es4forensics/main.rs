@@ -7,41 +7,48 @@ use anyhow::{Result, anyhow};
 use cli::{Cli, Action};
 use elasticsearch::auth::Credentials;
 use dfir_toolkit::es4forensics::*;
-use dfir_toolkit::common::FancyParser;
+use dfir_toolkit::common::{FancyParser, FileInput};
 
 #[tokio::main]
 async fn main() -> Result<()> {
     let cli: Cli = Cli::parse_cli();
-        
+    
+    let action = cli.action.clone();
     let e4f: Es4Forensics = cli.into();
-    e4f.run().await
+    e4f.run(action).await
 }
 
 struct Es4Forensics {
-    cli: Cli
+    strict_mode: bool,
+    index_name: String,
+    host: String,
+    port: u16,
+    protocol: Protocol,
+    omit_certificate_validation: bool,
+    username: String,
+    password: String,
 }
 
 impl Es4Forensics {
-    pub async fn run(self) -> Result<()> {
+    pub async fn run(self, action: Action) -> Result<()> {
 
         let builder = self.create_index_builder()?;
 
-        match &self.cli.action {
+        match action {
             Action::CreateIndex => {
                 if builder.index_exists().await? {
-                    return Err(anyhow!("index '{}' exists already", self.cli.index_name));
+                    return Err(anyhow!("index '{}' exists already", self.index_name));
                 }
                 builder.create_index().await?;
                 Ok(())
             }
             Action::Import{input_file, bulk_size} => {
-                let source = StreamSource::from(input_file)?;
-                self.import(builder, source.into(), *bulk_size).await
+                self.import(builder, input_file.into(), bulk_size).await
             }
         }
     }
 
-    async fn import(&self, builder: IndexBuilder, reader: Box<dyn BufRead + Send>, bulk_size: usize) -> Result<()> {
+    async fn import(&self, builder: IndexBuilder, reader: FileInput, bulk_size: usize) -> Result<()> {
         let mut index = builder.connect().await?;
         index.set_cache_size(bulk_size).await?;
 
@@ -50,7 +57,7 @@ impl Es4Forensics {
             let value = match serde_json::from_str(&line) {
                 Ok(v) => v,
                 Err(why) => {
-                    if self.cli.strict_mode {
+                    if self.strict_mode {
                         return Err(anyhow!(why))
                     } else {
                         ::log::error!("error while parsing: {}", why);
@@ -67,16 +74,16 @@ impl Es4Forensics {
     }    
 
     fn create_index_builder(&self) -> Result<IndexBuilder> {
-        let mut builder = IndexBuilder::with_name(self.cli.index_name.clone())
-            .with_host(self.cli.host.clone())
-            .with_port(self.cli.port)
+        let mut builder = IndexBuilder::with_name(self.index_name.clone())
+            .with_host(self.host.clone())
+            .with_port(self.port)
             .with_credentials(Credentials::Basic(
-                self.cli.username.clone(),
-                self.cli.password.clone(),
+                self.username.clone(),
+                self.password.clone(),
             ))
-            .with_protocol(self.cli.protocol.clone());
+            .with_protocol(self.protocol.clone());
 
-        if self.cli.omit_certificate_validation {
+        if self.omit_certificate_validation {
             ::log::warn!("disabling certificate validation");
             builder = builder.without_certificate_validation();
         }
@@ -88,7 +95,14 @@ impl Es4Forensics {
 impl From<Cli> for Es4Forensics {
     fn from(cli: Cli) -> Self {
         Self {
-            cli
+            strict_mode: cli.strict_mode,
+            host: cli.host.clone(),
+            port: cli.port,
+            username: cli.username.clone(),
+            password: cli.password.clone(),
+            index_name: cli.index_name.clone(),
+            protocol: cli.protocol.clone(),
+            omit_certificate_validation: cli.omit_certificate_validation,
         }
     }
 }

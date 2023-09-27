@@ -57,8 +57,9 @@ pub enum Command {
     },
 }
 
+/// crate provide functions to analyze evtx files
 #[derive(Parser)]
-#[clap(name=env!("CARGO_BIN_NAME"), author, version, about, long_about = None)]
+#[clap(name=env!("CARGO_BIN_NAME"), author, version, long_about = None)]
 pub(crate) struct Cli {
     #[command(subcommand)]
     pub(crate) command: Command,

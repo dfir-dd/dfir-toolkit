@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
 use anyhow::{anyhow, bail, Result};
-use dfir_toolkit::common::bodyfile::Bodyfile3Line;
 use chrono::{DateTime, Utc};
+use dfir_toolkit::common::bodyfile::Bodyfile3Line;
 use dfir_toolkit::es4forensics::{objects::WindowsEvent, TimelineObject};
 use evtx::SerializedEvtxRecord;
 use getset::{Getters, Setters};
@@ -25,12 +25,11 @@ pub(crate) struct BfData<'a> {
     custom_data: HashMap<&'a String, &'a Value>,
 
     #[serde(skip)]
-    #[getset(set="pub (crate)")]
+    #[getset(set = "pub (crate)")]
     enable_json_output: bool,
 }
 
 impl<'a> BfData<'a> {
-
     pub(crate) fn try_into_mactime(&self) -> Result<String> {
         let bf_line = Bodyfile3Line::new()
             .with_mtime(self.timestamp.timestamp())

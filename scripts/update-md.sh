@@ -6,35 +6,43 @@ cat >README.md <<'EOF'
 
 # DFIR Toolkit
 
+<img align="right" width="64px" src="https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/images/fuchs_blau_q.png?raw=true" />
+
+[![Crates.io](https://img.shields.io/crates/v/dfir-toolkit)](https://crates.io/crates/dfir-toolkit)
+[![Crates.io (latest)](https://img.shields.io/crates/dv/dfir-toolkit)](https://crates.io/crates/dfir-toolkit)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/dfir-dd/dfir-toolkit/cargo_test.yml)
+[![Codecov](https://img.shields.io/codecov/c/github/dfir-dd/dfir-toolkit)](https://app.codecov.io/gh/dfir-dd/dfir-toolkit)
+
+
 # Table of contents
 
 - [Installation](#installation)
 - [Overview of timelining tools](#overview-of-timelining-tools)
 - [Tools](#tools)
-  - [x] [`cleanhive`](#cleanhive)
-  - [x] [`evtx2bodyfile`](#evtx2bodyfile)
-  - [x] [`evtxanalyze`](#evtxanalyze)
-  - [x] [`evtxscan`](#evtxscan)
-  - [x] [`evtxcat`](#evtxcat)
-  - [x] [`evtxls`](#evtxls)
-  - [x] [`es4forensics`](#es4forensics)
-  - [x] [`hivescan`](#hivescan)
-  - [x] [`ipgrep`](#ipgrep)
+  - [x] [`cleanhive`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/cleanhive.md)
+  - [x] [`evtx2bodyfile`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/evtx2bodyfile.md)
+  - [x] [`evtxanalyze`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/avtxanalyze.md)
+  - [x] [`evtxscan`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/evtxscan.md)
+  - [x] [`evtxcat`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/evtxcat.md)
+  - [x] [`evtxls`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/evtxls.md)
+  - [x] [`es4forensics`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/es4forensics.md)
+  - [x] [`hivescan`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/hivescan.md)
+  - [x] [`ipgrep`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/ipgrep.md)
   - [ ] [`lnk2bodyfile`](https://github.com/janstarke/lnk2bodyfile)
-  - [x] [`mactime2`](#mactime2)
+  - [x] [`mactime2`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/mactime2.md)
   - [ ] [`mft2bodyfile`](https://github.com/janstarke/mft2bodyfile)
   - [ ] [`ntdsextract2`](https://github.com/janstarke/ntdsextract2)
-  - [x] [`pol_export`](#pol_export)
+  - [x] [`pol_export`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/pol_export.md)
   - [ ] [`procbins`](https://github.com/janstarke/procbins)
-  - [x] [`regdump`](#regdump)
+  - [x] [`regdump`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/regdump.md)
   - [ ] [`regls`](https://github.com/janstarke/regls)
   - [ ] [`regview`](https://github.com/janstarke/regview)
-  - [ ] [`ts2date`](https://github.com/janstarke/ts2date)
+  - [x] [`ts2date`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/ts2date.md)
   - [ ] [`usnjrnl_dump`](https://github.com/janstarke/usnjrnl)
 
 # Overview of timelining tools
 
-<img src="https://github.com/dfir-dd/dfir-toolkit/blob/master/doc/images/tools.svg?raw=true">
+<img src="https://raw.githubusercontent.com/dfir-dd/dfir-toolkit/main/doc/images/tools.svg">
 
 # Installation
 
@@ -50,9 +58,8 @@ mactime2 --autocomplete bash | sudo tee /etc/bash_completion.d/mactime2
 
 would install a autocompletion script in `/etc/bash_completion.d/mactime2`.
 
-# Tools
 EOF
 
 for B in $(cd src/bin; echo *); do
-    cargo run --bin $B -- --markdown-help >>README.md
+    cargo run --bin $B -- --markdown-help >>doc/$B.md
 done

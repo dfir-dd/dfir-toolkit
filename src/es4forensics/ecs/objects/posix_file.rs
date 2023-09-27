@@ -115,13 +115,13 @@ impl TryFrom<(&Bodyfile3Line, &Tz)> for PosixFile {
         Ok(Self {
             name: bfline.get_name().to_string(),
             inode: bfline.get_inode().to_string(),
-            uid: bfline.get_uid(),
-            gid: bfline.get_gid(),
-            size: bfline.get_size(),
-            atime: Self::load_timestamp(bfline.get_atime(), src_tz)?,
-            mtime: Self::load_timestamp(bfline.get_mtime(), src_tz)?,
-            ctime: Self::load_timestamp(bfline.get_ctime(), src_tz)?,
-            crtime: Self::load_timestamp(bfline.get_crtime(), src_tz)?,
+            uid: *bfline.get_uid(),
+            gid: *bfline.get_gid(),
+            size: *bfline.get_size(),
+            atime: Self::load_timestamp(*bfline.get_atime(), src_tz)?,
+            mtime: Self::load_timestamp(*bfline.get_mtime(), src_tz)?,
+            ctime: Self::load_timestamp(*bfline.get_ctime(), src_tz)?,
+            crtime: Self::load_timestamp(*bfline.get_crtime(), src_tz)?,
         })
     }
 }

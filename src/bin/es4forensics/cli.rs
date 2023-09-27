@@ -1,31 +1,34 @@
-use clap::Parser;
-use log::LevelFilter;
 use crate::Protocol;
+use clap::{Parser, ValueHint};
+use clio::Input;
 use dfir_toolkit::common::HasVerboseFlag;
+use log::LevelFilter;
 
 #[cfg(feature = "gzip")]
-const INPUTFILE_HELP: &str = "path to input file or '-' for stdin (files ending with .gz will be treated as being gzipped)";
+const INPUTFILE_HELP: &str =
+    "path to input file or '-' for stdin (files ending with .gz will be treated as being gzipped)";
 #[cfg(not(feature = "gzip"))]
 const INPUTFILE_HELP: &str = "path to input file or '-' for stdin";
 
-#[derive(clap::Subcommand)]
-pub (crate) enum Action {
+#[derive(clap::Subcommand, Clone)]
+pub(crate) enum Action {
     // create a new index
     CreateIndex,
 
     // import timeline data
     Import {
-        #[clap(default_value="-", help=INPUTFILE_HELP)]
-        input_file: String,
+        #[clap(default_value="-", help=INPUTFILE_HELP, value_hint=ValueHint::FilePath)]
+        input_file: Input,
 
         /// number of timeline entries to combine in one bulk operation
-        #[clap(long("bulk-size"), default_value_t=1000)]
-        bulk_size: usize
-    }
+        #[clap(long("bulk-size"), default_value_t = 1000)]
+        bulk_size: usize,
+    },
 }
 
+/// This crates provides structs and functions to insert timeline data into an elasticsearch index.
 #[derive(Parser)]
-#[clap(name=env!("CARGO_BIN_NAME"), author, version, about, long_about = None)]
+#[clap(name=env!("CARGO_BIN_NAME"), author, version, long_about = None)]
 pub struct Cli {
     #[command(subcommand)]
     pub(crate) action: Action,
@@ -39,7 +42,7 @@ pub struct Cli {
     pub(crate) index_name: String,
 
     /// server name or IP address of elasticsearch server
-    #[clap( 
+    #[clap(
         short('H'),
         long("host"),
         display_order = 810,
@@ -56,7 +59,7 @@ pub struct Cli {
     pub(crate) protocol: Protocol,
 
     /// omit certificate validation
-    #[clap( 
+    #[clap(
         short('k'),
         long("insecure"),
         display_order = 840,
@@ -77,7 +80,7 @@ pub struct Cli {
 }
 
 impl HasVerboseFlag for Cli {
-    fn log_level_filter(&self)-> LevelFilter {
+    fn log_level_filter(&self) -> LevelFilter {
         self.verbose.log_level_filter()
     }
 }
