@@ -16,7 +16,7 @@ impl CsvOutput {
 
 impl Mactime2Writer for CsvOutput {
     fn fmt(&self, timestamp: &i64, entry: &ListEntry) -> String {
-        let timestamp = ForensicsTimestamp::new(*timestamp, self.src_zone, self.dst_zone);
+        let timestamp = ForensicsTimestamp::new(*timestamp, self.src_zone, self.dst_zone).unwrap();
         format!(
             "{},{},{},{},{},{},{},\"{}\"",
             timestamp,
