@@ -18,7 +18,10 @@ fn main() -> Result<()> {
     }
 
     for filename in cli.lnk_files.iter() {
-        let lnkfile = LnkFile::from(filename);
+        let lnkfile = match LnkFile::try_from(filename) {
+            Ok(file) => file,
+            Err(e) => {println!("{:#?}", e); continue;},
+        };
         lnkfile.print_bodyfile();
     }
 

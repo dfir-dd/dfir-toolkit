@@ -1,3 +1,4 @@
+use anyhow::bail;
 use chrono::{DateTime, Utc};
 use clio::Input;
 use dfir_toolkit::common::bodyfile::Bodyfile3Line;
@@ -40,13 +41,16 @@ impl LnkFile {
     }
 }
 
-impl From<&Input> for LnkFile {
-    fn from(input: &Input) -> Self {
+impl TryFrom<&Input> for LnkFile {
+    type Error = anyhow::Error;
+
+    fn try_from(input: &Input) -> Result<Self, Self::Error> {
         let file_path = input.path().to_path_buf();
         let file_name = file_path.to_str().unwrap().to_string();
-        let lnk_file = ShellLink::open(file_path).unwrap();
-
-        Self { lnk_file, file_name }
+        match ShellLink::open(file_path) {
+            Ok(lnk_file) => Ok ( Self { lnk_file, file_name }),
+            Err(e) => bail!("{:?}: The file {} is not in a valid ShellLink format", e, file_name),
+        }
     }
 }
 
