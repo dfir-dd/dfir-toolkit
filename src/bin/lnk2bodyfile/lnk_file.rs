@@ -17,9 +17,11 @@ impl LnkFile {
 
     fn print_bodyfile_for_me(&self) {
         let header = self.lnk_file.header();
-        let linkinfo = self.lnk_file.link_info().clone().unwrap();
-        let localpath = match LinkInfo::local_base_path(&linkinfo) {
-            Some(s) => s,
+        let localpath = match self.lnk_file.link_info() {
+            Some(s1) => match LinkInfo::local_base_path(s1) {
+                Some(s2) => s2,
+                None => "-",
+            },
             None => "-",
         };
         let arguments = match self.lnk_file.arguments() {
@@ -46,7 +48,7 @@ impl TryFrom<&Input> for LnkFile {
 
     fn try_from(input: &Input) -> Result<Self, Self::Error> {
         let file_path = input.path().to_path_buf();
-        let file_name = file_path.to_str().unwrap().to_string();
+        let file_name = file_path.file_name().unwrap().to_str().unwrap().to_string();
         match ShellLink::open(file_path) {
             Ok(lnk_file) => Ok ( Self { lnk_file, file_name }),
             Err(e) => bail!("{:?}: The file {} is not in a valid ShellLink format", e, file_name),
