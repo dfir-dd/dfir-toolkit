@@ -1,21 +1,26 @@
 use dfir_toolkit::common::FancyParser;
 use cli::Cli;
-use anyhow::Result;
-use lnk_parser;
+use anyhow::{Result, bail};
+
+use crate::lnk_file::LnkFile;
 
 mod cli;
+mod lnk_file;
 
 fn main() -> Result<()> {
     let cli = Cli::parse_cli();
 
-    for filename in cli.lnk_files {
-        match LnkFile::try_from(&filename[..]) {
-            Ok(lnk_file) => lnk_file.print_bodyfile(),
-            Err(why) => log::error!("unable to open {filename}: {why}"),
-        }
+    if cli.lnk_files.iter().any(|f| !f.can_seek()) {
+        bail!(
+            "{} cannot read from a stream; you must specify a file",
+            env!("CARGO_BIN_NAME")
+        );
     }
 
-    println!("test");
+    for filename in cli.lnk_files.iter() {
+        let lnkfile = LnkFile::from(filename);
+        lnkfile.print_bodyfile();
+    }
 
     Ok(())
 }
