@@ -2,8 +2,7 @@ use anyhow::bail;
 use chrono::{DateTime, Utc};
 use clio::Input;
 use dfir_toolkit::common::bodyfile::Bodyfile3Line;
-use lnk::{ShellLinkHeader, ShellLink, LinkInfo};
-
+use lnk::{LinkInfo, ShellLink, ShellLinkHeader};
 
 pub struct LnkFile {
     lnk_file: ShellLink,
@@ -33,11 +32,20 @@ impl LnkFile {
         let ctime = ShellLinkHeader::creation_time(header);
 
         let bfline = Bodyfile3Line::new()
-            .with_name(&format!("{} {} (referred to by \"{}\")", localpath, arguments, self.file_name))
+            .with_name(&format!(
+                "{} {} (referred to by \"{}\")",
+                localpath, arguments, self.file_name
+            ))
             .with_size(ShellLinkHeader::file_size(header).into())
-            .with_ctime(DateTime::<Utc>::from_naive_utc_and_offset(ctime.datetime(), Utc).timestamp())
-            .with_mtime(DateTime::<Utc>::from_naive_utc_and_offset(mtime.datetime(), Utc).timestamp())
-            .with_atime(DateTime::<Utc>::from_naive_utc_and_offset(atime.datetime(), Utc).timestamp());
+            .with_ctime(
+                DateTime::<Utc>::from_naive_utc_and_offset(ctime.datetime(), Utc).timestamp(),
+            )
+            .with_mtime(
+                DateTime::<Utc>::from_naive_utc_and_offset(mtime.datetime(), Utc).timestamp(),
+            )
+            .with_atime(
+                DateTime::<Utc>::from_naive_utc_and_offset(atime.datetime(), Utc).timestamp(),
+            );
 
         println!("{bfline}");
     }
@@ -50,9 +58,15 @@ impl TryFrom<&Input> for LnkFile {
         let file_path = input.path().to_path_buf();
         let file_name = file_path.file_name().unwrap().to_str().unwrap().to_string();
         match ShellLink::open(file_path) {
-            Ok(lnk_file) => Ok ( Self { lnk_file, file_name }),
-            Err(e) => bail!("{:?}: The file {} is not in a valid ShellLink format", e, file_name),
+            Ok(lnk_file) => Ok(Self {
+                lnk_file,
+                file_name,
+            }),
+            Err(e) => bail!(
+                "{:?}: The file {} is not in a valid ShellLink format",
+                e,
+                file_name
+            ),
         }
     }
 }
-

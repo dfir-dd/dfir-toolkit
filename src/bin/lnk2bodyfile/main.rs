@@ -1,6 +1,6 @@
-use dfir_toolkit::common::FancyParser;
+use anyhow::{bail, Result};
 use cli::Cli;
-use anyhow::{Result, bail};
+use dfir_toolkit::common::FancyParser;
 
 use crate::lnk_file::LnkFile;
 
@@ -20,7 +20,10 @@ fn main() -> Result<()> {
     for filename in cli.lnk_files.iter() {
         let lnkfile = match LnkFile::try_from(filename) {
             Ok(file) => file,
-            Err(why) => {log::error!("{why}"); continue;},
+            Err(why) => {
+                log::error!("{why}");
+                continue;
+            }
         };
         lnkfile.print_bodyfile();
     }
