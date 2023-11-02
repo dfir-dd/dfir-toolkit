@@ -74,7 +74,7 @@ where
     if cli.display_bodyfile {
         let bf_line = Bodyfile3Line::new()
             .with_name(&current_path)
-            .with_ctime(keynode.timestamp().timestamp());
+            .with_ctime(keynode.timestamp().into());
         println!("{}", bf_line);
     } else {
         if cli.hide_timestamps {

@@ -42,7 +42,7 @@ pub(crate) fn display_pstree(cli: &Cli) -> anyhow::Result<()> {
                 .map(|r| r.expect("error reading event"))
                 .map(Process::try_from)
                 .filter_map(|r| r.expect("invalid event"))
-                .filter(|p| has_username(p))
+                .filter(has_username)
                 .map(|e| {
                     let pid = UniquePid::from(&e);
                     unique_pids

@@ -55,7 +55,7 @@ mod tests {
         let output = CsvOutput::new(Tz::UTC, Tz::UTC);
         for _ in 1..10 {
             let unix_ts = rand::random::<u32>() as i64;
-            let bf_line = Bodyfile3Line::new().with_crtime(unix_ts);
+            let bf_line = Bodyfile3Line::new().with_crtime(unix_ts.into());
             let entry = ListEntry {
                 flags: MACBFlags::B,
                 line: Arc::new(bf_line),
@@ -82,7 +82,7 @@ mod tests {
             let tz = random_tz();
             let output = CsvOutput::new(tz, tz);
             let unix_ts = rand::random::<u32>() as i64;
-            let bf_line = Bodyfile3Line::new().with_crtime(unix_ts);
+            let bf_line = Bodyfile3Line::new().with_crtime(unix_ts.into());
             let entry = ListEntry {
                 flags: MACBFlags::B,
                 line: Arc::new(bf_line),

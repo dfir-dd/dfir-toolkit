@@ -78,7 +78,7 @@ impl JsonSorter {
                 log::warn!("raw entry is {}", line.to_string());
             } else {
                 for (ts, line) in lines {
-                    entries.entry(ts).or_insert(BTreeSet::new()).insert(line);
+                    entries.entry(ts).or_default().insert(line);
                 }
             }
         }

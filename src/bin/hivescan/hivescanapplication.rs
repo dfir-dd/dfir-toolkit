@@ -68,7 +68,7 @@ impl HiveScanApplication {
             let bf_line = Bodyfile3Line::new()
                 .with_owned_name(bf_name)
                 .with_inode(&format!("{:x}", entry.offset().0))
-                .with_ctime(entry.nk().timestamp().timestamp());
+                .with_ctime(entry.nk().timestamp().into());
             println!("{}", bf_line);
         } else if entry.is_deleted() || force_print {
             println!(
