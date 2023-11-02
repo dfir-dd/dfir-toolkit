@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use anyhow::{anyhow, bail, Result};
 use chrono::{DateTime, Utc};
-use dfir_toolkit::common::bodyfile::Bodyfile3Line;
+use dfir_toolkit::common::bodyfile::{Bodyfile3Line, Modified};
 use dfir_toolkit::es4forensics::{objects::WindowsEvent, TimelineObject};
 use evtx::SerializedEvtxRecord;
 use getset::{Getters, Setters};
@@ -32,7 +32,7 @@ pub(crate) struct BfData<'a> {
 impl<'a> BfData<'a> {
     pub(crate) fn try_into_mactime(&self) -> Result<String> {
         let bf_line = Bodyfile3Line::new()
-            .with_mtime(self.timestamp.timestamp())
+            .with_mtime(Modified::from(self.timestamp.timestamp()))
             .with_owned_name(json!(self).to_string());
         Ok(bf_line.to_string())
     }

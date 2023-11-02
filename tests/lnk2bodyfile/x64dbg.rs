@@ -4,7 +4,7 @@ use std::{
 };
 
 use assert_cmd::Command;
-use dfir_toolkit::common::bodyfile::Bodyfile3Line;
+use dfir_toolkit::common::bodyfile::{Bodyfile3Line, Accessed, Modified, Changed, Created};
 
 #[test]
 fn test_x64dbg() {
@@ -30,10 +30,10 @@ fn test_x64dbg() {
     let bfline = Bodyfile3Line::try_from(&first_line[..]).unwrap();
     assert_eq!(bfline.get_name(), r#"C:\Program Files\x64dbg\release\x64\x64dbg.exe - (referred to by "x64dbg.lnk")"#);
     assert_eq!(*bfline.get_size(), 172768);
-    assert_eq!(*bfline.get_atime(), 1695724808);
-    assert_eq!(*bfline.get_mtime(), 1695250410);
-    assert_eq!(*bfline.get_ctime(), -1);
-    assert_eq!(*bfline.get_crtime(), 1695724422);
+    assert_eq!(*bfline.get_atime(), Accessed::from(1695724808));
+    assert_eq!(*bfline.get_mtime(), Modified::from(1695250410));
+    assert_eq!(*bfline.get_ctime(), Changed::default());
+    assert_eq!(*bfline.get_crtime(), Created::from(1695724422));
 
     assert!(lines_iterator.next().is_none());
 }

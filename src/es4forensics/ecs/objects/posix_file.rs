@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use anyhow::Result;
 
-use crate::common::bodyfile::Bodyfile3Line;
+use crate::common::bodyfile::{Bodyfile3Line, BehavesLikeI64};
 use chrono_tz::Tz;
 use serde::Serialize;
 
@@ -22,11 +22,11 @@ pub struct PosixFile {
 }
 
 impl PosixFile {
-    fn load_timestamp(ts: i64, tz: &Tz) -> Result<Option<Timestamp>> {
-        match ts {
-            -1 => Ok(None),
-            _ => {
-                Ok(Some((ts, tz).try_into()?))
+    fn load_timestamp<TS>(ts: &TS, tz: &Tz) -> Result<Option<Timestamp>> where TS: BehavesLikeI64 {
+        match ts.as_ref() {
+            None => Ok(None),
+            Some(ts) => {
+                Ok(Some((*ts, tz).try_into()?))
             }
         }
     }
@@ -118,10 +118,10 @@ impl TryFrom<(&Bodyfile3Line, &Tz)> for PosixFile {
             uid: *bfline.get_uid(),
             gid: *bfline.get_gid(),
             size: *bfline.get_size(),
-            atime: Self::load_timestamp(*bfline.get_atime(), src_tz)?,
-            mtime: Self::load_timestamp(*bfline.get_mtime(), src_tz)?,
-            ctime: Self::load_timestamp(*bfline.get_ctime(), src_tz)?,
-            crtime: Self::load_timestamp(*bfline.get_crtime(), src_tz)?,
+            atime: Self::load_timestamp(bfline.get_atime(), src_tz)?,
+            mtime: Self::load_timestamp(bfline.get_mtime(), src_tz)?,
+            ctime: Self::load_timestamp(bfline.get_ctime(), src_tz)?,
+            crtime: Self::load_timestamp(bfline.get_crtime(), src_tz)?,
         })
     }
 }

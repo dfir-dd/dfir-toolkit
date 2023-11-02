@@ -54,6 +54,7 @@ mod tests {
     use chrono_tz::Tz;
     use chrono_tz::TZ_VARIANTS;
     use dfir_toolkit::common::bodyfile::Bodyfile3Line;
+    use dfir_toolkit::common::bodyfile::Created;
     use std::sync::Arc;
 
     fn random_tz() -> Tz {
@@ -67,7 +68,7 @@ mod tests {
         let output = TxtOutput::new(Tz::UTC, Tz::UTC);
         for _ in 1..10 {
             let unix_ts = rand::random::<u32>() as i64;
-            let bf_line = Bodyfile3Line::new().with_crtime(unix_ts);
+            let bf_line = Bodyfile3Line::new().with_crtime(Created::from(unix_ts));
             let entry = ListEntry {
                 flags: MACBFlags::B,
                 line: Arc::new(bf_line),
@@ -97,7 +98,7 @@ mod tests {
             let tz = random_tz();
             let output = TxtOutput::new(tz, tz);
             let unix_ts = rand::random::<u32>() as i64;
-            let bf_line = Bodyfile3Line::new().with_crtime(unix_ts);
+            let bf_line = Bodyfile3Line::new().with_crtime(Created::from(unix_ts));
             let entry = ListEntry {
                 flags: MACBFlags::B,
                 line: Arc::new(bf_line),

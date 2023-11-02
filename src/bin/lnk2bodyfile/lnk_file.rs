@@ -1,5 +1,4 @@
 use anyhow::bail;
-use chrono::{DateTime, Utc};
 use clio::Input;
 use dfir_toolkit::common::bodyfile::Bodyfile3Line;
 use lnk::{LinkInfo, ShellLink, ShellLinkHeader};
@@ -37,15 +36,9 @@ impl LnkFile {
                 localpath, arguments, self.file_name
             ))
             .with_size(ShellLinkHeader::file_size(header).into())
-            .with_ctime(
-                DateTime::<Utc>::from_naive_utc_and_offset(ctime.datetime(), Utc).timestamp(),
-            )
-            .with_mtime(
-                DateTime::<Utc>::from_naive_utc_and_offset(mtime.datetime(), Utc).timestamp(),
-            )
-            .with_atime(
-                DateTime::<Utc>::from_naive_utc_and_offset(atime.datetime(), Utc).timestamp(),
-            );
+            .with_ctime(ctime.datetime().into())
+            .with_mtime(mtime.datetime().into())
+            .with_atime(atime.datetime().into());
 
         println!("{bfline}");
     }
