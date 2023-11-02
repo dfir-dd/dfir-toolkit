@@ -28,7 +28,7 @@ impl LnkFile {
         };
         let atime = ShellLinkHeader::access_time(header);
         let mtime = ShellLinkHeader::write_time(header);
-        let ctime = ShellLinkHeader::creation_time(header);
+        let crtime = ShellLinkHeader::creation_time(header);
 
         let bfline = Bodyfile3Line::new()
             .with_name(&format!(
@@ -36,7 +36,7 @@ impl LnkFile {
                 localpath, arguments, self.file_name
             ))
             .with_size(ShellLinkHeader::file_size(header).into())
-            .with_ctime(ctime.datetime().into())
+            .with_crtime(crtime.datetime().into())
             .with_mtime(mtime.datetime().into())
             .with_atime(atime.datetime().into());
 

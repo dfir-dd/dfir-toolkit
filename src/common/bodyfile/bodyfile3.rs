@@ -36,7 +36,7 @@ impl Bodyfile3Line {
     ///
     /// # Example
     /// ```
-    /// use dfir_toolkit::common::bodyfile::Bodyfile3Line;
+    /// use dfir_toolkit::common::bodyfile::{BehavesLikeI64, Bodyfile3Line};
     ///
     /// let bf = Bodyfile3Line::new();
     /// assert_eq!(bf.get_md5(), "0");
@@ -46,10 +46,10 @@ impl Bodyfile3Line {
     /// assert_eq!(*bf.get_uid(), 0);
     /// assert_eq!(*bf.get_gid(), 0);
     /// assert_eq!(*bf.get_size(), 0);
-    /// assert_eq!(*bf.get_atime(), -1);
-    /// assert_eq!(*bf.get_mtime(), -1);
-    /// assert_eq!(*bf.get_ctime(), -1);
-    /// assert_eq!(*bf.get_crtime(), -1);
+    /// assert!(bf.get_atime().is_none());
+    /// assert!(bf.get_mtime().is_none());
+    /// assert!(bf.get_ctime().is_none());
+    /// assert!(bf.get_crtime().is_none());
     /// ```
     pub fn new() -> Self {
         Self {
@@ -114,10 +114,10 @@ impl fmt::Display for Bodyfile3Line {
     ///             .with_uid(1003)
     ///             .with_gid(500)
     ///             .with_size(126378)
-    ///             .with_atime(12341)
-    ///             .with_mtime(12342)
-    ///             .with_ctime(12343)
-    ///             .with_crtime(12344);
+    ///             .with_atime(12341.into())
+    ///             .with_mtime(12342.into())
+    ///             .with_ctime(12343.into())
+    ///             .with_crtime(12344.into());
     /// let line = bf.to_string();
     /// assert_eq!(line, "4bad420da66571dac7f1ace995cc55c6|sample.txt|87915-128-1|r/rrwxrwxrwx|1003|500|126378|12341|12342|12343|12344")
     /// ```
@@ -218,7 +218,7 @@ pub enum Bodyfile3ParserError {
     /// assert_matches!(Bodyfile3Line::try_from("0||0||0|0|0|X|-1|-1|-1"), Err(Bodyfile3ParserError::IllegalATime));
     /// assert_matches!(Bodyfile3Line::try_from("0||0||0|0|0|-5|-1|-1|-1"), Err(Bodyfile3ParserError::IllegalATime));
     /// let valid_bf = Bodyfile3Line::try_from("0||0||1|0|0|5|-1|-1|-1").unwrap();
-    /// assert_eq!(*valid_bf.get_atime(), 5);
+    /// assert_eq!(*valid_bf.get_atime(), 5.into());
     /// ```
     IllegalATime,
 
@@ -234,7 +234,7 @@ pub enum Bodyfile3ParserError {
     /// assert_matches!(Bodyfile3Line::try_from("0||0||0|0|0|-1|X|-1|-1"), Err(Bodyfile3ParserError::IllegalMTime));
     /// assert_matches!(Bodyfile3Line::try_from("0||0||0|0|0|-1|-5|-1|-1"), Err(Bodyfile3ParserError::IllegalMTime));
     /// let valid_bf = Bodyfile3Line::try_from("0||0||1|0|0|-1|5|-1|-1").unwrap();
-    /// assert_eq!(*valid_bf.get_mtime(), 5);
+    /// assert_eq!(*valid_bf.get_mtime(), 5.into());
     /// ```
     IllegalMTime,
 
@@ -250,7 +250,7 @@ pub enum Bodyfile3ParserError {
     /// assert_matches!(Bodyfile3Line::try_from("0||0||0|0|0|-1|-1|X|-1"), Err(Bodyfile3ParserError::IllegalCTime));
     /// assert_matches!(Bodyfile3Line::try_from("0||0||0|0|0|-1|-1|-5|-1"), Err(Bodyfile3ParserError::IllegalCTime));
     /// let valid_bf = Bodyfile3Line::try_from("0||0||1|0|0|-1|-1|5|-1").unwrap();
-    /// assert_eq!(*valid_bf.get_ctime(), 5);
+    /// assert_eq!(*valid_bf.get_ctime(), 5.into());
     /// ```
     IllegalCTime,
 
@@ -266,7 +266,7 @@ pub enum Bodyfile3ParserError {
     /// assert_matches!(Bodyfile3Line::try_from("0||0||0|0|0|-1|-1|-1|X"), Err(Bodyfile3ParserError::IllegalCRTime));
     /// assert_matches!(Bodyfile3Line::try_from("0||0||0|0|0|-1|-1|-1|-5"), Err(Bodyfile3ParserError::IllegalCRTime));
     /// let valid_bf = Bodyfile3Line::try_from("0||0||1|0|0|-1|-1|-1|5").unwrap();
-    /// assert_eq!(*valid_bf.get_crtime(), 5);
+    /// assert_eq!(*valid_bf.get_crtime(), 5.into());
     /// ```
     IllegalCRTime,
 }
@@ -295,7 +295,7 @@ impl TryFrom<&str> for Bodyfile3Line {
     ///
     /// # Example
     /// ```
-    /// use dfir_toolkit::common::bodyfile::{Bodyfile3Line, Bodyfile3ParserError};
+    /// use dfir_toolkit::common::bodyfile::{Bodyfile3Line, Bodyfile3ParserError, Accessed, Modified, Changed, Created};
     /// use std::convert::TryFrom;
     /// let bf_line = Bodyfile3Line::try_from("0|ls -l |wc|1|2|3|4|5|6|7|8|9").unwrap();
     /// assert_eq!(bf_line.get_md5(), "0");
@@ -305,10 +305,10 @@ impl TryFrom<&str> for Bodyfile3Line {
     /// assert_eq!(*bf_line.get_uid(), 3);
     /// assert_eq!(*bf_line.get_gid(), 4);
     /// assert_eq!(*bf_line.get_size(), 5);
-    /// assert_eq!(*bf_line.get_atime(), 6);
-    /// assert_eq!(*bf_line.get_mtime(), 7);
-    /// assert_eq!(*bf_line.get_ctime(), 8);
-    /// assert_eq!(*bf_line.get_crtime(), 9);
+    /// assert_eq!(*bf_line.get_atime(), Accessed::from(6));
+    /// assert_eq!(*bf_line.get_mtime(), Modified::from(7));
+    /// assert_eq!(*bf_line.get_ctime(), Changed::from(8));
+    /// assert_eq!(*bf_line.get_crtime(), Created::from(9)); 
     /// ```
 
     fn try_from(line: &str) -> Result<Self, Self::Error> {

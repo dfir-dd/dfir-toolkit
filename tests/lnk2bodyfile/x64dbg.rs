@@ -31,9 +31,9 @@ fn test_x64dbg() {
     assert_eq!(bfline.get_name(), r#"C:\Program Files\x64dbg\release\x64\x64dbg.exe - (referred to by "x64dbg.lnk")"#);
     assert_eq!(*bfline.get_size(), 172768);
     assert_eq!(*bfline.get_atime(), Accessed::from(1695724808));
-    assert_eq!(*bfline.get_mtime(), Modified::from(1695250410));
+    assert_eq!(*bfline.get_mtime(), Modified::from(1695724422));
     assert_eq!(*bfline.get_ctime(), Changed::default());
-    assert_eq!(*bfline.get_crtime(), Created::from(1695724422));
+    assert_eq!(*bfline.get_crtime(), Created::from(1695250410));
 
     assert!(lines_iterator.next().is_none());
 }
