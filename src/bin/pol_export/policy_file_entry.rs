@@ -56,7 +56,7 @@ fn parse_wide_string<R: Read + Seek>(reader: &mut R, _ro: &ReadOptions, _args: (
 
 fn read_char<R: Read + Seek>(reader: &mut R, _ro: &ReadOptions, _args: ()) -> BinResult<char> {
     let b: [u16; 1] = reader.read_le()?;
-    Ok(char::decode_utf16(b.into_iter())
+    Ok(char::decode_utf16(b)
         .map(|r| r.unwrap_or(char::REPLACEMENT_CHARACTER))
         .next()
         .unwrap())
