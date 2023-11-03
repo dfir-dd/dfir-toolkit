@@ -7,7 +7,7 @@ use assert_cmd::Command;
 use dfir_toolkit::common::bodyfile::Bodyfile3Line;
 
 #[test]
-fn test_x64dbg() {
+fn test_obsidian() {
     let mut cmd = Command::cargo_bin("lnk2bodyfile").unwrap();
     let mut data_path = PathBuf::from(std::env::var("CARGO_MANIFEST_DIR").unwrap());
     data_path.push("tests");
