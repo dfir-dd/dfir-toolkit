@@ -1,4 +1,4 @@
-use dfir_toolkit::common::bodyfile::Bodyfile3Line;
+use dfir_toolkit::common::bodyfile::{Bodyfile3Line, BehavesLikeI64};
 use std::borrow::Borrow;
 use std::cmp::Ordering;
 use std::collections::{BTreeMap, HashSet};
@@ -59,13 +59,13 @@ fn insert_timestamp(
     line: Arc<Bodyfile3Line>,
 ) {
     let timestamp = if flag.contains(MACBFlags::M) {
-        *line.get_mtime()
+        *line.get_mtime().as_ref().unwrap()
     } else if flag.contains(MACBFlags::A) {
-        *line.get_atime()
+        *line.get_atime().as_ref().unwrap()
     } else if flag.contains(MACBFlags::C) {
-        *line.get_ctime()
+        *line.get_ctime().as_ref().unwrap()
     } else if flag.contains(MACBFlags::B) {
-        *line.get_crtime()
+        *line.get_crtime().as_ref().unwrap()
     } else {
         -1
     };
@@ -139,10 +139,10 @@ impl BodyfileSorter {
             } // delete the borrow to line
 
             // we need *some* value in mactimes!
-            if *line.get_mtime() == -1
-                && *line.get_atime() == -1
-                && *line.get_ctime() == -1
-                && *line.get_crtime() == -1
+            if line.get_mtime().is_none()
+                && line.get_atime().is_none()
+                && line.get_ctime().is_none()
+                && line.get_crtime().is_none()
             {
                 insert_timestamp(&mut entries, MACBFlags::NONE, Arc::clone(&line));
                 continue;
@@ -150,31 +150,31 @@ impl BodyfileSorter {
 
             let mut flags: [MACBFlags; 4] = [MACBFlags::NONE; 4];
 
-            if *line.get_mtime() != -1 {
+            if line.get_mtime().is_some() {
                 flags[0] |= MACBFlags::M;
             }
-            if *line.get_atime() != -1 {
-                if line.get_mtime() == line.get_atime() {
+            if line.get_atime().is_some() {
+                if line.get_mtime().as_ref() == line.get_atime().as_ref() {
                     flags[0] |= MACBFlags::A;
                 } else {
                     flags[1] |= MACBFlags::A;
                 }
             }
-            if *line.get_ctime() != -1 {
-                if line.get_mtime() == line.get_ctime() {
+            if line.get_ctime().is_some() {
+                if line.get_mtime().as_ref() == line.get_ctime().as_ref() {
                     flags[0] |= MACBFlags::C;
-                } else if line.get_atime() == line.get_ctime() {
+                } else if line.get_atime().as_ref() == line.get_ctime().as_ref() {
                     flags[1] |= MACBFlags::C;
                 } else {
                     flags[2] |= MACBFlags::C;
                 }
             }
-            if *line.get_crtime() != -1 {
-                if line.get_mtime() == line.get_crtime() {
+            if line.get_crtime().is_some() {
+                if line.get_mtime().as_ref() == line.get_crtime().as_ref() {
                     flags[0] |= MACBFlags::B;
-                } else if line.get_atime() == line.get_crtime() {
+                } else if line.get_atime().as_ref() == line.get_crtime().as_ref() {
                     flags[1] |= MACBFlags::B;
-                } else if line.get_ctime() == line.get_crtime() {
+                } else if line.get_ctime().as_ref() == line.get_crtime().as_ref() {
                     flags[2] |= MACBFlags::B;
                 } else {
                     flags[3] |= MACBFlags::B;

@@ -52,6 +52,9 @@
 pub mod bodyfile3;
 pub use bodyfile3::*;
 
+mod times;
+pub use times::*;
+
 #[cfg(test)]
 mod tests {
     use super::Bodyfile3Line;

@@ -36,6 +36,8 @@ impl Ord for UniquePid {
         self.timestamp.cmp(&other.timestamp)
     }
 }
+
+#[allow(clippy::incorrect_partial_ord_impl_on_ord_type)]
 impl PartialOrd for UniquePid {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         if self.pid != other.pid {
