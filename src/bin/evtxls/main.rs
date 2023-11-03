@@ -80,7 +80,7 @@ impl EvtxLs {
                     }
 
                     if let Some(not_after) = self.cli.not_after.as_ref() {
-                        if &record.timestamp < not_after {
+                        if &record.timestamp > not_after {
                             continue;
                         }
                     }
