@@ -26,7 +26,7 @@ impl Mactime2Writer for TxtOutput {
     fn fmt(&self, timestamp: &i64, entry: &ListEntry) -> String {
         let ts = if *timestamp != *self.last_ts.0.borrow() {
             *self.last_ts.1.borrow_mut() =
-                ForensicsTimestamp::new(*timestamp, self.src_zone, self.dst_zone).to_string();
+                ForensicsTimestamp::new(*timestamp, self.src_zone, self.dst_zone).unwrap().to_string();
             *self.last_ts.0.borrow_mut() = *timestamp;
             self.last_ts.1.borrow()
         } else {
