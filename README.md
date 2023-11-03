@@ -23,7 +23,7 @@
   - [x] [`es4forensics`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/es4forensics.md)
   - [x] [`hivescan`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/hivescan.md)
   - [x] [`ipgrep`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/ipgrep.md)
-  - [ ] [`lnk2bodyfile`](https://github.com/janstarke/lnk2bodyfile)
+  - [x] [`lnk2bodyfile`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/lnk2bodyfile.md)
   - [x] [`mactime2`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/mactime2.md)
   - [ ] [`mft2bodyfile`](https://github.com/janstarke/mft2bodyfile)
   - [ ] [`ntdsextract2`](https://github.com/janstarke/ntdsextract2)
