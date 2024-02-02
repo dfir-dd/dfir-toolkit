@@ -732,6 +732,7 @@ dependencies = [
  "getset",
  "indicatif",
  "lazy-regex",
+ "lazy_static",
  "lnk",
  "log",
  "matches",
