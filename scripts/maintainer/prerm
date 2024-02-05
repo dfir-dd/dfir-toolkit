@@ -1,0 +1,4 @@
+#!/bin/bash
+
+rm -f /etc/bash_completion.d/dfir-dd*
+rm -f /usr/local/share/zsh/site-functions/dfir-dd*
