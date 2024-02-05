@@ -77,9 +77,15 @@ name = "lnk2bodyfile"
 path = "src/bin/lnk2bodyfile/main.rs"
 required-features = ["lnk2bodyfile"]
 
+
+[[bin]]
+name = "pf2bodyfile"
+path = "src/bin/pf2bodyfile/main.rs"
+required-features = ["pf2bodyfile"]
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
-default = ["pol_export", "mactime2", "evtxtools", "regdump", "hivescan", "cleanhive", "ipgrep", "ts2date", "lnk2bodyfile"]
+default = ["pol_export", "mactime2", "evtxtools", "regdump", "hivescan", "cleanhive", "ipgrep", "ts2date", "lnk2bodyfile", "pf2bodyfile"]
 mactime2 = ["gzip", "elastic", "chrono-tz", "thiserror", "bitflags", "encoding_rs_io"]
 gzip = ["flate2"]
 elastic = ["elasticsearch", "tokio", "futures", "serde_json", "sha2", "base64", "num-traits", "num-derive", "strum", "strum_macros", "tokio-async-drop"]
@@ -93,6 +99,7 @@ evtx2bodyfile = ["evtx", "getset", "ouroboros", "indicatif"]
 ipgrep = []
 ts2date = ["regex"]
 lnk2bodyfile = ["lnk"]
+pf2bodyfile = ["num", "libc"]
 
 regdump = ["nt_hive2"]
 hivescan = ["nt_hive2"]
@@ -164,6 +171,10 @@ nt_hive2 = {version="4.0.1", optional=true}
 
 # lnk2bodyfile
 lnk = {version="0.5.1", optional=true}
+
+# pf2bodyfile
+libc = {version="0.2", optional=true}
+num = {version="0", optional=true}
 
 [dev-dependencies]
 
