@@ -37,7 +37,7 @@ impl EvtxLs {
         let mut records = Vec::new();
 
         for f_name in self.cli.evtx_files.iter() {
-            let path = PathBuf::try_from(&f_name)?;
+            let path = PathBuf::from(&f_name);
 
             let settings = ParserSettings::default().num_threads(0);
             let parser = EvtxParser::from_path(path)?.with_configuration(settings);
