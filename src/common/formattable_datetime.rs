@@ -9,7 +9,7 @@ lazy_static! {
         DateTime::<FixedOffset>::parse_from_rfc3339("0000-00-00T00:00:00+00:00").unwrap();
 }
 
-/// Wrapper around [`DateTime`] to alow customization of the Timestamp output
+/// Wrapper around [`DateTime`] to allow customization of the timestamp output
 /// using the `DFIR_DATE` environment variable
 /// 
 pub struct FormattableDatetime<TZ: TimeZone>(DateTime<TZ>)
