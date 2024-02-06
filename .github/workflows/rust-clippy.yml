@@ -38,6 +38,9 @@ jobs:
           components: clippy
           override: true
 
+      - name: Install required libscca-dev
+        run: sudo apt install -y libscca-dev
+        
       - name: Install required cargo
         run: cargo install clippy-sarif sarif-fmt
 

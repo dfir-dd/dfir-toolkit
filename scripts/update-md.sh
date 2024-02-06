@@ -20,6 +20,7 @@ cat >README.md <<'EOF'
 - [Overview of timelining tools](#overview-of-timelining-tools)
 - [Tools](#tools)
   - [x] [`cleanhive`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/cleanhive.md)
+  - [x] [`pf2bodyfile`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/pf2bodyfile.md)
   - [x] [`evtx2bodyfile`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/evtx2bodyfile.md)
   - [x] [`evtxanalyze`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/evtxanalyze.md)
   - [x] [`evtxscan`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/evtxscan.md)
@@ -47,6 +48,7 @@ cat >README.md <<'EOF'
 # Installation
 
 ```bash
+sudo apt install libscca-dev
 cargo install dfir-toolkit
 ```
 
