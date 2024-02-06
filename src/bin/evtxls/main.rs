@@ -16,7 +16,7 @@ use evtx::{EvtxParser, ParserSettings, SerializedEvtxRecord};
 use highlighted_string::HighlightedStringBuilder;
 use serde_json::Value;
 
-use dfir_toolkit::common::FancyParser;
+use dfir_toolkit::common::{FancyParser, FormattableDatetime};
 
 use crate::system_field::FilterBySystemField;
 
@@ -37,7 +37,7 @@ impl EvtxLs {
         let mut records = Vec::new();
 
         for f_name in self.cli.evtx_files.iter() {
-            let path = PathBuf::try_from(&f_name)?;
+            let path = PathBuf::from(&f_name);
 
             let settings = ParserSettings::default().num_threads(0);
             let parser = EvtxParser::from_path(path)?.with_configuration(settings);
@@ -145,18 +145,10 @@ impl EvtxLs {
             .unwrap_or_else(|| "".to_owned())
             .replace("\\u001b", "\u{001b}");
 
-        let output = match self.cli.delimiter {
-            None => format!(
-                "{} {system_fields}{event_data}",
-                record.timestamp.format("%FT%T%.3f")
-            ),
-            Some(d) => format!(
-                "{}{d}{system_fields}{event_data}",
-                record.timestamp.to_rfc3339()
-            ),
-        }
-        .normal();
+        let timestamp = FormattableDatetime::from(&record.timestamp);
+        let delimiter = self.cli.delimiter.unwrap_or(' ');
 
+        let output=format!("{timestamp}{delimiter}{system_fields}{event_data}").normal();
         println!("{output}");
 
         Ok(())

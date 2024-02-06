@@ -1,7 +1,7 @@
 use anyhow::{bail, Result};
 
 use dfir_toolkit::common::bodyfile::Bodyfile3Line;
-use dfir_toolkit::common::FancyParser;
+use dfir_toolkit::common::{FancyParser, FormattableDatetime};
 use nt_hive2::*;
 use simplelog::{Config, SimpleLogger};
 use std::fs::File;
@@ -80,7 +80,7 @@ where
         if cli.hide_timestamps {
             println!("\n[{}]", &current_path);
         } else {
-            println!("\n[{}]; {}", &current_path, keynode.timestamp());
+            println!("\n[{}]; {}", &current_path, FormattableDatetime::from(keynode.timestamp()));
         }
 
         print_values(keynode);

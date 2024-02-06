@@ -10,7 +10,6 @@ mod active_directory_domain_name;
 pub use session::*;
 pub use session_store::*;
 pub use session_event::*;
-pub use session_event_templates::*;
 pub use session_event_error::*;
 pub use session_as_json::*;
 pub use session_as_csv::*;

@@ -55,3 +55,39 @@ mactime2 --autocomplete bash | sudo tee /etc/bash_completion.d/mactime2
 
 would install a autocompletion script in `/etc/bash_completion.d/mactime2`.
 
+# Usage
+
+## Configuring the global timestamp format
+
+Per default, the DFIR toolkit uses an RFC3339-compliant data format. If you want to, you can change the data format
+being used by setting the `DFIR_DATE` environment variable. Let's look at an example:
+
+```shell
+$ mac2time2 -b tests/data/mactime2/sample.bodyfile -d | head
+1970-01-01T00:00:00+00:00,0,macb,V/V---------,0,0,62447617,"/$OrphanFiles"
+2022-04-18T10:28:59+00:00,4096,m...,d/drwxr-xr-x,0,0,42729473,"/proc"
+2022-04-18T10:28:59+00:00,4096,m...,d/drwxr-xr-x,0,0,36306945,"/sys"
+2022-04-21T00:57:50+00:00,7,m...,l/lrwxrwxrwx,0,0,12,"/bin -> usr/bin"
+2022-04-21T00:57:50+00:00,7,m...,l/lrwxrwxrwx,0,0,13,"/lib -> usr/lib"
+2022-04-21T00:57:50+00:00,9,m...,l/lrwxrwxrwx,0,0,14,"/lib32 -> usr/lib32"
+2022-04-21T00:57:50+00:00,9,m...,l/lrwxrwxrwx,0,0,15,"/lib64 -> usr/lib64"
+2022-04-21T00:57:50+00:00,10,m...,l/lrwxrwxrwx,0,0,16,"/libx32 -> usr/libx32"
+2022-04-21T00:57:50+00:00,8,m...,l/lrwxrwxrwx,0,0,17,"/sbin -> usr/sbin"
+2022-04-21T00:57:51+00:00,4096,m...,d/drwxr-xr-x,0,0,38010881,"/srv"
+```
+
+```shell
+$ DFIR_DATE="%F %T (%Z)" mac2time2 -b tests/data/mactime2/sample.bodyfile -d | head
+1970-01-01 00:00:00 (UTC),0,macb,V/V---------,0,0,62447617,"/$OrphanFiles"
+2022-04-18 10:28:59 (UTC),4096,m...,d/drwxr-xr-x,0,0,42729473,"/proc"
+2022-04-18 10:28:59 (UTC),4096,m...,d/drwxr-xr-x,0,0,36306945,"/sys"
+2022-04-21 00:57:50 (UTC),7,m...,l/lrwxrwxrwx,0,0,12,"/bin -> usr/bin"
+2022-04-21 00:57:50 (UTC),7,m...,l/lrwxrwxrwx,0,0,13,"/lib -> usr/lib"
+2022-04-21 00:57:50 (UTC),9,m...,l/lrwxrwxrwx,0,0,14,"/lib32 -> usr/lib32"
+2022-04-21 00:57:50 (UTC),9,m...,l/lrwxrwxrwx,0,0,15,"/lib64 -> usr/lib64"
+2022-04-21 00:57:50 (UTC),10,m...,l/lrwxrwxrwx,0,0,16,"/libx32 -> usr/libx32"
+2022-04-21 00:57:50 (UTC),8,m...,l/lrwxrwxrwx,0,0,17,"/sbin -> usr/sbin"
+2022-04-21 00:57:51 (UTC),4096,m...,d/drwxr-xr-x,0,0,38010881,"/srv"
+```
+
+The value of `DFIR_DATE` can be any format string which can also be used in `DateTime::strftime` (<https://docs.rs/chrono/latest/chrono/format/strftime/index.html>)
