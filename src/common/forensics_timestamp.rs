@@ -10,7 +10,16 @@ lazy_static! {
     static ref TIMESTAMP_FORMAT: Option<String> = {
         if let Ok(format) = std::env::var("DFIR_DATE") {
             if StrftimeItems::new(&format).any(|i| i == chrono::format::Item::Error) {
-                panic!("ERROR: invalid date format: '{format}'! Aborting execution!")
+                eprintln!();
+                eprintln!("ERROR: invalid date format: '{format}' stored in environment variable $DFIR_DATE!");
+                eprintln!();
+                eprintln!("Please take a look at");
+                eprintln!();
+                eprintln!("        <https://docs.rs/chrono/latest/chrono/format/strftime/index.html>");
+                eprintln!();
+                eprintln!("to see which format strings are accepted.");
+                eprintln!();
+                std::process::exit(-1);
             } else {
                 Some(format)
             }
