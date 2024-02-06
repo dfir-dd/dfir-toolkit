@@ -1,12 +1,23 @@
 use std::fmt::Display;
 
+use chrono::format::StrftimeItems;
 use chrono::offset::TimeZone;
 use chrono::{DateTime, FixedOffset, LocalResult, NaiveDateTime};
 use chrono_tz::Tz;
 use lazy_static::lazy_static;
 
 lazy_static! {
-    static ref TIMESTAMP_FORMAT: Option<String> = std::env::var("DFIR_DATE").ok();
+    static ref TIMESTAMP_FORMAT: Option<String> = {
+        if let Ok(format) = std::env::var("DFIR_DATE") {
+            if StrftimeItems::new(&format).any(|i| i == chrono::format::Item::Error) {
+                panic!("ERROR: invalid date format: '{format}'! Aborting execution!")
+            } else {
+                Some(format)
+            }
+        } else {
+            None
+        }
+    };
     static ref ZERO: DateTime<FixedOffset> =
         DateTime::<FixedOffset>::parse_from_rfc3339("0000-00-00T00:00:00+00:00").unwrap();
 }
