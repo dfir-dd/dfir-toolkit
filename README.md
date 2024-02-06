@@ -17,7 +17,7 @@
   - [x] [`cleanhive`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/cleanhive.md)
   - [x] [`pf2bodyfile`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/pf2bodyfile.md)
   - [x] [`evtx2bodyfile`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/evtx2bodyfile.md)
-  - [x] [`evtxanalyze`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/avtxanalyze.md)
+  - [x] [`evtxanalyze`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/evtxanalyze.md)
   - [x] [`evtxscan`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/evtxscan.md)
   - [x] [`evtxcat`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/evtxcat.md)
   - [x] [`evtxls`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/evtxls.md)
@@ -91,3 +91,5 @@ $ DFIR_DATE="%F %T (%Z)" mac2time2 -b tests/data/mactime2/sample.bodyfile -d | h
 ```
 
 The value of `DFIR_DATE` can be any format string which can also be used in `DateTime::strftime` (<https://docs.rs/chrono/latest/chrono/format/strftime/index.html>)
+
+
