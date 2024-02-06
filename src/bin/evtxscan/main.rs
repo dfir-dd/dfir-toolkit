@@ -16,7 +16,7 @@ fn main() -> Result<()> {
     let mut record_ids: Vec<EventId> = Vec::new();
     let mut records: HashMap<EventId, SerializedEvtxRecord<serde_json::Value>> = HashMap::new();
 
-    let path = PathBuf::try_from(&cli.evtx_file)?;
+    let path = PathBuf::from(&cli.evtx_file);
 
     let mut parser = EvtxParser::from_path(path)?;
     for record in parser.records_json_value() {

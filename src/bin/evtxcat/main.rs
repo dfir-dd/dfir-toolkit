@@ -19,7 +19,7 @@ use record_list_formatter::RecordListFormatter;
 fn main() -> Result<()> {
     let cli = Cli::parse_cli();
 
-    let path = PathBuf::try_from(&cli.evtx_file)?;
+    let path = PathBuf::from(&cli.evtx_file);
 
     let parser = EvtxParser::from_path(path)?;
 
