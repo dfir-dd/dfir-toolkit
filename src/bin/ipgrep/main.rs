@@ -1,7 +1,6 @@
 use anyhow::Result;
 use cli::Cli;
 use colored::control::SHOULD_COLORIZE;
-use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
 use std::{fs::File, io::BufReader};
 
 use dfir_toolkit::common::FancyParser;
@@ -14,13 +13,6 @@ use crate::format_ipv4::format_ipv4;
 
 fn main() -> Result<()> {
     let app = Cli::parse_cli();
-
-    TermLogger::init(
-        app.verbose.log_level_filter(),
-        Config::default(),
-        TerminalMode::Stderr,
-        ColorChoice::Auto,
-    )?;
 
     if app.display_colors {
         SHOULD_COLORIZE.set_override(true);
