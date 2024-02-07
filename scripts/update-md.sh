@@ -101,5 +101,5 @@ The value of `DFIR_DATE` can be any format string which can also be used in `Dat
 EOF
 
 for B in $(cd src/bin; echo *); do
-    cargo run --bin $B -- --markdown-help >>doc/$B.md
+    cargo run --bin $B -- --markdown-help >doc/$B.md
 done
