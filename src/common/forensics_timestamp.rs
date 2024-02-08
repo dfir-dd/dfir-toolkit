@@ -15,7 +15,9 @@ lazy_static! {
                 eprintln!();
                 eprintln!("Please take a look at");
                 eprintln!();
-                eprintln!("        <https://docs.rs/chrono/latest/chrono/format/strftime/index.html>");
+                eprintln!(
+                    "        <https://docs.rs/chrono/latest/chrono/format/strftime/index.html>"
+                );
                 eprintln!();
                 eprintln!("to see which format strings are accepted.");
                 eprintln!();
@@ -28,7 +30,8 @@ lazy_static! {
         }
     };
     static ref ZERO: DateTime<FixedOffset> =
-        DateTime::<FixedOffset>::parse_from_rfc3339("0000-00-00T00:00:00+00:00").unwrap();
+        DateTime::<FixedOffset>::parse_from_rfc3339("0000-00-00T00:00:00+00:00")
+            .expect("unable to parse literal timestamp");
 }
 
 pub struct ForensicsTimestamp {
@@ -63,10 +66,11 @@ impl ForensicsTimestamp {
 impl Display for ForensicsTimestamp {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.unix_ts >= 0 {
-            let src_timestamp = match self
-                .src_zone
-                .from_local_datetime(&NaiveDateTime::from_timestamp_opt(self.unix_ts, 0).unwrap())
-            {
+            let src_timestamp = match self.src_zone.from_local_datetime(
+                &NaiveDateTime::from_timestamp_opt(self.unix_ts, 0).unwrap_or_else(|| {
+                    panic!("unable to convert '{}' into unix timestamp", self.unix_ts)
+                }),
+            ) {
                 LocalResult::None => {
                     panic!("INVALID DATETIME");
                 }
