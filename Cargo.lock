@@ -742,7 +742,7 @@ dependencies = [
  "more-asserts",
  "nt_hive2",
  "num",
- "num-derive 0.3.3",
+ "num-derive 0.4.0",
  "num-traits",
  "ouroboros",
  "phf",
@@ -1056,11 +1056,12 @@ checksum = "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b"
 
 [[package]]
 name = "forensic-rs"
-version = "0.9.0"
+version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a7c13db42df6d5d46653880721c6de181ba19528014bee43d68b3c76fc02bcf0"
+checksum = "1e878efbc5ee339c257d8c18b1c8535864bcfb0ec9a4b7c0a6afd3aed718cf20"
 dependencies = [
  "serde",
+ "thiserror",
 ]
 
 [[package]]
