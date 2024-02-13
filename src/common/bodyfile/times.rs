@@ -2,13 +2,13 @@ use crate::common::bodyfile::Bodyfile3ParserError;
 use std::fmt::Display;
 use chrono::{DateTime, NaiveDateTime, Utc};
 
-#[derive(Debug, Default, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Accessed(Option<i64>);
-#[derive(Debug, Default, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Modified(Option<i64>);
-#[derive(Debug, Default, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Changed(Option<i64>);
-#[derive(Debug, Default, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Created(Option<i64>);
 
 pub trait BehavesLikeI64: From<i64> + From<Option<i64>> {

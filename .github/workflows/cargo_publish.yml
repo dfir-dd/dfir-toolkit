@@ -8,10 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         - uses: actions/checkout@v2
-        
-        - name: Install required libscca-dev
-          run: sudo apt install -y libscca-dev
-          
+                  
         - uses: actions-rs/toolchain@v1
           with:
               toolchain: stable

@@ -8,9 +8,6 @@ jobs:
     steps:
 
       - uses: actions/checkout@v1
-
-      - name: Install required libscca-dev
-        run: sudo apt install -y libscca-dev
     
       - uses: actions-rs/toolchain@v1
         with:

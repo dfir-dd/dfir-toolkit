@@ -702,7 +702,7 @@ dependencies = [
 
 [[package]]
 name = "dfir-toolkit"
-version = "0.10.0"
+version = "0.10.1"
 dependencies = [
  "anyhow",
  "assert-json-diff",
@@ -728,6 +728,8 @@ dependencies = [
  "encoding_rs_io",
  "evtx",
  "flate2",
+ "forensic-rs",
+ "frnsc-prefetch",
  "futures",
  "getset",
  "indicatif",
@@ -1053,12 +1055,32 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b"
 
 [[package]]
+name = "forensic-rs"
+version = "0.9.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1e878efbc5ee339c257d8c18b1c8535864bcfb0ec9a4b7c0a6afd3aed718cf20"
+dependencies = [
+ "serde",
+ "thiserror",
+]
+
+[[package]]
 name = "form_urlencoded"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a62bc1cf6f830c2ec14a513a9fb124d0a213a629668a4186f329db21fe045652"
 dependencies = [
  "percent-encoding",
+]
+
+[[package]]
+name = "frnsc-prefetch"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2ed2131c091273267486b2dabcc96c2bb6d7374d27f7827c37d98de86daa2a2f"
+dependencies = [
+ "crc32fast",
+ "forensic-rs",
 ]
 
 [[package]]

@@ -1,6 +1,6 @@
 [package]
 name = "dfir-toolkit"
-version = "0.10.0"
+version = "0.10.1"
 edition = "2021"
 authors = ["Jan Starke <jan.starke@posteo.de>", "Deborah Mahn <deborah.mahn@dfir-dd.de>"]
 description = "CLI tools for digital forensics and incident response"
@@ -99,7 +99,7 @@ evtx2bodyfile = ["evtx", "getset", "ouroboros", "indicatif"]
 ipgrep = []
 ts2date = ["regex"]
 lnk2bodyfile = ["lnk"]
-pf2bodyfile = ["num", "libc"]
+pf2bodyfile = ["num", "libc", "frnsc-prefetch", "forensic-rs"]
 
 regdump = ["nt_hive2"]
 hivescan = ["nt_hive2"]
@@ -176,6 +176,8 @@ lnk = {version="0.5.1", optional=true}
 # pf2bodyfile
 libc = {version="0.2", optional=true}
 num = {version="0", optional=true}
+frnsc-prefetch = {version="0.9", optional=true}
+forensic-rs = {version="0.9.1", optional=true}
 
 [dev-dependencies]
 
