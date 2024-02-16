@@ -1525,7 +1525,6 @@ checksum = "da2479e8c062e40bf0066ffa0bc823de0a9368974af99c9f6df941d2c231e03f"
 [[package]]
 name = "lnk"
 version = "0.5.1"
-source = "git+https://github.com/janstarke/lnk-rs.git?branch=main#8106162dc49b9ef3fc879b05d782f18ef33e6db1"
 dependencies = [
  "binread",
  "bitflags 2.4.0",

@@ -16,10 +16,7 @@ impl LnkFile {
 
     fn print_bodyfile_for_me(&self) {
         let header = self.lnk_file.header();
-        let localpath = match self.lnk_file.link_info() {
-            Some(s1) => LinkInfo::local_base_path(s1).unwrap_or("-"),
-            None => "-",
-        };
+        let localpath = self.lnk_file.link_target().unwrap_or("-".to_string());
         let arguments = match self.lnk_file.arguments() {
             Some(s) => s,
             None => "-",

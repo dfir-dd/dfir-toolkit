@@ -172,7 +172,8 @@ nt_hive2 = {version="4.0.1", optional=true}
 
 # lnk2bodyfile
 #lnk = {version="0.5.1", optional=true}
-lnk = { git="https://github.com/janstarke/lnk-rs.git", branch="main", optional=true }
+#lnk = { git="https://github.com/janstarke/lnk-rs.git", branch="main", optional=true }
+lnk = { path="../lnk-rs", optional=true}
 
 # pf2bodyfile
 libc = {version="0.2", optional=true}
