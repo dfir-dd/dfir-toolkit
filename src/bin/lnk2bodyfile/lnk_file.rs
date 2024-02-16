@@ -1,6 +1,7 @@
 use anyhow::bail;
 use clio::Input;
 use dfir_toolkit::common::bodyfile::Bodyfile3Line;
+use encoding_rs::WINDOWS_1252;
 use lnk::{LinkInfo, ShellLink, ShellLinkHeader};
 
 pub struct LnkFile {
@@ -16,10 +17,7 @@ impl LnkFile {
     fn print_bodyfile_for_me(&self) {
         let header = self.lnk_file.header();
         let localpath = match self.lnk_file.link_info() {
-            Some(s1) => match LinkInfo::local_base_path(s1) {
-                Some(s2) => s2,
-                None => "-",
-            },
+            Some(s1) => LinkInfo::local_base_path(s1).unwrap_or("-"),
             None => "-",
         };
         let arguments = match self.lnk_file.arguments() {
@@ -35,7 +33,7 @@ impl LnkFile {
                 "{} {} (referred to by \"{}\")",
                 localpath, arguments, self.file_name
             ))
-            .with_size(ShellLinkHeader::file_size(header).into())
+            .with_size((*ShellLinkHeader::file_size(header)).into())
             .with_crtime(crtime.datetime().into())
             .with_mtime(mtime.datetime().into())
             .with_atime(atime.datetime().into());
@@ -50,7 +48,7 @@ impl TryFrom<&Input> for LnkFile {
     fn try_from(input: &Input) -> Result<Self, Self::Error> {
         let file_path = input.path().to_path_buf();
         let file_name = file_path.file_name().unwrap().to_str().unwrap().to_string();
-        match ShellLink::open(file_path) {
+        match ShellLink::open(file_path, WINDOWS_1252) {
             Ok(lnk_file) => Ok(Self {
                 lnk_file,
                 file_name,
