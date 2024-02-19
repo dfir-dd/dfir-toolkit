@@ -22,10 +22,14 @@ impl LnkFile {
         let mtime = ShellLinkHeader::write_time(header);
         let crtime = ShellLinkHeader::creation_time(header);
 
+        let mut string_data = self.lnk_file.string_data().to_string();
+        if ! string_data.is_empty() {
+            string_data.push_str(", ");
+        }
+
         let bfline = Bodyfile3Line::new()
             .with_name(&format!(
-                "{} ({}, referred to by \"{}\")",
-                localpath, self.lnk_file.string_data(), self.file_name,
+                "{localpath} ({string_data}referred to by \"{}\")", self.file_name,
             ))
             .with_size((*ShellLinkHeader::file_size(header)).into())
             .with_crtime(crtime.datetime().into())
