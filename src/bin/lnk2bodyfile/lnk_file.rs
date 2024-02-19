@@ -17,18 +17,15 @@ impl LnkFile {
     fn print_bodyfile_for_me(&self) {
         let header = self.lnk_file.header();
         let localpath = self.lnk_file.link_target().unwrap_or("-".to_string());
-        let arguments = match self.lnk_file.arguments() {
-            Some(s) => s,
-            None => "-",
-        };
+        
         let atime = ShellLinkHeader::access_time(header);
         let mtime = ShellLinkHeader::write_time(header);
         let crtime = ShellLinkHeader::creation_time(header);
 
         let bfline = Bodyfile3Line::new()
             .with_name(&format!(
-                "{} {} (referred to by \"{}\")",
-                localpath, arguments, self.file_name
+                "{} ({}, referred to by \"{}\")",
+                localpath, self.lnk_file.string_data(), self.file_name,
             ))
             .with_size((*ShellLinkHeader::file_size(header)).into())
             .with_crtime(crtime.datetime().into())
