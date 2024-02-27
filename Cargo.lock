@@ -728,7 +728,7 @@ dependencies = [
  "encoding_rs_io",
  "evtx",
  "flate2",
- "forensic-rs",
+ "forensic-rs 0.11.0",
  "frnsc-prefetch",
  "futures",
  "getset",
@@ -1065,6 +1065,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "forensic-rs"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ccb29be9815a6c5c5ed191acb436097f45edf5bd8a50f572a5a4296a45ee44ff"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "form_urlencoded"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1080,7 +1089,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2ed2131c091273267486b2dabcc96c2bb6d7374d27f7827c37d98de86daa2a2f"
 dependencies = [
  "crc32fast",
- "forensic-rs",
+ "forensic-rs 0.9.1",
 ]
 
 [[package]]

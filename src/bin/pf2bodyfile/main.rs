@@ -26,12 +26,17 @@ fn main() -> anyhow::Result<()> {
                 let mut fs = ChRootFileSystem::new(parent, vfs.clone());
                 if let Some(pf_os_filename) = input.path().file_name() {
                     if let Some(pf_filename) = pf_os_filename.to_str() {
-                        let pf_file = read_prefetch_file(
-                            pf_filename,
-                            fs.open(Path::new(&pf_filename.to_string()))?,
-                        )?;
+                        let virtual_file = fs.open(Path::new(&pf_filename.to_string()))?;
+                        let created = virtual_file.metadata()?.created_opt().map(|t| i64::try_from(*t).ok()).flatten();
+                        let modified = virtual_file.metadata()?.modified_opt().map(|t| i64::try_from(*t).ok()).flatten();
+                        let pf_file = read_prefetch_file(pf_filename, virtual_file)?;
 
-                        pf_file.display_prefetch_file(pf_filename, *cli.include_metrics())?;
+                        pf_file.display_prefetch_file(
+                            pf_filename,
+                            *cli.include_metrics(),
+                            created,
+                            modified,
+                        )?;
                     } else {
                         error!("invalid Unicode characters in filename: '{pf_os_filename:?}'")
                     }
@@ -52,6 +57,8 @@ trait DisplayPrefetchFile {
         &self,
         pf_file_name: &str,
         include_metrics: bool,
+        created: Option<i64>,
+        modified: Option<i64>,
     ) -> anyhow::Result<()>;
 }
 
@@ -60,6 +67,8 @@ impl DisplayPrefetchFile for PrefetchFile {
         &self,
         pf_file_name: &str,
         include_metrics: bool,
+        created: Option<i64>,
+        modified: Option<i64>,
     ) -> anyhow::Result<()> {
         for time in &self.last_run_times {
             let accessed =
@@ -67,12 +76,19 @@ impl DisplayPrefetchFile for PrefetchFile {
                     .to_datetime()
                     .into();
 
-            let bf_line = Bodyfile3Line::new()
+            let mut bf_line = Bodyfile3Line::new()
                 .with_owned_name(format!(
                     "Prefetch: run '{}' (run {} times, read from '{pf_file_name}')",
                     self.name, self.run_count
                 ))
                 .with_atime(accessed);
+
+            if let Some(ts) = created {
+                bf_line = bf_line.with_crtime(ts.into());
+            }
+            if let Some(ts) = modified {
+                bf_line = bf_line.with_mtime(ts.into());
+            }
             println!("{bf_line}");
 
             if include_metrics {
