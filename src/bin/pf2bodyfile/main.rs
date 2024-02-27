@@ -27,8 +27,16 @@ fn main() -> anyhow::Result<()> {
                 if let Some(pf_os_filename) = input.path().file_name() {
                     if let Some(pf_filename) = pf_os_filename.to_str() {
                         let virtual_file = fs.open(Path::new(&pf_filename.to_string()))?;
-                        let created = virtual_file.metadata()?.created_opt().map(|t| i64::try_from(*t).ok()).flatten();
-                        let modified = virtual_file.metadata()?.modified_opt().map(|t| i64::try_from(*t).ok()).flatten();
+                        let created = virtual_file
+                            .metadata()?
+                            .created_opt()
+                            .map(|t| i64::try_from(*t).ok())
+                            .flatten();
+                        let modified = virtual_file
+                            .metadata()?
+                            .modified_opt()
+                            .map(|t| i64::try_from(*t).ok())
+                            .flatten();
                         let pf_file = read_prefetch_file(pf_filename, virtual_file)?;
 
                         pf_file.display_prefetch_file(
