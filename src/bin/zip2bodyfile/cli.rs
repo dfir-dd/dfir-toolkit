@@ -5,7 +5,7 @@ use dfir_toolkit::common::HasVerboseFlag;
 use getset::Getters;
 use log::LevelFilter;
 
-/// creates bodyfile from Windows Prefetch files
+/// creates bodyfile from ZIP Archives based on the contained files and folders
 #[derive(Parser, Getters)]
 #[clap(name=env!("CARGO_BIN_NAME"), author, version)]
 #[getset(get = "pub (crate)")]
