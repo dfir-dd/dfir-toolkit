@@ -8,7 +8,7 @@ This document contains the help content for the `zip2bodyfile` command-line prog
 
 ## `zip2bodyfile`
 
-creates bodyfile from files and folders within ZIP Archives
+creates bodyfile from ZIP Archives based on the contained files and folders
 
 **Usage:** `zip2bodyfile [OPTIONS] [ZIP_FILES]...`
 
