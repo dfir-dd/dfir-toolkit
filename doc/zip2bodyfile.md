@@ -8,7 +8,7 @@ This document contains the help content for the `zip2bodyfile` command-line prog
 
 ## `zip2bodyfile`
 
-creates bodyfile from Windows Prefetch files
+creates bodyfile from files and folders within ZIP Archives
 
 **Usage:** `zip2bodyfile [OPTIONS] [ZIP_FILES]...`
 
