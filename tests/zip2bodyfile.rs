@@ -87,19 +87,20 @@ fn do_test_hello2(args: impl Iterator<Item = &'static str>) {
     let mut expected_name = String::from("dfir-toolkit-feature-zip2bodyfile/");
     let mut bfline = Bodyfile3Line::try_from(&first_line[..]).unwrap();
     
-    assert_eq!(bfline.get_name(), expected_name.as_str());
+    assert_eq!(bfline.get_name(), &format!("{expected_name}, [offset: -08:00]"));
     assert_eq!(*bfline.get_size(), 0);
     // 1709151390 = 2024-02-28 20:16:30
     // 1709118990 = 2024-02-28 11:16:30
-    assert_eq!(*bfline.get_mtime(), Modified::from(1709151390));
+    // 1709147790 = 2024-02-28 19:16:30
+    assert_eq!(*bfline.get_mtime(), Modified::from(1709147790));
 
     let second_line = lines_iterator.next().unwrap().unwrap();
     bfline = Bodyfile3Line::try_from(&second_line[..]).unwrap();
     expected_name = String::from("dfir-toolkit-feature-zip2bodyfile/LICENSE");
-    assert_eq!(bfline.get_name(), expected_name.as_str());
+    assert_eq!(bfline.get_name(), &format!("{expected_name}, [offset: -08:00]"));
     assert_eq!(*bfline.get_size(), 35149);
     // 1709151390 = 2024-02-28 20:16:30
-    assert_eq!(*bfline.get_mtime(), Modified::from(1709151390));
+    assert_eq!(*bfline.get_mtime(), Modified::from(1709147790));
 
 
     assert!(lines_iterator.next().is_none());
