@@ -3369,6 +3369,7 @@ checksum = "2a0956f1ba7c7909bfb66c2e9e4124ab6f6482560f6628b5aaeba39207c9aad9"
 [[package]]
 name = "zip"
 version = "0.6.6"
+source = "git+https://github.com/janstarke/zip.git#a03b4e8ff9895f2cf5d4cea470a4e51f271e9929"
 dependencies = [
  "aes",
  "byteorder",
