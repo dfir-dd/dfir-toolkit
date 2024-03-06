@@ -2,11 +2,12 @@ mod cli;
 
 use std::io::{Read, Seek};
 
+use chrono::FixedOffset;
 use cli::Cli;
 use dfir_toolkit::common::bodyfile::Bodyfile3Line;
 use dfir_toolkit::common::FancyParser;
 use log::{error, warn};
-use zip::ZipArchive;
+use zip::{ExtraField, ZipArchive};
 
 fn main() -> anyhow::Result<()> {
     let cli = Cli::parse_cli();
@@ -33,24 +34,82 @@ fn main() -> anyhow::Result<()> {
 }
 
 trait DisplayZipFile {
-    fn display_zip_file(&mut self, zip_file_name: &str, show_archive_name: bool) -> anyhow::Result<()>;
+    fn display_zip_file(
+        &mut self,
+        zip_file_name: &str,
+        show_archive_name: bool,
+    ) -> anyhow::Result<()>;
 }
 
-impl<R> DisplayZipFile for ZipArchive<R> where R: Read + Seek {
-    fn display_zip_file(&mut self, zip_file_name: &str, show_archive_name: bool) -> anyhow::Result<()> {
+impl<R> DisplayZipFile for ZipArchive<R>
+where
+    R: Read + Seek,
+{
+    fn display_zip_file(
+        &mut self,
+        zip_file_name: &str,
+        show_archive_name: bool,
+    ) -> anyhow::Result<()> {
         for index in 0..self.len() {
             let file = self.by_index(index)?;
 
-            let name = if show_archive_name {
-                format!("{} (in archive {zip_file_name})", file.name())
-            } else {
-                file.name().to_string()
+            let mut bf_line = Bodyfile3Line::new()
+                .with_size(file.size());
+
+            let mut utc_mtime = None;
+            for field in file.extra_data_fields() {
+                #[allow(irrefutable_let_patterns)]
+                if let ExtraField::ExtendedTimestamp(ts) = field {
+                    if let Some(mtime) = ts.mod_time() {
+                        bf_line = bf_line.with_mtime((*mtime as i64).into());
+                        utc_mtime = Some(*mtime as i64);
+                    }
+                    if let Some(atime) = ts.mod_time() {
+                        bf_line = bf_line.with_atime((*atime as i64).into());
+                    }
+                    if let Some(crtime) = ts.mod_time() {
+                        bf_line = bf_line.with_crtime((*crtime as i64).into());
+                    }
+                    break;
+                }
+            }
+
+            let tz_offset = utc_mtime.and_then(|utc_ts| {
+                let local_ts = file.last_modified().to_time().unwrap().unix_timestamp();
+
+                match i32::try_from(local_ts - utc_ts) {
+                    Err(_) => {
+                        log::warn!("illegal timezone offset: {}, ", local_ts - utc_ts);
+                        None
+                    }
+                    Ok(secs) => match FixedOffset::east_opt(secs) {
+                        None => {
+                            log::warn!("timestamp offset (abs value) is too large: {secs} seconds");
+                            None
+                        }
+                        Some(offset) => Some(offset),
+                    },
+                }
+            });
+
+            let tz_offset_text = match tz_offset {
+                None => "".to_string(),
+                Some(o) => format!(", [offset: {o}]")
             };
 
-            let bf_line = Bodyfile3Line::new()
-                .with_owned_name(name)
-                .with_size(file.size())
-                .with_mtime(file.last_modified().to_time()?.unix_timestamp().into());
+            if utc_mtime.is_none() {
+                log::warn!("no extended timestamp header with modification time found, using the MS-DOS timestamp instead");
+                bf_line =
+                    bf_line.with_mtime(file.last_modified().to_time()?.unix_timestamp().into());
+            }
+
+            let name = if show_archive_name {
+                format!("{} (in archive {zip_file_name}){tz_offset_text}", file.name())
+            } else {
+                format!("{}{tz_offset_text}", file.name())
+            };
+            
+            bf_line = bf_line.with_owned_name(name);
 
             println!("{bf_line}");
         }
