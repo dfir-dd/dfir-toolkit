@@ -7,6 +7,9 @@ description = "CLI tools for digital forensics and incident response"
 homepage = "https://www.github.com/dfir-dd/dfir_toolkit"
 license = "GPL-3.0"
 
+[package.metadata.deb]
+maintainer-scripts = "scripts/maintainer"
+
 [[bin]]
 name = "mactime2"
 path = "src/bin/mactime2/main.rs"
