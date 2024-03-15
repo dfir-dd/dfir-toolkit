@@ -18,6 +18,7 @@ creates bodyfile from Windows Prefetch files
 
 ###### **Options:**
 
+* `-I` — show not only the executed files, but all references files -- such as libraries -- as well
 * `-v`, `--verbose` — More output per occurrence
 * `-q`, `--quiet` — Less output per occurrence
 
