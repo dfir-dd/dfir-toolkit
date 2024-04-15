@@ -5,7 +5,6 @@ use dfir_toolkit::common::bodyfile::Bodyfile3Line;
 use indicatif::{ProgressBar, ProgressStyle};
 use nt_hive2::*;
 use std::fs::File;
-use std::time::Duration;
 
 use crate::regtreebuilder::RegTreeBuilder;
 
@@ -34,7 +33,6 @@ impl HiveScanApplication {
             .unwrap();
         let bar = ProgressBar::new(self.hive.as_ref().unwrap().data_size().into());
         bar.set_style(progress_style);
-        bar.enable_steady_tick(Duration::from_millis(100));
         bar.set_message("scanning cells");
 
         let builder = RegTreeBuilder::from_hive(self.hive.take().unwrap(), |p| bar.set_position(p));
