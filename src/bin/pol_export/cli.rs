@@ -1,4 +1,4 @@
-use clap::Parser;
+use clap::{Parser, ValueHint};
 use dfir_toolkit::common::HasVerboseFlag;
 use log::LevelFilter;
 
@@ -7,7 +7,7 @@ use log::LevelFilter;
 #[clap(name=env!("CARGO_BIN_NAME"), author, version, long_about = None)]
 pub (crate) struct Cli {
     /// Name of the file to read
-    #[clap()]
+    #[clap(value_hint=ValueHint::FilePath)]
     pub (crate) polfile: String,
 
     #[clap(flatten)]

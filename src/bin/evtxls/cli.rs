@@ -1,4 +1,4 @@
-use clap::{Parser, ValueEnum};
+use clap::{ColorChoice, Parser, ValueEnum, ValueHint};
 
 use dfir_toolkit::common::{Rfc3339Datetime, HasVerboseFlag};
 use log::LevelFilter;
@@ -23,6 +23,7 @@ pub(crate) enum SortOrder {
 #[clap(name=env!("CARGO_BIN_NAME"), author, version,long_about=None)]
 pub(crate) struct Cli {
     /// Name of the evtx files to read from
+    #[clap(value_hint=ValueHint::FilePath)]
     pub(crate) evtx_files: Vec<String>,
 
     /// use this delimiter instead of generating fixed space columns
@@ -48,10 +49,9 @@ pub(crate) struct Cli {
     )]
     pub(crate) excluded_event_ids: Vec<u16>,
 
-
     /// highlight interesting content using colors
-    #[clap(short('c'), long("colors"))]
-    pub(crate) display_colors: bool,
+    #[clap(short('C'), long("color"))]
+    pub(crate) display_colors: ColorChoice,
 
     /// hide events older than the specified date (hint: use RFC 3339 syntax)
     #[clap(short('f'), long("from"))]
