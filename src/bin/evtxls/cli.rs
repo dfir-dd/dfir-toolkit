@@ -50,7 +50,7 @@ pub(crate) struct Cli {
     pub(crate) excluded_event_ids: Vec<u16>,
 
     /// highlight interesting content using colors
-    #[clap(short('C'), long("color"))]
+    #[clap(short('C'), long("color"), default_value_t = ColorChoice::Auto)]
     pub(crate) display_colors: ColorChoice,
 
     /// hide events older than the specified date (hint: use RFC 3339 syntax)
