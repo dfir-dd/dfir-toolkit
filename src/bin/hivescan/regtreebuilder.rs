@@ -48,7 +48,6 @@ impl RegTreeBuilder {
         B: BinReaderExt,
         C: Fn(u64),
     {
-        let iterator = hive.into_cell_iterator(progress_callback);
         let mut me = Self {
             subtrees: HashMap::new(),
             entries: HashMap::new(),
@@ -56,17 +55,17 @@ impl RegTreeBuilder {
         };
 
         let mut last_offset = Offset(0);
-        for cell in iterator {
+        for cell in hive.hivebins().flat_map(|hivebin| hivebin.cells()) {
             let my_offset = *cell.offset();
             let is_deleted = cell.header().is_deleted();
             assert_ne!(last_offset, my_offset);
             log::trace!("found new cell at offset 0x{:x}", my_offset.0);
 
             if let Ok(nk) = TryInto::<KeyNode>::try_into(cell) {
-                me.insert_nk(my_offset, nk, is_deleted)
-            };
-
+                me.insert_nk(my_offset, nk, is_deleted);
+            }
             last_offset = my_offset;
+            progress_callback(last_offset.0.into());
         }
         me
     }

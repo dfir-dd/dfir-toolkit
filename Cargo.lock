@@ -742,7 +742,7 @@ dependencies = [
  "more-asserts",
  "nt_hive2",
  "num",
- "num-derive 0.3.3",
+ "num-derive 0.4.0",
  "num-traits",
  "ouroboros",
  "phf",
@@ -1641,8 +1641,6 @@ dependencies = [
 [[package]]
 name = "nt_hive2"
 version = "4.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a05582cdbafd1b4599d5aa871608e80f663fe8bf05e753dd8588322d0fbadc07"
 dependencies = [
  "anyhow",
  "binread",
@@ -1652,6 +1650,7 @@ dependencies = [
  "chrono",
  "derive-getters",
  "encoding_rs",
+ "getset",
  "log",
  "marvin32",
  "memoverlay",
