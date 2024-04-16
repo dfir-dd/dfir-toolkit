@@ -62,10 +62,18 @@ impl EvtxLs {
         Ok(())
     }
 
-    fn read_records<T: Read + Seek>(&self, mut parser: EvtxParser<T>) -> Result<Vec<SerializedEvtxRecord<Value>>> {
-        if self.cli.display_colors {
-            SHOULD_COLORIZE.set_override(true);
-        }
+    fn read_records<T: Read + Seek>(
+        &self,
+        mut parser: EvtxParser<T>,
+    ) -> Result<Vec<SerializedEvtxRecord<Value>>> {
+        match self.cli.display_colors {
+            // Remove the manual override and let the environment decide if it’s ok to colorize
+            clap::ColorChoice::Auto => SHOULD_COLORIZE.unset_override(),
+
+            //Use this to force colored to ignore the environment and always/never colorize
+            clap::ColorChoice::Always => SHOULD_COLORIZE.set_override(true),
+            clap::ColorChoice::Never => SHOULD_COLORIZE.set_override(false),
+        };
 
         let mut records = Vec::new();
 
@@ -115,10 +123,11 @@ impl EvtxLs {
         let system_fields = if self.cli.hide_base_fields {
             "".to_owned()
         } else {
-            let system_fields = <SerializedEvtxRecord<Value> as FilterBySystemField>::filter_fields(
-                record,
-                self.cli.display_system_fields.as_ref()
-            )?;
+            let system_fields =
+                <SerializedEvtxRecord<Value> as FilterBySystemField>::filter_fields(
+                    record,
+                    self.cli.display_system_fields.as_ref(),
+                )?;
 
             let line_parts: Vec<String> = if self.cli.delimiter.is_none() {
                 system_fields
@@ -148,7 +157,7 @@ impl EvtxLs {
         let timestamp = FormattableDatetime::from(&record.timestamp);
         let delimiter = self.cli.delimiter.unwrap_or(' ');
 
-        let output=format!("{timestamp}{delimiter}{system_fields}{event_data}").normal();
+        let output = format!("{timestamp}{delimiter}{system_fields}{event_data}").normal();
         println!("{output}");
 
         Ok(())
@@ -166,7 +175,7 @@ impl EvtxLs {
             None => None,
             Some(custom_data) => match custom_data {
                 Value::Null => Some("".to_owned()),
-                v => Some(self.hs_builder.highlight_data(v).to_string())
+                v => Some(self.hs_builder.highlight_data(v).to_string()),
             },
         }
     }

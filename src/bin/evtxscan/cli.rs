@@ -1,4 +1,4 @@
-use clap::Parser;
+use clap::{Parser, ValueHint};
 use dfir_toolkit::common::HasVerboseFlag;
 use log::LevelFilter;
 
@@ -8,6 +8,7 @@ use log::LevelFilter;
 #[clap(name=env!("CARGO_BIN_NAME"), author, version)]
 pub (crate) struct Cli {
     /// name of the evtx file to scan
+    #[clap(value_hint=ValueHint::FilePath)]
     pub (crate) evtx_file: String,
 
     /// display also the contents of the records befor and after a time skew
