@@ -1640,7 +1640,9 @@ dependencies = [
 
 [[package]]
 name = "nt_hive2"
-version = "4.1.0"
+version = "4.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2914ee8d64e0b9a0a18ea060911202f0b200bcf57a08e4435e7a88ee51b41793"
 dependencies = [
  "anyhow",
  "binread",
