@@ -77,7 +77,7 @@ impl RegTreeBuilder {
     }
 
     fn insert_nk(&mut self, nk_offset: Offset, nk: KeyNode, is_deleted: bool) {
-        assert!(!self.subtrees.contains_key(&nk_offset));
+        assert!(!self.subtrees.contains_key(&nk_offset), "KeyNode at offset 0x{:08x} is already in the set of subtrees", nk_offset.0);
         assert!(!self.entries.contains_key(&nk_offset));
 
         let parent_offset = nk.parent;
