@@ -1,7 +1,5 @@
 use std::{
-    cell::RefCell,
-    collections::{hash_map, HashMap},
-    rc::Rc,
+    cell::RefCell, cmp::max, collections::{hash_map, HashMap}, rc::Rc
 };
 
 use binread::BinReaderExt;
@@ -55,8 +53,10 @@ impl RegTreeBuilder {
         };
 
         let mut last_offset = Offset(0);
+        let mut last_cell_end = 0;
         for cell in hive.hivebins().flat_map(|hivebin| hivebin.cells()) {
             let my_offset = *cell.offset();
+            let my_size = cell.header().size();
             let is_deleted = cell.header().is_deleted();
             assert_ne!(last_offset, my_offset);
             log::trace!("found new cell at offset 0x{:x}", my_offset.0);
@@ -65,7 +65,9 @@ impl RegTreeBuilder {
                 me.insert_nk(my_offset, nk, is_deleted);
             }
             last_offset = my_offset;
-            progress_callback(last_offset.0.into());
+
+            last_cell_end = max(last_cell_end, u64::from(last_offset.0) + u64::try_from(my_size).unwrap());
+            progress_callback(last_cell_end);
         }
         me
     }
