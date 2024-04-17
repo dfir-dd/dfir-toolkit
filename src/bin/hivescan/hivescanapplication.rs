@@ -4,20 +4,26 @@ use anyhow::Result;
 use dfir_toolkit::common::bodyfile::Bodyfile3Line;
 use indicatif::{ProgressBar, ProgressStyle};
 use nt_hive2::*;
-use std::fs::File;
+use std::{io::Read, io::Seek};
 
 use crate::regtreebuilder::RegTreeBuilder;
 
-pub(crate) struct HiveScanApplication {
+pub(crate) struct HiveScanApplication<RS>
+where
+    RS: Read + Seek,
+{
     #[allow(dead_code)]
     cli: Cli,
 
     root_offset: Offset,
-    hive: Option<Hive<File, CleanHive>>,
+    hive: Option<Hive<RS, CleanHive>>,
 }
 
-impl HiveScanApplication {
-    pub fn new(cli: Cli, hive: Hive<File, CleanHive>) -> Self {
+impl<RS> HiveScanApplication<RS>
+where
+    RS: Read + Seek,
+{
+    pub fn new(cli: Cli, hive: Hive<RS, CleanHive>) -> Self {
         Self {
             cli,
             root_offset: hive.root_cell_offset(),
