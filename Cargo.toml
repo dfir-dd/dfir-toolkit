@@ -4,7 +4,7 @@ version = "0.10.2"
 edition = "2021"
 authors = ["Jan Starke <jan.starke@posteo.de>", "Deborah Mahn <deborah.mahn@dfir-dd.de>"]
 description = "CLI tools for digital forensics and incident response"
-homepage = "https://www.github.com/dfir-dd/dfir_toolkit"
+repository = "https://github.com/dfir-dd/dfir-toolkit"
 license = "GPL-3.0"
 
 [package.metadata.deb]
