@@ -2,7 +2,7 @@ use anyhow::{bail, Result};
 use cli::Cli;
 use dfir_toolkit::common::FancyParser;
 use nt_hive2::{ContainsHive, Hive, HiveParseMode};
-use std::fs::File;
+use std::{fs::File, io::BufReader};
 
 mod hivescanapplication;
 mod regtreebuilder;
@@ -15,6 +15,7 @@ fn main() -> Result<()> {
 
     match File::open(&cli.hive_file) {
         Ok(data) => {
+            let data = BufReader::new(data);
             let hive = Hive::new(data, HiveParseMode::NormalWithBaseBlock).unwrap();
 
             let clean_hive = match cli.logfiles.len() {
