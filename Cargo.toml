@@ -88,7 +88,7 @@ required-features = ["pf2bodyfile"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
-default = ["pol_export", "mactime2", "evtxtools", "regdump", "hivescan", "cleanhive", "ipgrep", "ts2date", "lnk2bodyfile", "pf2bodyfile"]
+default = ["pol_export", "mactime2", "evtxtools", "regdump", "hivescan", "cleanhive", "ipgrep", "ts2date", "lnk2bodyfile", "pf2bodyfile", "evtxview"]
 mactime2 = ["gzip", "elastic", "chrono-tz", "thiserror", "bitflags", "encoding_rs_io"]
 gzip = ["flate2"]
 elastic = ["elasticsearch", "tokio", "futures", "serde_json", "sha2", "base64", "num-traits", "num-derive", "strum", "strum_macros", "tokio-async-drop"]
@@ -103,6 +103,7 @@ ipgrep = []
 ts2date = ["regex"]
 lnk2bodyfile = ["lnk"]
 pf2bodyfile = ["num", "libc", "frnsc-prefetch", "forensic-rs"]
+evtxview = ["cursive", "cursive_table_view", "cursive-async-view"]
 
 regdump = ["nt_hive2"]
 hivescan = ["nt_hive2"]
@@ -182,6 +183,11 @@ libc = {version="0.2", optional=true}
 num = {version="0", optional=true}
 frnsc-prefetch = {version="0.9", optional=true}
 forensic-rs = {version="0.9.1", optional=true}
+
+# evtxview
+cursive = {version="0.20", optional=true}
+cursive_table_view = {version="0.14", optional=true}
+cursive-async-view = {version="^0", optional=true}
 
 [dev-dependencies]
 
