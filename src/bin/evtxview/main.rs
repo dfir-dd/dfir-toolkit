@@ -1,28 +1,16 @@
+mod app;
 mod cli;
-mod system_field;
-mod ui_main;
-mod evtx_line;
-mod evtx_column;
-mod evtx_view;
+mod tui;
 
-use anyhow::{bail, Result};
+use anyhow::Result;
+use app::App;
 use cli::Cli;
-use clap::Parser;
-use ui_main::UIMain;
+use dfir_toolkit::common::FancyParser;
 
 fn main() -> Result<()> {
-    let cli = Cli::parse();
-
-    if ! cli.evtx_file.path().exists() {
-        bail!("invalid filename specified: file does not exist");
-    }
-
-    if ! cli.evtx_file.path().is_file() {
-        bail!("invalid filename specified: filename does not point to a file");
-    }
-
-    cursive::logger::init();
-
-    let mut ui = UIMain::new(cli.evtx_file.path().path())?;
-    ui.run()
+    let cli = Cli::parse_cli();
+    let mut terminal = tui::init()?;
+    let app_result = App::new(cli).run(&mut terminal);
+    tui::restore()?;
+    Ok(app_result?)
 }

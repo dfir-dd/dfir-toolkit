@@ -103,7 +103,7 @@ ipgrep = []
 ts2date = ["regex"]
 lnk2bodyfile = ["lnk"]
 pf2bodyfile = ["num", "libc", "frnsc-prefetch", "forensic-rs"]
-evtxview = ["cursive", "cursive_table_view", "cursive-async-view"]
+evtxview = ["ratatui", "crossterm", "ouroboros"]
 
 regdump = ["nt_hive2"]
 hivescan = ["nt_hive2"]
@@ -185,9 +185,8 @@ frnsc-prefetch = {version="0.9", optional=true}
 forensic-rs = {version="0.9.1", optional=true}
 
 # evtxview
-cursive = {version="0.20", optional=true}
-cursive_table_view = {version="0.14", optional=true}
-cursive-async-view = {version="^0", optional=true}
+ratatui = {version="0.26.2", optional=true}
+crossterm = {version="^0", optional=true}
 
 [dev-dependencies]
 

@@ -19,13 +19,13 @@ pub(crate) enum SortOrder {
 /// Display one or more events from an evtx file
 #[derive(Parser)]
 #[clap(name=env!("CARGO_BIN_NAME"), author, version,long_about=None)]
-pub(crate) struct Cli {
+pub struct Cli {
     /// Name of the evtx files to read from
     #[clap(value_hint=ValueHint::FilePath)]
     pub(crate) evtx_file: InputPath,
 
     #[clap(flatten)]
-    verbose: clap_verbosity_flag::Verbosity,
+    pub(crate) verbose: clap_verbosity_flag::Verbosity,
 }
 
 impl HasVerboseFlag for Cli {
