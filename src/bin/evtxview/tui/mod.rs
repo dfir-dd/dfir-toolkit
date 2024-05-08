@@ -1,5 +1,8 @@
-mod evtx_iterator;
-pub use evtx_iterator::*;
+mod evtx_table;
+pub use evtx_table::*;
+
+mod color_scheme;
+pub use color_scheme::*;
 
 use std::io::{self, stdout, Stdout};
 

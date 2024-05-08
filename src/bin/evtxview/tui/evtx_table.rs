@@ -3,11 +3,17 @@ use std::{fs::File, path::Path};
 use dfirtk_eventdata::EventId;
 use evtx::{EvtxParser, SerializedEvtxRecord};
 use ouroboros::self_referencing;
-use ratatui::widgets::{Row, Table};
+use ratatui::{
+    style::{Modifier, Style},
+    widgets::{Row, Table},
+};
 use serde_json::Value;
+
+use super::color_scheme::{ColorScheme, PALETTES};
 
 pub struct EvtxTable {
     rows: Vec<RowContents>,
+    colors: ColorScheme,
 }
 
 impl TryFrom<&Path> for EvtxTable {
@@ -15,13 +21,20 @@ impl TryFrom<&Path> for EvtxTable {
 
     fn try_from(path: &Path) -> Result<Self, Self::Error> {
         let rows = RowContentsIterator::try_from(path)?.collect();
-        Ok(EvtxTable { rows })
+        Ok(EvtxTable {
+            rows,
+            colors: ColorScheme::new(&PALETTES[0]),
+        })
     }
 }
 
 impl EvtxTable {
     pub fn table(&self) -> Table<'_> {
-        Table::new(&self.rows, vec![10, 10, 10])
+        let selected_style = Style::default()
+            .add_modifier(Modifier::REVERSED)
+            .fg(    self.colors.selected_style_fg());
+        let table = Table::new(&self.rows, vec![10, 10, 10]).highlight_style(selected_style);
+        table
     }
 
     pub fn len(&self) -> usize {
