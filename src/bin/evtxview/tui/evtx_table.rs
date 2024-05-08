@@ -1,11 +1,12 @@
 use std::{fs::File, path::Path};
 
+use dfir_toolkit::common::FormattableDatetime;
 use dfirtk_eventdata::EventId;
 use evtx::{EvtxParser, SerializedEvtxRecord};
 use ouroboros::self_referencing;
 use ratatui::{
     style::{Modifier, Style},
-    widgets::{Row, Table},
+    widgets::{Cell, Row, Table},
 };
 use serde_json::Value;
 
@@ -14,6 +15,7 @@ use super::color_scheme::{ColorScheme, PALETTES};
 pub struct EvtxTable {
     rows: Vec<RowContents>,
     colors: ColorScheme,
+    timestamp_width: u16,
 }
 
 impl TryFrom<&Path> for EvtxTable {
@@ -21,19 +23,38 @@ impl TryFrom<&Path> for EvtxTable {
 
     fn try_from(path: &Path) -> Result<Self, Self::Error> {
         let rows = RowContentsIterator::try_from(path)?.collect();
+        let timestamp_width = u16::try_from(
+            FormattableDatetime::from(chrono::offset::Utc::now())
+                .to_string()
+                .len(),
+        )?;
         Ok(EvtxTable {
             rows,
             colors: ColorScheme::new(&PALETTES[0]),
+            timestamp_width,
         })
     }
 }
 
 impl EvtxTable {
     pub fn table(&self) -> Table<'_> {
+        let header_style = Style::default()
+            .fg(self.colors.header_fg())
+            .bg(self.colors.header_bg());
+
+        let header = ["Timestamp", "Record#", "Event#"]
+            .into_iter()
+            .map(Cell::from)
+            .collect::<Row>()
+            .style(header_style)
+            .height(1);
+
         let selected_style = Style::default()
             .add_modifier(Modifier::REVERSED)
             .fg(self.colors.selected_style_fg());
-        let table = Table::new(&self.rows, vec![10, 10, 10]).highlight_style(selected_style);
+        let table = Table::new(&self.rows, vec![self.timestamp_width, 10, 10])
+            .header(header)
+            .highlight_style(selected_style);
         table
     }
 
@@ -100,7 +121,7 @@ pub struct RowContents {
 impl<'r> From<&'r SerializedEvtxRecord<Value>> for RowContents {
     fn from(record: &'r SerializedEvtxRecord<Value>) -> Self {
         Self {
-            timestamp: record.timestamp.to_rfc3339(),
+            timestamp: FormattableDatetime::from(record.timestamp).to_string(),
             record_id: record.event_record_id.to_string(),
             event_id: EventId::try_from(record)
                 .ok()
