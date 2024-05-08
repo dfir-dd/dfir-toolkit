@@ -17,7 +17,8 @@ pub struct App {
     evtx_table: EvtxTable,
     exit: bool,
     state: TableState,
-    scroll_state: ScrollbarState,
+    table_scroll_state: ScrollbarState,
+    details_scroll_state: ScrollbarState,
     colors: ColorScheme,
     table_view_port: Rect,
 }
@@ -30,9 +31,10 @@ impl App {
             evtx_table,
             exit: Default::default(),
             state: TableState::default().with_selected(0),
-            scroll_state: ScrollbarState::new(table_len - 1),
+            table_scroll_state: ScrollbarState::new(table_len - 1),
+            details_scroll_state: ScrollbarState::new(0),
             colors: ColorScheme::new(&PALETTES[0]),
-            table_view_port: Rect::new(0, 0, 0, 0)
+            table_view_port: Rect::new(0, 0, 0, 0),
         }
     }
     /// runs the application's main loop until the user quits
@@ -45,16 +47,44 @@ impl App {
     }
 
     fn render_frame(&mut self, frame: &mut Frame) {
-        let rects =
-            Layout::vertical([Constraint::Min(5), Constraint::Length(3)]).split(frame.size());
-        let cols = Layout::horizontal([Constraint::Percentage(50), Constraint::Percentage(50)])
-            .split(rects[0]);
-        self.table_view_port = cols[0];
+        let margins = Margin::new(1, 1);
+        let rects = Layout::vertical([
+            Constraint::Min(5),
+            Constraint::Length(5),
+            Constraint::Length(3),
+        ])
+        .split(frame.size());
+        let cols = Layout::horizontal(
+            Constraint::from_percentages(vec![50, 50])).split(rects[0]);
+
+        let table_scroll_area = cols[0].inner(&margins);
+        let table_contents_area = table_scroll_area.inner(&margins);
+        self.table_view_port = table_contents_area;
+
         frame.render_widget(Clear, rects[0]);
-        self.render_table(frame, cols[0]);
-        self.render_scrollbar(frame, cols[0]);
-        self.render_content(frame, cols[1]);
-        self.render_footer(frame, rects[1]);
+        self.render_table(frame, self.table_view_port);
+        frame.render_stateful_widget(
+            Scrollbar::default()
+                .orientation(ScrollbarOrientation::VerticalRight)
+                .begin_symbol(None)
+                .end_symbol(None),
+            table_scroll_area,
+            &mut self.table_scroll_state,
+        );
+
+        let details_scroll_area = cols[1].inner(&margins);
+        let details_contents_area = details_scroll_area.inner(&margins);
+        self.render_content(frame, details_contents_area);
+        frame.render_stateful_widget(
+            Scrollbar::default()
+                .orientation(ScrollbarOrientation::VerticalRight)
+                .begin_symbol(None)
+                .end_symbol(None),
+            details_scroll_area,
+            &mut self.details_scroll_state,
+        );
+        self.render_sparkline(frame, rects[1]);
+        self.render_footer(frame, rects[2]);
     }
 
     fn render_table(&mut self, frame: &mut Frame, area: Rect) {
@@ -63,25 +93,20 @@ impl App {
     fn render_content(&mut self, frame: &mut Frame, area: Rect) {
         match self.state.selected() {
             Some(i) => match self.evtx_table.content(i) {
-                Some(value) => frame.render_widget(Paragraph::new(&value[..]), area),
+                Some(value) => {
+                    frame.render_widget(Paragraph::new(&value[..]).wrap(Wrap { trim: false }), area)
+                }
                 None => frame.render_widget(Clear, area),
             },
             None => frame.render_widget(Clear, area),
         }
     }
 
-    fn render_scrollbar(&mut self, frame: &mut Frame, area: Rect) {
-        frame.render_stateful_widget(
-            Scrollbar::default()
-                .orientation(ScrollbarOrientation::VerticalRight)
-                .begin_symbol(None)
-                .end_symbol(None),
-            area.inner(&Margin {
-                vertical: 1,
-                horizontal: 1,
-            }),
-            &mut self.scroll_state,
-        )
+    fn render_sparkline(&mut self, frame: &mut Frame, area: Rect) {
+        let spark_line = Sparkline::default()
+            .data(self.evtx_table.sparkline_data())
+            .block(Block::new().border_type(BorderType::Thick));
+        frame.render_widget(spark_line, area)
     }
 
     fn render_footer(&mut self, frame: &mut Frame, area: Rect) {
@@ -113,7 +138,7 @@ impl App {
     }
     fn handle_key_event(&mut self, key_event: KeyEvent) {
         match key_event.code {
-            KeyCode::Char('q') => self.exit(),
+            KeyCode::Esc | KeyCode::Char('q') => self.exit(),
             KeyCode::Char('g') => self.set_selected(0),
             KeyCode::Char('G') => self.set_selected(self.evtx_table.len() - 1),
             KeyCode::Down => self.next(1),
@@ -129,7 +154,7 @@ impl App {
 
     fn set_selected(&mut self, idx: usize) {
         self.state.select(Some(idx));
-        self.scroll_state = self.scroll_state.position(idx);
+        self.table_scroll_state = self.table_scroll_state.position(idx);
     }
 
     fn next(&mut self, steps: usize) {
