@@ -134,28 +134,19 @@ impl App {
 
     fn next(&mut self, steps: usize) {
         assert_ne!(steps, 0);
-        let i = match self.state.selected() {
-            Some(i) => (i + steps) % self.evtx_table.len(),
-            None => 0,
-        };
-        self.set_selected(i);
+        if !self.evtx_table.is_empty() {
+            let i = match self.state.selected() {
+                Some(i) => usize::min(i + steps, self.evtx_table.len() - 1),
+                None => 0,
+            };
+            self.set_selected(i);
+        }
     }
 
     fn previous(&mut self, steps: usize) {
         assert_ne!(steps, 0);
         let i = match self.state.selected() {
-            Some(i) => {
-                if i > steps {
-                    i - steps
-                } else {
-                    let steps = steps % self.evtx_table.len();
-                    if steps == 0 {
-                        0
-                    } else {
-                        self.evtx_table.len() - steps
-                    }
-                }
-            }
+            Some(i) => if i < steps { 0 } else {i - steps}
             None => 0,
         };
         self.set_selected(i);

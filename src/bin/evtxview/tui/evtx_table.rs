@@ -32,13 +32,17 @@ impl EvtxTable {
     pub fn table(&self) -> Table<'_> {
         let selected_style = Style::default()
             .add_modifier(Modifier::REVERSED)
-            .fg(    self.colors.selected_style_fg());
+            .fg(self.colors.selected_style_fg());
         let table = Table::new(&self.rows, vec![10, 10, 10]).highlight_style(selected_style);
         table
     }
 
     pub fn len(&self) -> usize {
         self.rows.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.rows.is_empty()
     }
 
     pub fn content(&self, idx: usize) -> Option<&Value> {
