@@ -1,14 +1,18 @@
 use std::{fs::File, path::Path};
 
 use dfir_toolkit::common::FormattableDatetime;
-use dfirtk_eventdata::EventId;
 use evtx::{EvtxParser, SerializedEvtxRecord};
 use ouroboros::self_referencing;
+use quick_xml::de::from_str;
+use ratatui::style::Stylize;
+use ratatui::widgets::HighlightSpacing;
 use ratatui::{
     style::{Modifier, Style},
+    text::Text,
     widgets::{Cell, Row, Table},
 };
-use serde_json::Value;
+
+use crate::event::Event;
 
 use super::color_scheme::{ColorScheme, PALETTES};
 
@@ -42,7 +46,8 @@ impl EvtxTable {
             .fg(self.colors.header_fg())
             .bg(self.colors.header_bg());
 
-        let header = ["Timestamp", "Record#", "Event#"]
+        let column_headers = ["", "Timestamp", "Record#", "Event#"];
+        let header = column_headers
             .into_iter()
             .map(Cell::from)
             .collect::<Row>()
@@ -52,9 +57,23 @@ impl EvtxTable {
         let selected_style = Style::default()
             .add_modifier(Modifier::REVERSED)
             .fg(self.colors.selected_style_fg());
-        let table = Table::new(&self.rows, vec![self.timestamp_width, 10, 10])
-            .header(header)
-            .highlight_style(selected_style);
+
+        let bar = " █ ";
+
+        let table = Table::new(
+            &self.rows,
+            vec![
+                1,
+                self.timestamp_width,
+                column_headers[1].len() as u16,
+                column_headers[1].len() as u16,
+            ],
+        )
+        .header(header)
+        .highlight_style(selected_style)
+        .highlight_symbol(Text::from(vec!["".into(), bar.into(), bar.into()]))
+        .bg(self.colors.buffer_bg())
+        .highlight_spacing(HighlightSpacing::Always);
         table
     }
 
@@ -66,8 +85,8 @@ impl EvtxTable {
         self.rows.is_empty()
     }
 
-    pub fn content(&self, idx: usize) -> Option<&Value> {
-        self.rows.get(idx).map(|r| &r.value)
+    pub fn content(&self, idx: usize) -> Option<&String> {
+        self.rows.get(idx).map(|r| &r.raw_value)
     }
 }
 
@@ -77,9 +96,7 @@ pub struct RowContentsIterator {
 
     #[borrows(mut parser)]
     #[covariant]
-    iterator: Box<
-        dyn Iterator<Item = evtx::err::Result<SerializedEvtxRecord<serde_json::Value>>> + 'this,
-    >,
+    iterator: Box<dyn Iterator<Item = evtx::err::Result<SerializedEvtxRecord<String>>> + 'this>,
 }
 
 impl TryFrom<&Path> for RowContentsIterator {
@@ -89,11 +106,7 @@ impl TryFrom<&Path> for RowContentsIterator {
         let parser = EvtxParser::from_path(evtx_file)?;
         Ok(RowContentsIteratorBuilder {
             parser,
-            iterator_builder: |parser| {
-                Box::new(parser.serialized_records(|record| {
-                    record.and_then(|record| record.into_json_value())
-                }))
-            },
+            iterator_builder: |parser| Box::new(parser.records()),
         }
         .build())
     }
@@ -105,36 +118,45 @@ impl Iterator for RowContentsIterator {
     fn next(&mut self) -> Option<Self::Item> {
         self.with_iterator_mut(|iterator| match iterator.next() {
             Some(Err(why)) => panic!("Error while reading record: {why}"),
-            Some(Ok(r)) => Some((&r).into()),
+            Some(Ok(r)) => match (&r).try_into() {
+                Ok(contents) => Some(contents),
+                Err(why) => panic!("Error while parsing record: {why}"),
+            },
             None => None,
         })
     }
 }
 
+#[allow(dead_code)]
 pub struct RowContents {
+    level: String,
     timestamp: String,
     record_id: String,
     event_id: String,
-    value: Value,
+    raw_value: String,
+    event: Event,
 }
 
-impl<'r> From<&'r SerializedEvtxRecord<Value>> for RowContents {
-    fn from(record: &'r SerializedEvtxRecord<Value>) -> Self {
-        Self {
+impl<'r> TryFrom<&'r SerializedEvtxRecord<String>> for RowContents {
+    type Error = anyhow::Error;
+
+    fn try_from(record: &'r SerializedEvtxRecord<String>) -> Result<Self, Self::Error> {
+        let event: Event = from_str(&record.data)?;
+        Ok(Self {
+            level: event.system().level().to_string(),
             timestamp: FormattableDatetime::from(record.timestamp).to_string(),
             record_id: record.event_record_id.to_string(),
-            event_id: EventId::try_from(record)
-                .ok()
-                .map(|e| e.to_string())
-                .unwrap_or_default(),
-            value: record.data.clone(),
-        }
+            event_id: event.system().EventID().clone(),
+            raw_value: record.data.clone(),
+            event,
+        })
     }
 }
 
 impl<'r> From<&'r RowContents> for Row<'r> {
     fn from(contents: &'r RowContents) -> Self {
         Row::new(vec![
+            &contents.level[..],
             &contents.timestamp[..],
             &contents.record_id[..],
             &contents.event_id[..],

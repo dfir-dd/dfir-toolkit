@@ -19,6 +19,7 @@ pub struct App {
     state: TableState,
     scroll_state: ScrollbarState,
     colors: ColorScheme,
+    table_view_port: Rect,
 }
 
 impl App {
@@ -31,6 +32,7 @@ impl App {
             state: TableState::default().with_selected(0),
             scroll_state: ScrollbarState::new(table_len - 1),
             colors: ColorScheme::new(&PALETTES[0]),
+            table_view_port: Rect::new(0, 0, 0, 0)
         }
     }
     /// runs the application's main loop until the user quits
@@ -47,6 +49,7 @@ impl App {
             Layout::vertical([Constraint::Min(5), Constraint::Length(3)]).split(frame.size());
         let cols = Layout::horizontal([Constraint::Percentage(50), Constraint::Percentage(50)])
             .split(rects[0]);
+        self.table_view_port = cols[0];
         frame.render_widget(Clear, rects[0]);
         self.render_table(frame, cols[0]);
         self.render_scrollbar(frame, cols[0]);
@@ -60,10 +63,7 @@ impl App {
     fn render_content(&mut self, frame: &mut Frame, area: Rect) {
         match self.state.selected() {
             Some(i) => match self.evtx_table.content(i) {
-                Some(value) => match serde_json::to_string_pretty(value) {
-                    Ok(content) => frame.render_widget(Paragraph::new(content), area),
-                    Err(why) => frame.render_widget(Paragraph::new(format!("{why}")), area),
-                },
+                Some(value) => frame.render_widget(Paragraph::new(&value[..]), area),
                 None => frame.render_widget(Clear, area),
             },
             None => frame.render_widget(Clear, area),
@@ -118,8 +118,8 @@ impl App {
             KeyCode::Char('G') => self.set_selected(self.evtx_table.len() - 1),
             KeyCode::Down => self.next(1),
             KeyCode::Up => self.previous(1),
-            KeyCode::PageDown => self.next(10),
-            KeyCode::PageUp => self.previous(10),
+            KeyCode::PageDown => self.next((self.table_view_port.height / 2).into()),
+            KeyCode::PageUp => self.previous((self.table_view_port.height / 2).into()),
             _ => {}
         }
     }
@@ -146,7 +146,13 @@ impl App {
     fn previous(&mut self, steps: usize) {
         assert_ne!(steps, 0);
         let i = match self.state.selected() {
-            Some(i) => if i < steps { 0 } else {i - steps}
+            Some(i) => {
+                if i < steps {
+                    0
+                } else {
+                    i - steps
+                }
+            }
             None => 0,
         };
         self.set_selected(i);

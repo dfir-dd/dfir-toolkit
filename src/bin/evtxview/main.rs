@@ -1,6 +1,7 @@
 mod app;
 mod cli;
 mod tui;
+mod event;
 
 use anyhow::Result;
 use app::App;
