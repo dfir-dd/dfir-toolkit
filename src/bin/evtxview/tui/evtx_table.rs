@@ -146,7 +146,11 @@ impl TryFrom<&Path> for EvtxTable {
 impl EvtxTable {
     pub fn render(&mut self, frame: &mut Frame, area: Rect, state: &mut TableState) {
         let block = Block::bordered()
-            .title(self.read_status().map(|s| s.to_string()).unwrap_or("".to_string()))
+            .title(
+                self.read_status()
+                    .map(|s| s.to_string())
+                    .unwrap_or("".to_string()),
+            )
             .border_type(BorderType::Rounded)
             .border_style(Style::new().fg(self.colors.footer_border_color()));
 
@@ -190,7 +194,12 @@ impl EvtxTable {
             .highlight_spacing(HighlightSpacing::Always);
 
         if let Ok(data) = self.data.lock() {
-            table = table.rows(data.rows.iter().map(Row::from));
+            table = table.rows(
+                data.rows
+                    .iter()
+                    .filter(|rc| self.filter_row(rc))
+                    .map(Row::from),
+            );
             frame.render_stateful_widget(table.block(block), area, state);
         } else {
             panic!("unable to acquire data lock");
