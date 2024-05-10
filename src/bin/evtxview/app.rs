@@ -11,7 +11,7 @@ use ratatui::{
 };
 
 // (→) next color | (←) previous color
-const INFO_TEXT: &str = r#"(Esc) quit | (↑) move up | (↓) move down | (x) eXclude by event id" | (i) Include by event id | (R) Reset filter | (o) change Orientation | (+/-) in/decrease table size"#;
+const INFO_TEXT: &str = r#"(Esc) quit | (↑) move up | (↓) move down | (E) Exclude by Event id" | (e) include by Event id | (U) exclude by User | (u) include by User | (R) Reset filter | (o) change Orientation | (+/-) in/decrease table size"#;
 
 pub struct App {
     evtx_table: EvtxTable,
@@ -60,7 +60,6 @@ impl App {
         let margins = Margin::new(0, 0);
         let rects = Layout::vertical([
             Constraint::Min(5),
-            Constraint::Length(5),
             Constraint::Length(3),
         ])
         .split(frame.size());
@@ -104,8 +103,7 @@ impl App {
             details_scroll_area,
             &mut self.details_scroll_state,
         );
-        self.render_sparkline(frame, rects[1]);
-        self.render_footer(frame, rects[2]);
+        self.render_footer(frame, rects[1]);
     }
 
     fn render_table(&mut self, frame: &mut Frame, area: Rect) {
@@ -124,17 +122,6 @@ impl App {
             },
             None => frame.render_widget(Clear, area),
         }
-    }
-
-    fn render_sparkline(&mut self, frame: &mut Frame, area: Rect) {
-        self.evtx_table.with_sparkline_data(|sparkline_data| {
-            frame.render_widget(
-                Sparkline::default()
-                    .data(sparkline_data)
-                    .block(self.bordered_block()),
-                area,
-            )
-        });
     }
 
     fn bordered_block(&self) -> Block {
@@ -179,8 +166,10 @@ impl App {
             KeyCode::Up => self.previous(1),
             KeyCode::PageDown => self.next((self.table_view_port.height / 2).into()),
             KeyCode::PageUp => self.previous((self.table_view_port.height / 2).into()),
-            KeyCode::Char('x') => self.exclude_event_id(),
-            KeyCode::Char('i') => self.include_event_id(),
+            KeyCode::Char('E') => self.exclude_event_id(),
+            KeyCode::Char('e') => self.include_event_id(),
+            KeyCode::Char('U') => self.exclude_user(),
+            KeyCode::Char('u') => self.include_user(),
             KeyCode::Char('R') => self.reset_filter(),
             KeyCode::Char('o') => self.change_orientation(),
             KeyCode::Char('+') => self.increase_table_size(),
@@ -225,6 +214,22 @@ impl App {
         if !self.evtx_table.is_empty() {
             if let Some(i) = self.state.selected() {
                 self.evtx_table.include_event_id(i)
+            }
+        }
+    }
+
+    fn exclude_user(&mut self) {
+        if !self.evtx_table.is_empty() {
+            if let Some(i) = self.state.selected() {
+                self.evtx_table.exclude_user(i)
+            }
+        }
+    }
+
+    fn include_user(&mut self) {
+        if !self.evtx_table.is_empty() {
+            if let Some(i) = self.state.selected() {
+                self.evtx_table.include_user(i)
             }
         }
     }

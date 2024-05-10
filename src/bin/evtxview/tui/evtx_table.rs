@@ -25,6 +25,8 @@ use super::RowContents;
 pub enum EventFilter {
     ExcludeByEventId(u32),
     IncludeByEventId(u32),
+    ExcludeByUser(String),
+    IncludeByUser(String),
 }
 
 impl EventFilter {
@@ -32,6 +34,8 @@ impl EventFilter {
         match self {
             EventFilter::ExcludeByEventId(event_id) => rc.event().system().EventID() != event_id,
             EventFilter::IncludeByEventId(event_id) => rc.event().system().EventID() == event_id,
+            EventFilter::ExcludeByUser(user_id) => rc.event().system().security().user_id().as_ref() != Some(user_id),
+            EventFilter::IncludeByUser(user_id) => rc.event().system().security().user_id().as_ref() == Some(user_id),
         }
     }
 }
@@ -57,39 +61,19 @@ impl Display for ReadState {
 #[derive(Default)]
 struct EvtxTableData {
     rows: BTreeSet<RowContents>,
-    sparkline_data: Vec<u64>,
     number_of_records: usize,
     state: ReadState,
 }
 
 impl EvtxTableData {
-    pub fn add_row(&mut self, row: RowContents) ->anyhow::Result<()> {
+    pub fn add_row(&mut self, row: RowContents) -> anyhow::Result<()> {
         if self.number_of_records > 0 {
             let c: f32 = self.rows.len().as_();
             let n: f32 = self.number_of_records.as_();
             self.state = ReadState::Running(c / n);
         }
 
-        let record_timestamp = row.record_timestamp().timestamp();
         self.rows.insert(row);
-
-        // update sparkline data
-        if let Some(first_ts) = self.rows.first() {
-            if let Some(last_ts) = self.rows.last() {
-                let mut first_ts = first_ts.record_timestamp().timestamp();
-                let last_ts = last_ts.record_timestamp().timestamp();
-                assert!(last_ts >= first_ts);
-                let step_size = i64::max(1, (last_ts - first_ts) / 3600);
-
-                first_ts /= step_size;
-
-                let ts = usize::try_from((record_timestamp / step_size) - first_ts)?;
-                while ts + 1 > self.sparkline_data.len() {
-                    self.sparkline_data.push(0)
-                }
-                self.sparkline_data[ts] += 1;
-            }
-        }
         Ok(())
     }
 }
@@ -257,15 +241,6 @@ impl EvtxTable {
         }
     }
 
-    pub fn with_sparkline_data<F>(&self, mut f: F)
-    where
-        F: FnMut(&Vec<u64>),
-    {
-        if let Ok(data) = self.data.lock() {
-            f(&data.sparkline_data)
-        }
-    }
-
     pub fn event_id_in_row(&self, filtered_row_id: usize) -> Option<u32> {
         if let Ok(data) = self.data.lock() {
             data.rows
@@ -273,6 +248,18 @@ impl EvtxTable {
                 .filter(|rc| self.filter_row(rc))
                 .nth(filtered_row_id)
                 .map(|r| *r.event().system().EventID())
+        } else {
+            None
+        }
+    }
+
+    pub fn user_in_row(&self, filtered_row_id: usize) -> Option<String> {
+        if let Ok(data) = self.data.lock() {
+            data.rows
+                .iter()
+                .filter(|rc| self.filter_row(rc))
+                .nth(filtered_row_id)
+                .and_then(|r| r.event().system().security().user_id().clone())
         } else {
             None
         }
@@ -292,6 +279,22 @@ impl EvtxTable {
         }
         self.update();
     }
+
+    pub fn exclude_user(&mut self, filtered_row_id: usize) {
+        if let Some(user_id) = self.user_in_row(filtered_row_id) {
+            self.event_filters
+                .insert(EventFilter::ExcludeByUser(user_id));
+        }
+        self.update();
+    }
+    pub fn include_user(&mut self, filtered_row_id: usize) {
+        if let Some(user_id) = self.user_in_row(filtered_row_id) {
+            self.event_filters
+                .insert(EventFilter::IncludeByUser(user_id));
+        }
+        self.update();
+    }
+
     pub fn reset_filter(&mut self) {
         self.event_filters.clear();
         self.update();
