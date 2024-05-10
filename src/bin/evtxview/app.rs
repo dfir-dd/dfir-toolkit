@@ -10,8 +10,8 @@ use ratatui::{
     widgets::{block::*, *},
 };
 
-const INFO_TEXT: &str = r#"(Esc) quit | (↑) move up | (↓) move down | (→) next color | (←) previous color |
- (x) eXclude by event id" | (i) Include by event id | (R) Reset filter | (o) change Orientation | (+/-) in/decrease table size"#;
+// (→) next color | (←) previous color 
+const INFO_TEXT: &str = r#"(Esc) quit | (↑) move up | (↓) move down | (x) eXclude by event id" | (i) Include by event id | (R) Reset filter | (o) change Orientation | (+/-) in/decrease table size"#;
 
 pub struct App {
     evtx_table: EvtxTable,
