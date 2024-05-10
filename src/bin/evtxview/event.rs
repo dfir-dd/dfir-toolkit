@@ -18,7 +18,7 @@ pub struct Event {
 #[allow(unused,non_snake_case)]
 pub struct System {
     //provider: Provider,
-    EventID: String,
+    EventID: u32,
     version: String,
     level: EventLevel,
     task: String,

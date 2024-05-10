@@ -11,7 +11,8 @@ use ratatui::{
 };
 
 const INFO_TEXT: &str =
-    "(Esc) quit | (↑) move up | (↓) move down | (→) next color | (←) previous color";
+    r#"(Esc) quit | (↑) move up | (↓) move down | (→) next color | (←) previous color |
+ (x) eXclude by event id" | (i) Include by event id | (R) Reset filter"#;
 
 pub struct App {
     evtx_table: EvtxTable,
@@ -145,11 +146,34 @@ impl App {
             KeyCode::Up => self.previous(1),
             KeyCode::PageDown => self.next((self.table_view_port.height / 2).into()),
             KeyCode::PageUp => self.previous((self.table_view_port.height / 2).into()),
+            KeyCode::Char('x') => self.exclude_event_id(),
+            KeyCode::Char('i') => self.include_event_id(),
+            KeyCode::Char('R') => self.reset_filter(),
             _ => {}
         }
     }
     fn exit(&mut self) {
         self.exit = true;
+    }
+
+    fn exclude_event_id(&mut self) {
+        if !self.evtx_table.is_empty() {
+            if let Some(i) = self.state.selected() {
+                self.evtx_table.exclude_event_id(i)
+            }
+        }
+    }
+
+    fn include_event_id(&mut self) {
+        if !self.evtx_table.is_empty() {
+            if let Some(i) = self.state.selected() {
+                self.evtx_table.include_event_id(i)
+            }
+        }
+    }
+
+    fn reset_filter(&mut self) {
+        self.evtx_table.reset_filter();
     }
 
     fn set_selected(&mut self, idx: usize) {
