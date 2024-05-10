@@ -1,4 +1,6 @@
+use num_traits::cast::AsPrimitive;
 use std::collections::{BTreeSet, HashSet};
+use std::fmt::Display;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use std::thread::{self, JoinHandle};
@@ -34,10 +36,30 @@ impl EventFilter {
     }
 }
 
+#[derive(Default, Copy, Clone)]
+pub enum ReadState {
+    #[default]
+    Preparing,
+    Running(f32),
+    Finished,
+}
+
+impl Display for ReadState {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ReadState::Preparing => write!(f, "preparing"),
+            ReadState::Running(s) => write!(f, "{:.2}%", s * 100.0),
+            ReadState::Finished => write!(f, ""),
+        }
+    }
+}
+
 #[derive(Default)]
 struct EvtxTableData {
     rows: BTreeSet<RowContents>,
     sparkline_data: Vec<u64>,
+    number_of_records: usize,
+    state: ReadState,
 }
 
 pub struct EvtxTable {
@@ -50,8 +72,20 @@ pub struct EvtxTable {
 }
 
 fn load_events(path: PathBuf, data: Arc<Mutex<EvtxTableData>>) -> anyhow::Result<()> {
+    if let Ok(mut data) = data.lock() {
+        data.number_of_records = EvtxParser::from_path(&path)?.records().count();
+    }
+
+    let mut count: usize = 0;
     for row in RowContentsIterator::try_from(path.as_path())? {
         if let Ok(mut data) = data.lock() {
+            count += 1;
+            if data.number_of_records > 0 {
+                let c: f32 = count.as_();
+                let n: f32 = data.number_of_records.as_();
+                data.state = ReadState::Running(c / n);
+            }
+
             let record_timestamp = row.record_timestamp().timestamp();
             data.rows.insert(row);
 
@@ -75,6 +109,10 @@ fn load_events(path: PathBuf, data: Arc<Mutex<EvtxTableData>>) -> anyhow::Result
         } else {
             break;
         }
+    }
+
+    if let Ok(mut data) = data.lock() {
+        data.state = ReadState::Finished;
     }
     Ok(())
 }
@@ -108,6 +146,7 @@ impl TryFrom<&Path> for EvtxTable {
 impl EvtxTable {
     pub fn render(&mut self, frame: &mut Frame, area: Rect, state: &mut TableState) {
         let block = Block::bordered()
+            .title(self.read_status().map(|s| s.to_string()).unwrap_or("".to_string()))
             .border_type(BorderType::Rounded)
             .border_style(Style::new().fg(self.colors.footer_border_color()));
 
@@ -229,6 +268,10 @@ impl EvtxTable {
     pub fn reset_filter(&mut self) {
         self.event_filters.clear();
         self.update();
+    }
+
+    pub fn read_status(&self) -> Option<ReadState> {
+        self.data.lock().ok().map(|data| data.state)
     }
 }
 
