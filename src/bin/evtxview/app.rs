@@ -11,7 +11,7 @@ use ratatui::{
 };
 
 const INFO_TEXT: &str = r#"(Esc) quit | (↑) move up | (↓) move down | (→) next color | (←) previous color |
- (x) eXclude by event id" | (i) Include by event id | (R) Reset filter | (o) change Orientation"#;
+ (x) eXclude by event id" | (i) Include by event id | (R) Reset filter | (o) change Orientation | (+/-) in/decrease table size"#;
 
 pub struct App {
     evtx_table: EvtxTable,
@@ -22,6 +22,7 @@ pub struct App {
     colors: ColorScheme,
     table_view_port: Rect,
     orientation: Direction,
+    table_percentage: u16,
 }
 
 impl App {
@@ -37,6 +38,7 @@ impl App {
             colors: ColorScheme::new(&PALETTES[0]),
             table_view_port: Rect::new(0, 0, 0, 0),
             orientation: Direction::Horizontal,
+            table_percentage: 50
         }
     }
     /// runs the application's main loop until the user quits
@@ -59,7 +61,7 @@ impl App {
 
         let cols = Layout::new(
             self.orientation,
-            vec![Constraint::Percentage(50), Constraint::Min(0)],
+            vec![Constraint::Percentage(self.table_percentage), Constraint::Percentage(100-self.table_percentage)],
         )
         .split(rects[0]);
 
@@ -167,11 +169,27 @@ impl App {
             KeyCode::Char('i') => self.include_event_id(),
             KeyCode::Char('R') => self.reset_filter(),
             KeyCode::Char('o') => self.change_orientation(),
+            KeyCode::Char('+') => self.increase_table_size(),
+            KeyCode::Char('-') => self.decrease_table_size(),
             _ => {}
         }
     }
     fn exit(&mut self) {
         self.exit = true;
+    }
+
+    fn increase_table_size(&mut self) {
+        // leave some space
+        if self.table_percentage < 97 {
+            self.table_percentage += 1;
+        }
+    }
+
+    fn decrease_table_size(&mut self) {
+        // leave some space
+        if self.table_percentage > 3 {
+            self.table_percentage -= 1;
+        }
     }
 
     fn change_orientation(&mut self) {
