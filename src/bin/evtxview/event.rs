@@ -19,10 +19,10 @@ pub struct Event {
 pub struct System {
     //provider: Provider,
     EventID: u32,
-    version: String,
+    version: Option<String>,
     level: EventLevel,
     task: String,
-    opcode: String,
+    opcode: Option<String>,
     keywords: String,
     time_created: TimeCreated,
     EventRecordID: String,
@@ -88,7 +88,8 @@ pub enum EventLevel {
     Critical = 1,
     Error = 2,
     Warning = 3,
-    Information = 4,    
+    Information = 4,
+    Debug = 5,    
 }
 
 impl ToString for EventLevel {
@@ -99,6 +100,7 @@ impl ToString for EventLevel {
             EventLevel::Error => "🛑",
             EventLevel::Warning => "⚠",
             EventLevel::Information => "ℹ",
+            EventLevel::Debug => "D",
         }.into()
     }
 }

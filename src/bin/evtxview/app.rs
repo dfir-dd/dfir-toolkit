@@ -27,7 +27,8 @@ pub struct App {
 
 impl App {
     pub fn new(cli: Cli) -> Self {
-        let evtx_table = EvtxTable::try_from(cli.evtx_file.path().path()).unwrap();
+        let paths: Vec<_> = cli.evtx_file.iter().map(|p| p.path().path()).collect();
+        let evtx_table = EvtxTable::try_from(paths).unwrap();
         let table_len = evtx_table.len();
         let table_scroll_state = if table_len == 0 {
             0

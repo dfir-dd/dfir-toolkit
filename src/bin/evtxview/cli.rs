@@ -22,7 +22,7 @@ pub(crate) enum SortOrder {
 pub struct Cli {
     /// Name of the evtx files to read from
     #[clap(value_hint=ValueHint::FilePath)]
-    pub(crate) evtx_file: InputPath,
+    pub(crate) evtx_file: Vec<InputPath>,
 
     #[clap(flatten)]
     pub(crate) verbose: clap_verbosity_flag::Verbosity,

@@ -62,9 +62,41 @@ struct EvtxTableData {
     state: ReadState,
 }
 
+impl EvtxTableData {
+    pub fn add_row(&mut self, row: RowContents) ->anyhow::Result<()> {
+        if self.number_of_records > 0 {
+            let c: f32 = self.rows.len().as_();
+            let n: f32 = self.number_of_records.as_();
+            self.state = ReadState::Running(c / n);
+        }
+
+        let record_timestamp = row.record_timestamp().timestamp();
+        self.rows.insert(row);
+
+        // update sparkline data
+        if let Some(first_ts) = self.rows.first() {
+            if let Some(last_ts) = self.rows.last() {
+                let mut first_ts = first_ts.record_timestamp().timestamp();
+                let last_ts = last_ts.record_timestamp().timestamp();
+                assert!(last_ts >= first_ts);
+                let step_size = i64::max(1, (last_ts - first_ts) / 3600);
+
+                first_ts /= step_size;
+
+                let ts = usize::try_from((record_timestamp / step_size) - first_ts)?;
+                while ts + 1 > self.sparkline_data.len() {
+                    self.sparkline_data.push(0)
+                }
+                self.sparkline_data[ts] += 1;
+            }
+        }
+        Ok(())
+    }
+}
+
 pub struct EvtxTable {
     data: Arc<Mutex<EvtxTableData>>,
-    _reader: JoinHandle<anyhow::Result<()>>,
+    _readers: Vec<JoinHandle<anyhow::Result<()>>>,
     colors: ColorScheme,
     timestamp_width: u16,
     event_filters: HashSet<EventFilter>,
@@ -76,36 +108,9 @@ fn load_events(path: PathBuf, data: Arc<Mutex<EvtxTableData>>) -> anyhow::Result
         data.number_of_records = EvtxParser::from_path(&path)?.records().count();
     }
 
-    let mut count: usize = 0;
     for row in RowContentsIterator::try_from(path.as_path())? {
         if let Ok(mut data) = data.lock() {
-            count += 1;
-            if data.number_of_records > 0 {
-                let c: f32 = count.as_();
-                let n: f32 = data.number_of_records.as_();
-                data.state = ReadState::Running(c / n);
-            }
-
-            let record_timestamp = row.record_timestamp().timestamp();
-            data.rows.insert(row);
-
-            // update sparkline data
-            if let Some(first_ts) = data.rows.first() {
-                if let Some(last_ts) = data.rows.last() {
-                    let mut first_ts = first_ts.record_timestamp().timestamp();
-                    let last_ts = last_ts.record_timestamp().timestamp();
-                    assert!(last_ts >= first_ts);
-                    let step_size = i64::max(1, (last_ts - first_ts) / 3600);
-
-                    first_ts /= step_size;
-
-                    let ts = usize::try_from((record_timestamp / step_size) - first_ts)?;
-                    while ts + 1 > data.sparkline_data.len() {
-                        data.sparkline_data.push(0)
-                    }
-                    data.sparkline_data[ts] += 1;
-                }
-            }
+            data.add_row(row)?;
         } else {
             break;
         }
@@ -117,14 +122,18 @@ fn load_events(path: PathBuf, data: Arc<Mutex<EvtxTableData>>) -> anyhow::Result
     Ok(())
 }
 
-impl TryFrom<&Path> for EvtxTable {
+impl TryFrom<Vec<&Path>> for EvtxTable {
     type Error = anyhow::Error;
 
-    fn try_from(path: &Path) -> Result<Self, Self::Error> {
+    fn try_from(paths: Vec<&Path>) -> Result<Self, Self::Error> {
         let data = Arc::new(Mutex::new(EvtxTableData::default()));
-        let path = path.to_path_buf();
-        let reader_data = Arc::clone(&data);
-        let _reader = thread::spawn(move || load_events(path, reader_data));
+        let mut _readers = Vec::new();
+
+        for path in paths {
+            let path = path.to_path_buf();
+            let reader_data = Arc::clone(&data);
+            _readers.push(thread::spawn(move || load_events(path, reader_data)));
+        }
 
         let timestamp_width = u16::try_from(
             FormattableDatetime::from(chrono::offset::Utc::now())
@@ -134,7 +143,7 @@ impl TryFrom<&Path> for EvtxTable {
 
         Ok(EvtxTable {
             data,
-            _reader,
+            _readers,
             colors: ColorScheme::new(&PALETTES[0]),
             timestamp_width,
             event_filters: HashSet::new(),
@@ -158,7 +167,15 @@ impl EvtxTable {
             .fg(self.colors.header_fg())
             .bg(self.colors.header_bg());
 
-        let column_headers = ["", "Timestamp", "Record#", "Event#", "UserID", "Data"];
+        let column_headers = [
+            "",
+            "Timestamp",
+            "Record#",
+            "Event#",
+            "Channel",
+            "UserID",
+            "Data",
+        ];
         let header = column_headers
             .into_iter()
             .map(Cell::from)
@@ -178,7 +195,8 @@ impl EvtxTable {
                 Constraint::Length(self.timestamp_width),
                 Constraint::Length(column_headers[1].len() as u16),
                 Constraint::Length(column_headers[1].len() as u16),
-                Constraint::Length(20),
+                Constraint::Max(20),
+                Constraint::Length(10),
                 Constraint::Min(1),
             ])
             .header(header)
@@ -310,13 +328,27 @@ impl Iterator for RowContentsIterator {
     type Item = RowContents;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.with_iterator_mut(|iterator| match iterator.next() {
-            Some(Err(why)) => panic!("Error while reading record: {why}"),
-            Some(Ok(r)) => match (&r).try_into() {
-                Ok(contents) => Some(contents),
-                Err(why) => panic!("Error while parsing record: {why}"),
-            },
-            None => None,
+        self.with_iterator_mut(|iterator| {
+            let mut res = None;
+            for r in iterator.by_ref() {
+                match r {
+                    Err(why) => {
+                        log::error!("Error while reading record: {why}");
+                        continue;
+                    }
+                    Ok(c) => match RowContents::try_from(&c) {
+                        Ok(rc) => {
+                            res = Some(rc);
+                            break;
+                        }
+                        Err(why) => {
+                            log::error!("Error while reading record: {why}");
+                            continue;
+                        }
+                    },
+                }
+            }
+            res
         })
     }
 }

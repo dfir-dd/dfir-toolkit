@@ -22,6 +22,7 @@ pub struct RowContents {
     raw_value: String,
     user_id: String,
     event_data: String,
+    channel: String,
     event: Event,
 }
 
@@ -62,6 +63,8 @@ impl<'r> TryFrom<&'r SerializedEvtxRecord<String>> for RowContents {
             }
         }
 
+        let channel = event.system().channel().clone().replace("Microsoft-Windows-", "");
+
         Ok(Self {
             event_record_id: record.event_record_id,
             record_timestamp: record.timestamp,
@@ -73,6 +76,7 @@ impl<'r> TryFrom<&'r SerializedEvtxRecord<String>> for RowContents {
             user_id,
             event,
             event_data,
+            channel
         })
     }
 }
@@ -84,6 +88,7 @@ impl<'r> From<&'r RowContents> for Row<'r> {
             &contents.timestamp[..],
             &contents.record_id[..],
             &contents.event_id[..],
+            &contents.channel[..],
             &contents.user_id[..],
             &contents.event_data[..],
         ]);
