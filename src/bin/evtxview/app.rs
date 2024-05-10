@@ -1,4 +1,4 @@
-use std::io;
+use std::{io, time::Duration};
 
 use crate::{
     cli::Cli,
@@ -10,7 +10,7 @@ use ratatui::{
     widgets::{block::*, *},
 };
 
-// (→) next color | (←) previous color 
+// (→) next color | (←) previous color
 const INFO_TEXT: &str = r#"(Esc) quit | (↑) move up | (↓) move down | (x) eXclude by event id" | (i) Include by event id | (R) Reset filter | (o) change Orientation | (+/-) in/decrease table size"#;
 
 pub struct App {
@@ -29,16 +29,21 @@ impl App {
     pub fn new(cli: Cli) -> Self {
         let evtx_table = EvtxTable::try_from(cli.evtx_file.path().path()).unwrap();
         let table_len = evtx_table.len();
+        let table_scroll_state = if table_len == 0 {
+            0
+        } else {
+            table_len - 1
+        };
         Self {
             evtx_table,
             exit: Default::default(),
             state: TableState::default().with_selected(0),
-            table_scroll_state: ScrollbarState::new(table_len - 1),
+            table_scroll_state: ScrollbarState::new(table_scroll_state),
             details_scroll_state: ScrollbarState::new(0),
             colors: ColorScheme::new(&PALETTES[0]),
             table_view_port: Rect::new(0, 0, 0, 0),
             orientation: Direction::Horizontal,
-            table_percentage: 50
+            table_percentage: 50,
         }
     }
     /// runs the application's main loop until the user quits
@@ -61,7 +66,10 @@ impl App {
 
         let cols = Layout::new(
             self.orientation,
-            vec![Constraint::Percentage(self.table_percentage), Constraint::Percentage(100-self.table_percentage)],
+            vec![
+                Constraint::Percentage(self.table_percentage),
+                Constraint::Percentage(100 - self.table_percentage),
+            ],
         )
         .split(rects[0]);
 
@@ -100,10 +108,7 @@ impl App {
     }
 
     fn render_table(&mut self, frame: &mut Frame, area: Rect) {
-        let block = Block::bordered()
-            .border_type(BorderType::Rounded)
-            .border_style(Style::new().fg(self.colors.footer_border_color()));
-        frame.render_stateful_widget(self.evtx_table.table().block(block), area, &mut self.state);
+        self.evtx_table.render(frame, area, &mut self.state)
     }
     fn render_content(&mut self, frame: &mut Frame, area: Rect) {
         match self.state.selected() {
@@ -121,10 +126,14 @@ impl App {
     }
 
     fn render_sparkline(&mut self, frame: &mut Frame, area: Rect) {
-        let spark_line = Sparkline::default()
-            .data(self.evtx_table.sparkline_data())
-            .block(self.bordered_block());
-        frame.render_widget(spark_line, area)
+        self.evtx_table.with_sparkline_data(|sparkline_data| {
+            frame.render_widget(
+                Sparkline::default()
+                    .data(sparkline_data)
+                    .block(self.bordered_block()),
+                area,
+            )
+        });
     }
 
     fn bordered_block(&self) -> Block {
@@ -146,21 +155,25 @@ impl App {
     }
 
     fn handle_events(&mut self) -> io::Result<()> {
-        match event::read()? {
-            // it's important to check that the event is a key press event as
-            // crossterm also emits key release and repeat events on Windows.
-            Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
-                self.handle_key_event(key_event)
+        self.evtx_table.update();
+        if event::poll(Duration::from_millis(100))? {
+            match event::read()? {
+                // it's important to check that the event is a key press event as
+                // crossterm also emits key release and repeat events on Windows.
+                Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
+                    self.handle_key_event(key_event)
+                }
+                _ => {}
             }
-            _ => {}
-        };
+        }
         Ok(())
     }
     fn handle_key_event(&mut self, key_event: KeyEvent) {
+        self.evtx_table.update();
         match key_event.code {
             KeyCode::Esc | KeyCode::Char('q') => self.exit(),
             KeyCode::Char('g') => self.set_selected(0),
-            KeyCode::Char('G') => self.set_selected(self.evtx_table.len() - 1),
+            KeyCode::Char('G') => self.set_selected(usize::max(self.evtx_table.len(), 1) - 1),
             KeyCode::Down => self.next(1),
             KeyCode::Up => self.previous(1),
             KeyCode::PageDown => self.next((self.table_view_port.height / 2).into()),

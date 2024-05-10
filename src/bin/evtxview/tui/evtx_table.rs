@@ -1,23 +1,23 @@
-use std::collections::HashSet;
+use std::collections::{BTreeSet, HashSet};
+use std::path::PathBuf;
+use std::sync::{Arc, Mutex};
+use std::thread::{self, JoinHandle};
 use std::{fs::File, path::Path};
 
-use chrono::{DateTime, Utc};
 use dfir_toolkit::common::FormattableDatetime;
 use evtx::{EvtxParser, SerializedEvtxRecord};
 use ouroboros::self_referencing;
-use quick_xml::de::from_str;
-use ratatui::layout::Constraint;
-use ratatui::style::{Color, Stylize};
-use ratatui::widgets::HighlightSpacing;
+use ratatui::layout::{Constraint, Rect};
+use ratatui::widgets::{Block, BorderType, HighlightSpacing, TableState};
+use ratatui::Frame;
 use ratatui::{
     style::{Modifier, Style},
     text::Text,
     widgets::{Cell, Row, Table},
 };
 
-use crate::event::Event;
-
 use super::color_scheme::{ColorScheme, PALETTES};
+use super::RowContents;
 
 #[derive(Eq, PartialEq, Hash)]
 pub enum EventFilter {
@@ -28,66 +28,89 @@ pub enum EventFilter {
 impl EventFilter {
     pub fn filter(&self, rc: &RowContents) -> bool {
         match self {
-            EventFilter::ExcludeByEventId(event_id) => rc.event.system().EventID() != event_id,
-            EventFilter::IncludeByEventId(event_id) => rc.event.system().EventID() == event_id,
+            EventFilter::ExcludeByEventId(event_id) => rc.event().system().EventID() != event_id,
+            EventFilter::IncludeByEventId(event_id) => rc.event().system().EventID() == event_id,
         }
     }
 }
 
-pub struct EvtxTable {
-    rows: Vec<RowContents>,
+#[derive(Default)]
+struct EvtxTableData {
+    rows: BTreeSet<RowContents>,
     sparkline_data: Vec<u64>,
+}
+
+pub struct EvtxTable {
+    data: Arc<Mutex<EvtxTableData>>,
+    _reader: JoinHandle<anyhow::Result<()>>,
     colors: ColorScheme,
     timestamp_width: u16,
     event_filters: HashSet<EventFilter>,
     filtered_rows_count: usize,
 }
 
+fn load_events(path: PathBuf, data: Arc<Mutex<EvtxTableData>>) -> anyhow::Result<()> {
+    for row in RowContentsIterator::try_from(path.as_path())? {
+        if let Ok(mut data) = data.lock() {
+            let record_timestamp = row.record_timestamp().timestamp();
+            data.rows.insert(row);
+
+            // update sparkline data
+            if let Some(first_ts) = data.rows.first() {
+                if let Some(last_ts) = data.rows.last() {
+                    let mut first_ts = first_ts.record_timestamp().timestamp();
+                    let last_ts = last_ts.record_timestamp().timestamp();
+                    assert!(last_ts >= first_ts);
+                    let step_size = i64::max(1, (last_ts - first_ts) / 3600);
+
+                    first_ts /= step_size;
+
+                    let ts = usize::try_from((record_timestamp / step_size) - first_ts)?;
+                    while ts + 1 > data.sparkline_data.len() {
+                        data.sparkline_data.push(0)
+                    }
+                    data.sparkline_data[ts] += 1;
+                }
+            }
+        } else {
+            break;
+        }
+    }
+    Ok(())
+}
+
 impl TryFrom<&Path> for EvtxTable {
     type Error = anyhow::Error;
 
     fn try_from(path: &Path) -> Result<Self, Self::Error> {
-        let mut rows: Vec<_> = RowContentsIterator::try_from(path)?.collect();
-        rows.sort_by(|lhs, rhs| lhs.record_timestamp.cmp(&rhs.record_timestamp));
-        let mut sparkline_data = Vec::new();
-        if let Some(first_ts) = rows.first() {
-            if let Some(last_ts) = rows.last() {
-                let mut first_ts = first_ts.record_timestamp.timestamp();
-                let last_ts = last_ts.record_timestamp.timestamp();
-                assert!(last_ts >= first_ts);
-                let step_size = i64::max(1, (last_ts - first_ts) / 3600);
+        let data = Arc::new(Mutex::new(EvtxTableData::default()));
+        let path = path.to_path_buf();
+        let reader_data = Arc::clone(&data);
+        let _reader = thread::spawn(move || load_events(path, reader_data));
 
-                first_ts /= step_size;
-
-                for row in rows.iter() {
-                    let ts =
-                        usize::try_from((row.record_timestamp.timestamp() / step_size) - first_ts)?;
-                    while ts + 1 > sparkline_data.len() {
-                        sparkline_data.push(0)
-                    }
-                    sparkline_data[ts] += 1;
-                }
-            }
-        }
         let timestamp_width = u16::try_from(
             FormattableDatetime::from(chrono::offset::Utc::now())
                 .to_string()
                 .len(),
         )?;
-        let filtered_rows_count = rows.len();
+
         Ok(EvtxTable {
-            rows,
+            data,
+            _reader,
             colors: ColorScheme::new(&PALETTES[0]),
             timestamp_width,
-            sparkline_data,
             event_filters: HashSet::new(),
-            filtered_rows_count,
+            filtered_rows_count: 0,
         })
     }
 }
 
 impl EvtxTable {
-    pub fn table(&self) -> Table<'_> {
+    pub fn render(&mut self, frame: &mut Frame, area: Rect, state: &mut TableState) {
+        let block = Block::bordered()
+            .border_type(BorderType::Rounded)
+            .border_style(Style::new().fg(self.colors.footer_border_color()));
+
         let header_style = Style::default()
             .fg(self.colors.header_fg())
             .bg(self.colors.header_bg());
@@ -106,35 +129,39 @@ impl EvtxTable {
 
         let bar = " █ ";
 
-        let rows: Vec<_> = self.filtered_rows().collect();
-
-        let table = Table::new(
-            rows,
-            vec![
+        let mut table = Table::default()
+            .widths(vec![
                 Constraint::Length(2),
                 Constraint::Length(self.timestamp_width),
                 Constraint::Length(column_headers[1].len() as u16),
                 Constraint::Length(column_headers[1].len() as u16),
                 Constraint::Length(20),
                 Constraint::Min(1),
-            ],
-        )
-        .header(header)
-        .highlight_style(selected_style)
-        .highlight_symbol(Text::from(vec![
-            "".into(),
-            bar.into(),
-            bar.into(),
-            bar.into(),
-            bar.into(),
-        ]))
-        //.bg(self.colors.buffer_bg())
-        .highlight_spacing(HighlightSpacing::Always);
-        table
+            ])
+            .header(header)
+            .highlight_style(selected_style)
+            .highlight_symbol(Text::from(vec![
+                "".into(),
+                bar.into(),
+                bar.into(),
+                bar.into(),
+                bar.into(),
+            ]))
+            //.bg(self.colors.buffer_bg())
+            .highlight_spacing(HighlightSpacing::Always);
+
+        if let Ok(data) = self.data.lock() {
+            table = table.rows(data.rows.iter().map(Row::from));
+            frame.render_stateful_widget(table.block(block), area, state);
+        } else {
+            panic!("unable to acquire data lock");
+        }
     }
 
-    fn filtered_rows(&self) -> impl Iterator<Item = &RowContents> {
-        self.rows.iter().filter(|rc| self.filter_row(rc))
+    pub fn update(&mut self) {
+        if let Ok(data) = self.data.lock() {
+            self.filtered_rows_count = data.rows.iter().filter(|rc| self.filter_row(rc)).count()
+        }
     }
 
     fn filter_row(&self, rc: &RowContents) -> bool {
@@ -152,18 +179,37 @@ impl EvtxTable {
         self.filtered_rows_count == 0
     }
 
-    pub fn content(&self, filtered_row_id: usize) -> Option<&String> {
-        self.filtered_rows().nth(filtered_row_id).map(|r| &r.raw_value)
+    pub fn content(&self, filtered_row_id: usize) -> Option<String> {
+        if let Ok(data) = self.data.lock() {
+            data.rows
+                .iter()
+                .filter(|rc| self.filter_row(rc))
+                .nth(filtered_row_id)
+                .map(|r| r.raw_value().clone())
+        } else {
+            None
+        }
     }
 
-    pub fn sparkline_data(&self) -> &Vec<u64> {
-        &self.sparkline_data
+    pub fn with_sparkline_data<F>(&self, mut f: F)
+    where
+        F: FnMut(&Vec<u64>),
+    {
+        if let Ok(data) = self.data.lock() {
+            f(&data.sparkline_data)
+        }
     }
 
     pub fn event_id_in_row(&self, filtered_row_id: usize) -> Option<u32> {
-        self.filtered_rows()
-            .nth(filtered_row_id)
-            .map(|r| *r.event.system().EventID())
+        if let Ok(data) = self.data.lock() {
+            data.rows
+                .iter()
+                .filter(|rc| self.filter_row(rc))
+                .nth(filtered_row_id)
+                .map(|r| *r.event().system().EventID())
+        } else {
+            None
+        }
     }
 
     pub fn exclude_event_id(&mut self, filtered_row_id: usize) {
@@ -171,18 +217,18 @@ impl EvtxTable {
             self.event_filters
                 .insert(EventFilter::ExcludeByEventId(event_id));
         }
-        self.filtered_rows_count = self.filtered_rows().count();
+        self.update();
     }
     pub fn include_event_id(&mut self, filtered_row_id: usize) {
         if let Some(event_id) = self.event_id_in_row(filtered_row_id) {
             self.event_filters
                 .insert(EventFilter::IncludeByEventId(event_id));
         }
-        self.filtered_rows_count = self.filtered_rows().count();
+        self.update();
     }
     pub fn reset_filter(&mut self) {
         self.event_filters.clear();
-        self.filtered_rows_count = self.filtered_rows().count();
+        self.update();
     }
 }
 
@@ -220,94 +266,5 @@ impl Iterator for RowContentsIterator {
             },
             None => None,
         })
-    }
-}
-
-#[allow(dead_code)]
-pub struct RowContents {
-    record_timestamp: DateTime<Utc>,
-    event_record_id: u64,
-    level: String,
-    timestamp: String,
-    record_id: String,
-    event_id: String,
-    raw_value: String,
-    user_id: String,
-    event_data: String,
-    event: Event,
-}
-
-impl<'r> TryFrom<&'r SerializedEvtxRecord<String>> for RowContents {
-    type Error = anyhow::Error;
-
-    fn try_from(record: &'r SerializedEvtxRecord<String>) -> Result<Self, Self::Error> {
-        let event: Event = from_str(&record.data)?;
-        let event_data = match event.event_data() {
-            Some(data) => match data.data() {
-                Some(data) => {
-                    let value: Vec<_> = data
-                        .iter()
-                        .map(|d| {
-                            format!(
-                                "{}: {}",
-                                d.name().as_ref().map(|s| &s[..]).unwrap_or(""),
-                                d.value().as_ref().map(|s| &s[..]).unwrap_or_default()
-                            )
-                        })
-                        .collect();
-                    value.join(", ")
-                }
-                None => "".into(),
-            },
-            None => "".into(),
-        };
-        let mut user_id = event
-            .system()
-            .security()
-            .user_id()
-            .clone()
-            .unwrap_or_default();
-
-        if user_id.len() > 38 {
-            if let Some(l) = user_id.split('-').last() {
-                user_id = l.into();
-            }
-        }
-
-        Ok(Self {
-            event_record_id: record.event_record_id,
-            record_timestamp: record.timestamp,
-            level: event.system().level().to_string(),
-            timestamp: FormattableDatetime::from(record.timestamp).to_string(),
-            record_id: record.event_record_id.to_string(),
-            event_id: event.system().EventID().to_string(),
-            raw_value: record.data.clone(),
-            user_id,
-            event,
-            event_data,
-        })
-    }
-}
-
-impl<'r> From<&'r RowContents> for Row<'r> {
-    fn from(contents: &'r RowContents) -> Self {
-        let mut row = Row::new(vec![
-            &contents.level[..],
-            &contents.timestamp[..],
-            &contents.record_id[..],
-            &contents.event_id[..],
-            &contents.user_id[..],
-            &contents.event_data[..],
-        ]);
-
-        if !contents.user_id.is_empty() && !contents.user_id.contains('-') {
-            if contents.user_id == "500" {
-                row = row.bold().red()
-            } else {
-                row = row.fg(Color::Red)
-            }
-        }
-
-        row
     }
 }

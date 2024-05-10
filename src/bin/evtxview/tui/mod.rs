@@ -4,6 +4,9 @@ pub use evtx_table::*;
 mod color_scheme;
 pub use color_scheme::*;
 
+mod row_contents;
+pub use row_contents::*;
+
 use std::io::{self, Stdout};
 
 use crossterm::{
