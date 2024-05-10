@@ -10,9 +10,8 @@ use ratatui::{
     widgets::{block::*, *},
 };
 
-const INFO_TEXT: &str =
-    r#"(Esc) quit | (↑) move up | (↓) move down | (→) next color | (←) previous color |
- (x) eXclude by event id" | (i) Include by event id | (R) Reset filter"#;
+const INFO_TEXT: &str = r#"(Esc) quit | (↑) move up | (↓) move down | (→) next color | (←) previous color |
+ (x) eXclude by event id" | (i) Include by event id | (R) Reset filter | (o) change Orientation"#;
 
 pub struct App {
     evtx_table: EvtxTable,
@@ -22,6 +21,7 @@ pub struct App {
     details_scroll_state: ScrollbarState,
     colors: ColorScheme,
     table_view_port: Rect,
+    orientation: Direction,
 }
 
 impl App {
@@ -36,6 +36,7 @@ impl App {
             details_scroll_state: ScrollbarState::new(0),
             colors: ColorScheme::new(&PALETTES[0]),
             table_view_port: Rect::new(0, 0, 0, 0),
+            orientation: Direction::Horizontal,
         }
     }
     /// runs the application's main loop until the user quits
@@ -48,15 +49,19 @@ impl App {
     }
 
     fn render_frame(&mut self, frame: &mut Frame) {
-        let margins = Margin::new(1, 1);
+        let margins = Margin::new(0, 0);
         let rects = Layout::vertical([
             Constraint::Min(5),
             Constraint::Length(5),
             Constraint::Length(3),
         ])
         .split(frame.size());
-        let cols = Layout::horizontal(
-            Constraint::from_percentages(vec![50, 50])).split(rects[0]);
+
+        let cols = Layout::new(
+            self.orientation,
+            vec![Constraint::Percentage(50), Constraint::Min(0)],
+        )
+        .split(rects[0]);
 
         let table_scroll_area = cols[0].inner(&margins);
         let table_contents_area = table_scroll_area.inner(&margins);
@@ -68,8 +73,12 @@ impl App {
             Scrollbar::default()
                 .orientation(ScrollbarOrientation::VerticalRight)
                 .begin_symbol(None)
-                .end_symbol(None),
-            table_scroll_area,
+                .end_symbol(None)
+                .track_symbol(None),
+            table_scroll_area.inner(&Margin {
+                vertical: 1,
+                horizontal: 0,
+            }),
             &mut self.table_scroll_state,
         );
 
@@ -89,14 +98,20 @@ impl App {
     }
 
     fn render_table(&mut self, frame: &mut Frame, area: Rect) {
-        frame.render_stateful_widget(self.evtx_table.table(), area, &mut self.state);
+        let block = Block::bordered()
+            .border_type(BorderType::Rounded)
+            .border_style(Style::new().fg(self.colors.footer_border_color()));
+        frame.render_stateful_widget(self.evtx_table.table().block(block), area, &mut self.state);
     }
     fn render_content(&mut self, frame: &mut Frame, area: Rect) {
         match self.state.selected() {
             Some(i) => match self.evtx_table.content(i) {
-                Some(value) => {
-                    frame.render_widget(Paragraph::new(&value[..]).wrap(Wrap { trim: false }), area)
-                }
+                Some(value) => frame.render_widget(
+                    Paragraph::new(&value[..])
+                        .wrap(Wrap { trim: false })
+                        .block(self.bordered_block()),
+                    area,
+                ),
                 None => frame.render_widget(Clear, area),
             },
             None => frame.render_widget(Clear, area),
@@ -106,8 +121,14 @@ impl App {
     fn render_sparkline(&mut self, frame: &mut Frame, area: Rect) {
         let spark_line = Sparkline::default()
             .data(self.evtx_table.sparkline_data())
-            .block(Block::new().border_type(BorderType::Thick));
+            .block(self.bordered_block());
         frame.render_widget(spark_line, area)
+    }
+
+    fn bordered_block(&self) -> Block {
+        Block::bordered()
+            .border_type(BorderType::Rounded)
+            .border_style(Style::new().fg(self.colors.footer_border_color()))
     }
 
     fn render_footer(&mut self, frame: &mut Frame, area: Rect) {
@@ -118,11 +139,7 @@ impl App {
                     .bg(self.colors.buffer_bg()),
             )
             .centered()
-            .block(
-                Block::bordered()
-                    .border_type(BorderType::Double)
-                    .border_style(Style::new().fg(self.colors.footer_border_color())),
-            );
+            .block(self.bordered_block());
         frame.render_widget(info_footer, area);
     }
 
@@ -149,11 +166,19 @@ impl App {
             KeyCode::Char('x') => self.exclude_event_id(),
             KeyCode::Char('i') => self.include_event_id(),
             KeyCode::Char('R') => self.reset_filter(),
+            KeyCode::Char('o') => self.change_orientation(),
             _ => {}
         }
     }
     fn exit(&mut self) {
         self.exit = true;
+    }
+
+    fn change_orientation(&mut self) {
+        self.orientation = match self.orientation {
+            Direction::Horizontal => Direction::Vertical,
+            Direction::Vertical => Direction::Horizontal,
+        }
     }
 
     fn exclude_event_id(&mut self) {

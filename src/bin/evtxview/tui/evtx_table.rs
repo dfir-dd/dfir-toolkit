@@ -152,8 +152,8 @@ impl EvtxTable {
         self.filtered_rows_count == 0
     }
 
-    pub fn content(&self, idx: usize) -> Option<&String> {
-        self.rows.get(idx).map(|r| &r.raw_value)
+    pub fn content(&self, filtered_row_id: usize) -> Option<&String> {
+        self.filtered_rows().nth(filtered_row_id).map(|r| &r.raw_value)
     }
 
     pub fn sparkline_data(&self) -> &Vec<u64> {
