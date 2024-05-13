@@ -719,7 +719,7 @@ dependencies = [
  "encoding_rs_io",
  "evtx",
  "flate2",
- "forensic-rs 0.11.0",
+ "forensic-rs",
  "frnsc-prefetch",
  "futures",
  "getset",
@@ -1036,19 +1036,9 @@ checksum = "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b"
 
 [[package]]
 name = "forensic-rs"
-version = "0.9.1"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1e878efbc5ee339c257d8c18b1c8535864bcfb0ec9a4b7c0a6afd3aed718cf20"
-dependencies = [
- "serde",
- "thiserror",
-]
-
-[[package]]
-name = "forensic-rs"
-version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ccb29be9815a6c5c5ed191acb436097f45edf5bd8a50f572a5a4296a45ee44ff"
+checksum = "6b505c08ffc21e66f9cfca93ebf46f6aef480d806508fd591b7f628eabee45a7"
 dependencies = [
  "serde",
 ]
@@ -1064,12 +1054,12 @@ dependencies = [
 
 [[package]]
 name = "frnsc-prefetch"
-version = "0.9.1"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c8cc48c4295142e32b6b94988a69701557a9810a90a743a8b01a8899746d7ed9"
+checksum = "fbe8c029ad817943d73e5ee4b9df54df4540e93d2ab44e9544976381a685f7de"
 dependencies = [
  "crc32fast",
- "forensic-rs 0.9.1",
+ "forensic-rs",
 ]
 
 [[package]]
