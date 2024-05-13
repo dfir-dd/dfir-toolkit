@@ -11,9 +11,6 @@ use ratatui::{
 };
 use tui_textarea::TextArea;
 
-// (→) next color | (←) previous color
-const INFO_TEXT: &str = r#"(Esc) quit | (↑) move up | (↓) move down | (E) Exclude by Event id" | (e) include by Event id | (U) exclude by User | (u) include by User | (R) Reset filter | (o) change Orientation | (+/-) in/decrease table size | (/|?) search forard/backward"#;
-
 #[derive(Clone, Copy)]
 enum SearchOrder {
     Forward,
@@ -183,15 +180,34 @@ impl<'t> App<'t> {
     }
 
     fn render_footer(&mut self, frame: &mut Frame, area: Rect) {
-        let info_footer = Paragraph::new(Line::from(INFO_TEXT))
-            .style(
-                Style::new()
-                    .fg(self.colors.row_fg())
-                    .bg(self.colors.buffer_bg()),
-            )
-            .centered()
-            .block(self.bordered_block());
-        frame.render_widget(info_footer, area);
+        let help_table = Table::new(
+            vec![
+                Row::new(vec![
+                    "(Esc) quit",
+                    "(E) Exclude by Event id",
+                    "(U) exclude by User",
+                    "(+/-) in/decrease table size",
+                ]),
+                Row::new(vec![
+                    "(↑) move up",
+                    "(e) include by Event id",
+                    "(u) include by User",
+                    "(o) change Orientation",
+                ]),
+                Row::new(vec![
+                    "(↓) move down",
+                    "(R) Reset filter",
+                    "(/|?) search forward/backward",
+                    "",
+                ]),
+            ],
+            Constraint::from_percentages(vec![25, 25, 25, 25]),
+        )
+        .style(
+            Style::new()
+                .fg(self.colors.row_fg())
+        );
+        frame.render_widget(help_table, area);
     }
 
     fn render_textfield(&mut self, frame: &mut Frame, area: Rect) {
@@ -202,7 +218,7 @@ impl<'t> App<'t> {
         let display_text = match self.app_mode {
             AppMode::Normal => "",
             AppMode::SearchField(SearchOrder::Forward) => "Search (forward):",
-            AppMode::SearchField(SearchOrder::Backward) => "Search (backward):"
+            AppMode::SearchField(SearchOrder::Backward) => "Search (backward):",
         };
         frame.render_widget(Text::raw(display_text), layout[0]);
         frame.render_widget(self.search_field.widget(), layout[1]);
