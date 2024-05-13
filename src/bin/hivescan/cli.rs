@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use clap::Parser;
+use clap::{Parser, ValueHint};
 use dfir_toolkit::common::HasVerboseFlag;
 use log::LevelFilter;
 
@@ -10,10 +10,11 @@ use log::LevelFilter;
 #[clap(name=env!("CARGO_BIN_NAME"), author, version)]
 pub (crate) struct Cli {
     /// name of the file to scan
+    #[clap(value_hint=ValueHint::FilePath)]
     pub (crate) hive_file: String,
 
     /// transaction LOG file(s). This argument can be specified one or two times.
-    #[clap(short('L'), long("log"))]
+    #[clap(short('L'), long("log"), value_hint=ValueHint::FilePath)]
     #[arg(value_parser = validate_file)]
     pub (crate) logfiles: Vec<PathBuf>,
 

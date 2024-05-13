@@ -1,6 +1,6 @@
 use std::{io::stdout, path::PathBuf};
 
-use clap::{Parser, Subcommand, ValueEnum};
+use clap::{Parser, Subcommand, ValueEnum, ValueHint};
 use dfir_toolkit::common::HasVerboseFlag;
 use log::LevelFilter;
 
@@ -27,7 +27,8 @@ pub enum Command {
         #[clap(short('U'), long("username"))]
         username: Option<String>,
 
-        /// Name of the evtx file to parse
+        /// Name of the evtx file to parse (should be the path to "Security.evtx")
+        #[clap(value_hint=ValueHint::FilePath)]
         evtx_file: PathBuf,
 
         /// output format
@@ -38,7 +39,10 @@ pub enum Command {
     /// display sessions
     #[clap(name = "sessions")]
     Sessions {
-        /// Names of the evtx files to parse
+        /// Names of the evtx files directory to parse. Be aware that
+        /// this tool assumes some file names. If you renamed the files,
+        /// session analysis wil not work correctly.
+        #[clap(value_hint=ValueHint::DirPath)]
         evtx_files_dir: PathBuf,
 
         /// include anonymous sessions
@@ -49,7 +53,10 @@ pub enum Command {
     /// display one single session
     #[clap(name = "session")]
     Session {
-        /// Names of the evtx files to parse
+        /// Names of the evtx files directory to parse. Be aware that
+        /// this tool assumes some file names. If you renamed the files,
+        /// session analysis wil not work correctly.
+        #[clap(value_hint=ValueHint::DirPath)]
         evtx_files_dir: PathBuf,
 
         /// Session ID

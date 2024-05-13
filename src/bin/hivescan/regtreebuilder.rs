@@ -1,7 +1,5 @@
 use std::{
-    cell::RefCell,
-    collections::{hash_map, HashMap},
-    rc::Rc,
+    cell::RefCell, cmp::max, collections::{hash_map, HashMap}, rc::Rc
 };
 
 use binread::BinReaderExt;
@@ -48,7 +46,6 @@ impl RegTreeBuilder {
         B: BinReaderExt,
         C: Fn(u64),
     {
-        let iterator = hive.into_cell_iterator(progress_callback);
         let mut me = Self {
             subtrees: HashMap::new(),
             entries: HashMap::new(),
@@ -56,17 +53,21 @@ impl RegTreeBuilder {
         };
 
         let mut last_offset = Offset(0);
-        for cell in iterator {
+        let mut last_cell_end = 0;
+        for cell in hive.hivebins().flat_map(|hivebin| hivebin.cells()) {
             let my_offset = *cell.offset();
+            let my_size = cell.header().size();
             let is_deleted = cell.header().is_deleted();
             assert_ne!(last_offset, my_offset);
             log::trace!("found new cell at offset 0x{:x}", my_offset.0);
 
             if let Ok(nk) = TryInto::<KeyNode>::try_into(cell) {
-                me.insert_nk(my_offset, nk, is_deleted)
-            };
-
+                me.insert_nk(my_offset, nk, is_deleted);
+            }
             last_offset = my_offset;
+
+            last_cell_end = max(last_cell_end, u64::from(last_offset.0) + u64::try_from(my_size).unwrap());
+            progress_callback(last_cell_end);
         }
         me
     }
@@ -78,7 +79,7 @@ impl RegTreeBuilder {
     }
 
     fn insert_nk(&mut self, nk_offset: Offset, nk: KeyNode, is_deleted: bool) {
-        assert!(!self.subtrees.contains_key(&nk_offset));
+        assert!(!self.subtrees.contains_key(&nk_offset), "KeyNode at offset 0x{:08x} is already in the set of subtrees", nk_offset.0);
         assert!(!self.entries.contains_key(&nk_offset));
 
         let parent_offset = nk.parent;
