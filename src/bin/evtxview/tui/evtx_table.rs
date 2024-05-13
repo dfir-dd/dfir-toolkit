@@ -34,8 +34,12 @@ impl EventFilter {
         match self {
             EventFilter::ExcludeByEventId(event_id) => rc.event().system().EventID() != event_id,
             EventFilter::IncludeByEventId(event_id) => rc.event().system().EventID() == event_id,
-            EventFilter::ExcludeByUser(user_id) => rc.event().system().security().user_id().as_ref() != Some(user_id),
-            EventFilter::IncludeByUser(user_id) => rc.event().system().security().user_id().as_ref() == Some(user_id),
+            EventFilter::ExcludeByUser(user_id) => {
+                rc.event().system().security().user_id().as_ref() != Some(user_id)
+            }
+            EventFilter::IncludeByUser(user_id) => {
+                rc.event().system().security().user_id().as_ref() == Some(user_id)
+            }
         }
     }
 }
@@ -302,6 +306,29 @@ impl EvtxTable {
 
     pub fn read_status(&self) -> Option<ReadState> {
         self.data.lock().ok().map(|data| data.state)
+    }
+
+    pub fn find_next(&self, starting_at: usize, search_string: &str) -> Option<usize> {
+        if let Ok(data) = self.data.lock() {
+            data.rows
+                .iter()
+                .filter(|rc| self.filter_row(rc))
+                .enumerate()
+                .filter(|(idx, _rc)| *idx > starting_at)
+                .find_map(|(idx, rc)| {
+                    if rc.raw_value().contains(search_string) {
+                        Some(idx)
+                    } else {
+                        None
+                    }
+                })
+        } else {
+            None
+        }
+    }
+
+    pub fn find_previous(&self, starting_at: usize, search_string: &str) -> Option<usize> {
+        None
     }
 }
 
