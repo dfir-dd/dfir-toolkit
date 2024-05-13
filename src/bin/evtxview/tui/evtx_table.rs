@@ -328,7 +328,22 @@ impl EvtxTable {
     }
 
     pub fn find_previous(&self, starting_at: usize, search_string: &str) -> Option<usize> {
-        None
+        if let Ok(data) = self.data.lock() {
+            data.rows
+                .iter()
+                .filter(|rc| self.filter_row(rc))
+                .enumerate()
+                .filter(|(idx, _rc)| *idx < starting_at)
+                .filter_map(|(idx, rc)| {
+                    if rc.raw_value().contains(search_string) {
+                        Some(idx)
+                    } else {
+                        None
+                    }
+                }).last()
+        } else {
+            None
+        }
     }
 }
 
