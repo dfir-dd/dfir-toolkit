@@ -1,29 +1,49 @@
 use chrono_tz::Tz;
 use dfir_toolkit::common::ForensicsTimestamp;
-use std::cell::RefCell;
+use std::{cell::RefCell, io::Write};
 
 use crate::bodyfile::{ListEntry, Mactime2Writer};
 
-pub struct TxtOutput {
+pub struct TxtOutput<W>
+where
+    W: Write + Send,
+{
     src_zone: Tz,
     dst_zone: Tz,
     last_ts: (RefCell<i64>, RefCell<String>),
     empty_ts: RefCell<String>,
+    writer: W,
 }
 
-impl TxtOutput {
-    pub fn new(src_zone: Tz, dst_zone: Tz) -> Self {
+impl<W> TxtOutput<W>
+where
+    W: Write + Send,
+{
+    pub fn new(writer: W, src_zone: Tz, dst_zone: Tz) -> Self {
         Self {
             src_zone,
             dst_zone,
             last_ts: (RefCell::new(i64::MIN), RefCell::new("".to_owned())),
             empty_ts: RefCell::new("                         ".to_owned()),
+            writer,
         }
+    }
+
+    #[allow(dead_code)]
+    pub fn with_writer(mut self, writer: W) -> Self
+    where
+        W: Write + Send + 'static,
+    {
+        self.writer = writer;
+        self
     }
 }
 
-impl Mactime2Writer for TxtOutput {
-    fn fmt(&self, timestamp: &i64, entry: &ListEntry) -> String {
+impl<W> Mactime2Writer<W> for TxtOutput<W>
+where
+    W: Write + Send,
+{
+    fn write_line(&mut self, timestamp: &i64, entry: &ListEntry) -> std::io::Result<()> {
         let ts = if *timestamp != *self.last_ts.0.borrow() {
             *self.last_ts.1.borrow_mut() =
                 ForensicsTimestamp::new(*timestamp, self.src_zone, self.dst_zone).to_string();
@@ -32,7 +52,8 @@ impl Mactime2Writer for TxtOutput {
         } else {
             self.empty_ts.borrow()
         };
-        format!(
+        writeln!(
+            &mut self.writer,
             "{} {:>8} {} {:<12} {:<7} {:<7} {} {}",
             ts,
             entry.line.get_size(),
@@ -44,17 +65,23 @@ impl Mactime2Writer for TxtOutput {
             entry.line.get_name()
         )
     }
+
+    fn into_writer(self) -> W {
+        self.writer
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::TxtOutput;
-    use crate::bodyfile::{ListEntry, MACBFlags, Mactime2Writer};
+    use crate::bodyfile::Mactime2Writer;
+    use crate::bodyfile::{ListEntry, MACBFlags};
     use chrono::DateTime;
     use chrono_tz::Tz;
     use chrono_tz::TZ_VARIANTS;
     use dfir_toolkit::common::bodyfile::Bodyfile3Line;
     use dfir_toolkit::common::bodyfile::Created;
+    use std::io::{BufRead, BufReader, Cursor};
     use std::sync::Arc;
 
     fn random_tz() -> Tz {
@@ -65,7 +92,6 @@ mod tests {
     #[allow(non_snake_case)]
     #[test]
     fn test_correct_ts_UTC() {
-        let output = TxtOutput::new(Tz::UTC, Tz::UTC);
         for _ in 1..10 {
             let unix_ts = rand::random::<u32>() as i64;
             let bf_line = Bodyfile3Line::new().with_crtime(Created::from(unix_ts));
@@ -74,8 +100,13 @@ mod tests {
                 line: Arc::new(bf_line),
             };
 
-            let out_line = output.fmt(&unix_ts, &entry);
-            let out_line2 = output.fmt(&unix_ts, &entry);
+            let mut output = TxtOutput::new(Cursor::new(vec![]), Tz::UTC, Tz::UTC);
+            output.write_line(&unix_ts, &entry).unwrap();
+            output.write_line(&unix_ts, &entry).unwrap();
+            let mut output = BufReader::new(Cursor::new(output.into_writer().into_inner())).lines();
+
+            let out_line = output.next().unwrap().unwrap();
+            let out_line2 = output.next().unwrap().unwrap();
             assert!(out_line2.starts_with(' '));
 
             let out_ts = out_line.split(' ').next().unwrap();
@@ -83,7 +114,7 @@ mod tests {
             assert_eq!(
                 unix_ts,
                 rfc3339.timestamp(),
-                "Timestamp {} converted to '{}' and back to {}",
+                "Timestamp {} converted to '{}' and back to {}",
                 unix_ts,
                 out_ts,
                 rfc3339.timestamp()
@@ -96,7 +127,6 @@ mod tests {
     fn test_correct_ts_random_tz() -> Result<(), String> {
         for _ in 1..100 {
             let tz = random_tz();
-            let output = TxtOutput::new(tz, tz);
             let unix_ts = rand::random::<u32>() as i64;
             let bf_line = Bodyfile3Line::new().with_crtime(Created::from(unix_ts));
             let entry = ListEntry {
@@ -104,8 +134,13 @@ mod tests {
                 line: Arc::new(bf_line),
             };
 
-            let out_line = output.fmt(&unix_ts, &entry);
-            let out_line2 = output.fmt(&unix_ts, &entry);
+            let mut output = TxtOutput::new(Cursor::new(vec![]), tz, tz);
+            output.write_line(&unix_ts, &entry).unwrap();
+            output.write_line(&unix_ts, &entry).unwrap();
+            let mut output = BufReader::new(Cursor::new(output.into_writer().into_inner())).lines();
+
+            let out_line = output.next().unwrap().unwrap();
+            let out_line2 = output.next().unwrap().unwrap();
             assert!(out_line2.starts_with(' '));
 
             let out_ts = out_line.split(' ').next().unwrap();

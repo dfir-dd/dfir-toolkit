@@ -5,6 +5,7 @@ use chrono::offset::TimeZone;
 use chrono::{DateTime, FixedOffset, LocalResult, NaiveDateTime};
 use chrono_tz::Tz;
 use lazy_static::lazy_static;
+use serde::Serialize;
 
 lazy_static! {
     static ref TIMESTAMP_FORMAT: Option<String> = {
@@ -82,5 +83,13 @@ impl Display for ForensicsTimestamp {
         } else {
             Self::display_datetime(&*ZERO, f)
         }
+    }
+}
+
+impl Serialize for ForensicsTimestamp {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer {
+        serializer.serialize_str(&format!("{self}"))
     }
 }

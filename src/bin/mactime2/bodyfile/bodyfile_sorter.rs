@@ -1,7 +1,8 @@
-use dfir_toolkit::common::bodyfile::{Bodyfile3Line, BehavesLikeI64};
+use dfir_toolkit::common::bodyfile::{BehavesLikeI64, Bodyfile3Line};
 use std::borrow::Borrow;
 use std::cmp::Ordering;
 use std::collections::{BTreeMap, HashSet};
+use std::io::{Stdout, Write};
 use std::sync::mpsc::Receiver;
 use std::sync::Arc;
 use std::thread::JoinHandle;
@@ -11,18 +12,19 @@ use crate::filter::{Joinable, RunOptions, Runnable, Sorter};
 
 use super::MACBFlags;
 
-pub trait Mactime2Writer: Send {
-    fn write(&self, timestamp: &i64, entry: &ListEntry) {
-        println!("{}", self.fmt(timestamp, entry));
-    }
-    fn fmt(&self, timestamp: &i64, entry: &ListEntry) -> String;
+pub trait Mactime2Writer<W>: Send
+where
+    W: Write + Send
+{
+    fn write_line(&mut self, timestamp: &i64, entry: &ListEntry) -> std::io::Result<()>;
+    fn into_writer(self) -> W;
 }
 
 #[derive(Default)]
 pub struct BodyfileSorter {
     worker: Option<JoinHandle<Result<(), MactimeError>>>,
     receiver: Option<Receiver<Bodyfile3Line>>,
-    output: Option<Box<dyn Mactime2Writer>>,
+    output: Option<Box<dyn Mactime2Writer<Stdout>>>,
 }
 
 #[derive(Debug)]
@@ -105,14 +107,14 @@ impl BodyfileSorter {
         self
     }
 
-    pub fn with_output(mut self, output: Box<dyn Mactime2Writer>) -> Self {
+    pub fn with_output(mut self, output: Box<dyn Mactime2Writer<Stdout>>) -> Self {
         self.output = Some(output);
         self
     }
 
     fn worker(
         decoder: Receiver<Bodyfile3Line>,
-        output: Box<dyn Mactime2Writer>,
+        mut output: Box<dyn Mactime2Writer<Stdout>>,
     ) -> Result<(), MactimeError> {
         let mut entries: BTreeMap<i64, Vec<ListEntry>> = BTreeMap::new();
         let mut names: HashSet<(String, String)> = HashSet::new();
@@ -189,7 +191,7 @@ impl BodyfileSorter {
 
         for (ts, entries_at_ts) in entries.iter() {
             for line in entries_at_ts {
-                output.write(ts, line);
+                output.write_line(ts, line)?;
             }
         }
         Ok(())

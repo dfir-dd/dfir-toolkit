@@ -62,8 +62,8 @@ impl Mactime2Application {
                 BodyfileSorter::default().with_receiver(decoder.get_receiver(), options);
 
             sorter = sorter.with_output(match self.format {
-                OutputFormat::Csv => Box::new(CsvOutput::new(self.src_zone, self.dst_zone)),
-                OutputFormat::Txt => Box::new(TxtOutput::new(self.src_zone, self.dst_zone)),
+                OutputFormat::Csv => Box::new(CsvOutput::new(std::io::stdout(), self.src_zone, self.dst_zone)),
+                OutputFormat::Txt => Box::new(TxtOutput::new(std::io::stdout(), self.src_zone, self.dst_zone)),
                 _ => panic!("invalid execution path"),
             });
             Box::new(sorter)
