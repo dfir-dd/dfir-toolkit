@@ -30,13 +30,11 @@ fn main() -> anyhow::Result<()> {
                         let created = virtual_file
                             .metadata()?
                             .created_opt()
-                            .map(|t| i64::try_from(*t).ok())
-                            .flatten();
+                            .and_then(|t| i64::try_from(*t).ok());
                         let modified = virtual_file
                             .metadata()?
                             .modified_opt()
-                            .map(|t| i64::try_from(*t).ok())
-                            .flatten();
+                            .and_then(|t| i64::try_from(*t).ok());
                         let pf_file = read_prefetch_file(pf_filename, virtual_file)?;
 
                         pf_file.display_prefetch_file(
