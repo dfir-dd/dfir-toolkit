@@ -7,6 +7,10 @@ description = "CLI tools for digital forensics and incident response"
 repository = "https://github.com/dfir-dd/dfir-toolkit"
 license = "GPL-3.0"
 
+# this version is required, because earlier versions handle missing `created`
+# timestamps as `Uncategorized`, instead of `Unsupported`
+rust-version = "1.78"
+
 [package.metadata.deb]
 maintainer-scripts = "scripts/maintainer"
 
