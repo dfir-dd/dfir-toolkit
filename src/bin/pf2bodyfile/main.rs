@@ -27,22 +27,23 @@ fn main() -> anyhow::Result<()> {
                 if let Some(pf_os_filename) = input.path().file_name() {
                     if let Some(pf_filename) = pf_os_filename.to_str() {
                         let virtual_file = fs.open(Path::new(&pf_filename.to_string()))?;
-                        let created = virtual_file
-                            .metadata()?
-                            .created_opt()
-                            .and_then(|t| i64::try_from(*t).ok());
-                        let modified = virtual_file
-                            .metadata()?
-                            .modified_opt()
-                            .and_then(|t| i64::try_from(*t).ok());
-                        let pf_file = read_prefetch_file(pf_filename, virtual_file)?;
-
-                        pf_file.display_prefetch_file(
-                            pf_filename,
-                            *cli.include_metrics(),
-                            created,
-                            modified,
-                        )?;
+                        match virtual_file.metadata() {
+                            Ok(metadata) => {
+                                let created = metadata.created_opt().and_then(|t| i64::try_from(*t).ok());
+                                let modified = metadata.modified_opt().and_then(|t| i64::try_from(*t).ok());
+                                let pf_file = read_prefetch_file(pf_filename, virtual_file)?;
+        
+                                pf_file.display_prefetch_file(
+                                    pf_filename,
+                                    *cli.include_metrics(),
+                                    created,
+                                    modified,
+                                )?;
+                            }
+                            Err(why) => {
+                                log::error!("Unable to obtain metadata for {pf_filename}: {why}");
+                            },
+                        }
                     } else {
                         error!("invalid Unicode characters in filename: '{pf_os_filename:?}'")
                     }
