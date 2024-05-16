@@ -27,23 +27,29 @@ fn main() -> anyhow::Result<()> {
                 if let Some(pf_os_filename) = input.path().file_name() {
                     if let Some(pf_filename) = pf_os_filename.to_str() {
                         let virtual_file = fs.open(Path::new(&pf_filename.to_string()))?;
+                        let created;
+                        let modified;
                         match virtual_file.metadata() {
                             Ok(metadata) => {
-                                let created = metadata.created_opt().and_then(|t| i64::try_from(*t).ok());
-                                let modified = metadata.modified_opt().and_then(|t| i64::try_from(*t).ok());
-                                let pf_file = read_prefetch_file(pf_filename, virtual_file)?;
-        
-                                pf_file.display_prefetch_file(
-                                    pf_filename,
-                                    *cli.include_metrics(),
-                                    created,
-                                    modified,
-                                )?;
+                                created =
+                                    metadata.created_opt().and_then(|t| i64::try_from(*t).ok());
+                                modified =
+                                    metadata.modified_opt().and_then(|t| i64::try_from(*t).ok());
                             }
                             Err(why) => {
-                                log::error!("Unable to obtain metadata for {pf_filename}: {why}");
-                            },
+                                log::warn!("Unable to obtain metadata for {pf_filename}: {why}");
+                                created = None;
+                                modified = None;
+                            }
                         }
+                        let pf_file = read_prefetch_file(pf_filename, virtual_file).unwrap();
+
+                        pf_file.display_prefetch_file(
+                            pf_filename,
+                            *cli.include_metrics(),
+                            created,
+                            modified,
+                        )?;
                     } else {
                         error!("invalid Unicode characters in filename: '{pf_os_filename:?}'")
                     }
