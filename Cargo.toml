@@ -7,6 +7,10 @@ description = "CLI tools for digital forensics and incident response"
 repository = "https://github.com/dfir-dd/dfir-toolkit"
 license = "GPL-3.0"
 
+# this version is required, because earlier versions handle missing `created`
+# timestamps as `Uncategorized`, instead of `Unsupported`
+rust-version = "1.78"
+
 [package.metadata.deb]
 maintainer-scripts = "scripts/maintainer"
 
@@ -180,8 +184,8 @@ lnk = {version="0.5.1", optional=true}
 # pf2bodyfile
 libc = {version="0.2", optional=true}
 num = {version="0", optional=true}
-frnsc-prefetch = {version="0.9", optional=true}
-forensic-rs = {version="0.9.1", optional=true}
+frnsc-prefetch = {version="0.13", optional=true}
+forensic-rs = {version="0.13", optional=true}
 
 [dev-dependencies]
 

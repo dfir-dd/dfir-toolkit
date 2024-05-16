@@ -1,5 +1,5 @@
 use anyhow::{anyhow, Result};
-use chrono::{DateTime, LocalResult, NaiveDateTime, TimeZone, Utc};
+use chrono::{DateTime, TimeZone, Utc};
 use chrono_tz::Tz;
 use serde::Serialize;
 use serde_json::{json, Value};
@@ -36,14 +36,11 @@ impl TryFrom<(i64, &Tz)> for Timestamp {
     type Error = anyhow::Error;
 
     fn try_from((unix_ts, src_tz): (i64, &Tz)) -> Result<Self, Self::Error> {
-        let ts = match src_tz
-            .from_local_datetime(&NaiveDateTime::from_timestamp_opt(unix_ts, 0).unwrap())
-        {
-            LocalResult::None => {
+        let ts = match DateTime::from_timestamp(unix_ts, 0) {
+            Some(ts) => ts.with_timezone(src_tz),
+            None => {
                 return Err(anyhow!("INVALID DATETIME"));
             }
-            LocalResult::Single(t) => t,
-            LocalResult::Ambiguous(t1, _t2) => t1,
         };
         Ok(Self {
             ts: ts.timestamp_millis(),
