@@ -4,19 +4,18 @@ use dfir_toolkit::common::ForensicsTimestamp;
 use crate::bodyfile::{ListEntry, Mactime2Writer};
 
 pub(crate) struct CsvOutput {
-    src_zone: Tz,
     dst_zone: Tz,
 }
 
 impl CsvOutput {
-    pub fn new(src_zone: Tz, dst_zone: Tz) -> Self {
-        Self { src_zone, dst_zone }
+    pub fn new(dst_zone: Tz) -> Self {
+        Self { dst_zone }
     }
 }
 
 impl Mactime2Writer for CsvOutput {
     fn fmt(&self, timestamp: &i64, entry: &ListEntry) -> String {
-        let timestamp = ForensicsTimestamp::new(*timestamp, self.src_zone, self.dst_zone);
+        let timestamp = ForensicsTimestamp::from(*timestamp).with_timezone(self.dst_zone);
         format!(
             "{},{},{},{},{},{},{},\"{}\"",
             timestamp,
@@ -52,7 +51,7 @@ mod tests {
     #[allow(non_snake_case)]
     #[test]
     fn test_correct_ts_UTC() {
-        let output = CsvOutput::new(Tz::UTC, Tz::UTC);
+        let output = CsvOutput::new(Tz::UTC);
         for _ in 1..10 {
             let unix_ts = rand::random::<u32>() as i64;
             let bf_line = Bodyfile3Line::new().with_crtime(unix_ts.into());
@@ -78,7 +77,7 @@ mod tests {
     fn test_correct_ts_random_tz() -> Result<(), String> {
         for _ in 1..100 {
             let tz = random_tz();
-            let output = CsvOutput::new(tz, tz);
+            let output = CsvOutput::new(tz);
             let unix_ts = rand::random::<u32>() as i64;
             let bf_line = Bodyfile3Line::new().with_crtime(unix_ts.into());
             let entry = ListEntry {

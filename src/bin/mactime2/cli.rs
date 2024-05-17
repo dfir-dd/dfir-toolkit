@@ -40,10 +40,6 @@ pub struct Cli {
     #[clap(short('j'), display_order(620))]
     pub(crate) json_format: bool,
 
-    /// name of offset of source timezone (or 'list' to display all possible values
-    #[clap(short('f'), long("from-timezone"), display_order(300), default_value_t=TzArgument::Tz(Tz::UTC))]
-    pub src_zone: TzArgument,
-
     /// name of offset of destination timezone (or 'list' to display all possible values
     #[clap(short('t'), long("to-timezone"), display_order(400), default_value_t=TzArgument::Tz(Tz::UTC))]
     pub dst_zone: TzArgument,

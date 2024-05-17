@@ -1,11 +1,8 @@
 use std::sync::mpsc::{Sender, Receiver};
 
-use chrono_tz::Tz;
-
 #[derive(Copy, Clone)]
 pub struct RunOptions {
     pub strict_mode: bool,
-    pub src_zone: Tz
 }
 
 pub trait Provider<To, R>: Joinable<R> {

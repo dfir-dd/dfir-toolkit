@@ -5,7 +5,6 @@ use std::{
     thread::JoinHandle,
 };
 
-use chrono_tz::Tz;
 use dfir_toolkit::{
     common::bodyfile::Bodyfile3Line,
     es4forensics::{objects::PosixFile, Timestamp, TimelineObject},
@@ -20,7 +19,6 @@ use crate::{
 pub struct JsonSorter {
     worker: Option<JoinHandle<Result<(), MactimeError>>>,
     receiver: Option<Receiver<Bodyfile3Line>>,
-    src_zone: Tz,
 }
 
 impl Joinable<Result<(), MactimeError>> for JsonSorter {
@@ -30,11 +28,10 @@ impl Joinable<Result<(), MactimeError>> for JsonSorter {
 }
 
 impl Consumer<Bodyfile3Line> for JsonSorter {
-    fn with_receiver(previous: Receiver<Bodyfile3Line>, options: RunOptions) -> Self {
+    fn with_receiver(previous: Receiver<Bodyfile3Line>, _options: RunOptions) -> Self {
         Self {
             receiver: Some(previous),
             worker: None,
-            src_zone: options.src_zone,
         }
     }
 }
@@ -45,9 +42,8 @@ impl Runnable for JsonSorter {
             .receiver
             .take()
             .expect("no receiver provided; please call with_receiver()");
-        let src_zone = self.src_zone;
         self.worker = Some(std::thread::spawn(move || {
-            Self::json_worker(receiver, src_zone)
+            Self::json_worker(receiver)
         }));
     }
 }
@@ -55,7 +51,7 @@ impl Runnable for JsonSorter {
 impl Sorter<Result<(), MactimeError>> for JsonSorter {}
 
 impl JsonSorter {
-    fn json_worker(decoder: Receiver<Bodyfile3Line>, src_zone: Tz) -> Result<(), MactimeError> {
+    fn json_worker(decoder: Receiver<Bodyfile3Line>) -> Result<(), MactimeError> {
         let mut entries: BTreeMap<Timestamp, BTreeSet<String>> = BTreeMap::new();
         loop {
             let line = Arc::new(match decoder.recv() {
@@ -66,7 +62,7 @@ impl JsonSorter {
             });
 
             let bfline: &Bodyfile3Line = line.borrow();
-            let pf = PosixFile::try_from((bfline, &src_zone)).unwrap();
+            let pf = PosixFile::try_from(bfline).unwrap();
 
             let lines: Vec<(Timestamp, String)> = pf
                 .into_tuples()

@@ -86,13 +86,6 @@ impl IntoIterator for PosixFile {
     }
 }
 
-impl TryFrom<(Bodyfile3Line, &Tz)> for PosixFile {
-    type Error = anyhow::Error;
-    fn try_from((bfline, src_tz): (Bodyfile3Line, &Tz)) -> Result<Self> {
-        Self::try_from((&bfline, src_tz))
-    }
-}
-
 impl TryFrom<Bodyfile3Line> for PosixFile {
     type Error = anyhow::Error;
     fn try_from(bfline: Bodyfile3Line) -> Result<Self> {
