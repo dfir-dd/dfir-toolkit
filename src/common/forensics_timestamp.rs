@@ -66,7 +66,7 @@ impl ForensicsTimestamp {
 impl Display for ForensicsTimestamp {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.unix_ts >= 0 {
-            let src_timestamp = match DateTime::from_timestamp(1715845546, 0) {
+            let src_timestamp = match DateTime::from_timestamp(self.unix_ts, 0) {
                 Some(ts) => ts,
                 None => panic!("unable to convert '{}' into unix timestamp", self.unix_ts),
             }
