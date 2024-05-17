@@ -13,9 +13,17 @@ const BODYFILE_HELP: &str =
 #[cfg(not(feature = "gzip"))]
 const BODYFILE_HELP: &str = "path to input file or '-' for stdin";
 
-/// replacement for `mactime`
+/// Replacement for `mactime`
 #[derive(Parser)]
-#[clap(name="mactime2", author, version, long_about = None)]
+#[clap(name="mactime2", author, version, long_about = None, after_help=
+r##"
+╭────────────────────────────────────────────────────────────────────────────╮
+│IMPORTANT:                                                                  │
+│                                                                            │
+│Note that POSIX specifies that all UNIX timestamps are UTC timestamps. It is│
+│up to you to ensure that the bodyfile only contains UNIX timestamps that    │
+│comply with the POSIX standard.                                             │
+╰────────────────────────────────────────────────────────────────────────────╯"##)]
 
 pub struct Cli {
     #[clap(short('b'), value_parser, value_hint=ValueHint::FilePath, default_value="-", help=BODYFILE_HELP, display_order(100))]
