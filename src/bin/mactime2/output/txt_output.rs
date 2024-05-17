@@ -79,14 +79,12 @@ mod tests {
             assert!(out_line2.starts_with(' '));
 
             let out_ts = out_line.split(' ').next().unwrap();
-            let rfc3339 = DateTime::parse_from_rfc3339(out_ts).expect(out_ts);
+            let rfc3339 = DateTime::parse_from_rfc3339(out_ts)
+                .expect(out_ts)
+                .timestamp();
             assert_eq!(
-                unix_ts,
-                rfc3339.timestamp(),
-                "Timestamp {} converted to '{}' and back to {}",
-                unix_ts,
-                out_ts,
-                rfc3339.timestamp()
+                unix_ts, rfc3339,
+                "Timestamp {unix_ts} converted to '{out_ts}' and back to {rfc3339}",
             );
         }
     }
@@ -117,8 +115,7 @@ mod tests {
             let calculated_ts = rfc3339.timestamp() + offset;
             assert_eq!(
                 unix_ts, calculated_ts,
-                "Timestamp {} converted to '{}' and back to {} (offset was {}s)",
-                unix_ts, out_ts, calculated_ts, offset
+                "Timestamp {unix_ts} converted to '{out_ts}' and back to {calculated_ts} (offset was {offset}s)",
             );
         }
         Ok(())
