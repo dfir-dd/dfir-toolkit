@@ -110,11 +110,10 @@ mod tests {
                 Ok(ts) => ts,
                 Err(e) => return Err(format!("error while parsing '{}': {}", out_ts, e)),
             };
-            let offset = rfc3339.offset().local_minus_utc() as i64;
-            let calculated_ts = rfc3339.timestamp() + offset;
+            let calculated_ts = rfc3339.timestamp();
             assert_eq!(
                 unix_ts, calculated_ts,
-                "Timestamp {unix_ts} converted to '{out_ts}' and back to {calculated_ts} (offset was {offset}s)",
+                "Timestamp {unix_ts} converted to '{out_ts}' and back to {calculated_ts}",
             );
         }
         Ok(())
