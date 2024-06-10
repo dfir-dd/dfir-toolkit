@@ -22,14 +22,17 @@ Display one or more events from an evtx file
 * `--max <MAX>` — filter: maximal event record identifier
 * `-i`, `--id <ID>` — show only the one event with this record identifier
 * `-T`, `--display-table` — don't display the records in a table format
+
+  Possible values: `true`, `false`
+
 * `-F`, `--format <FORMAT>` — output format
 
   Default value: `xml`
 
   Possible values: `json`, `xml`
 
-* `-v`, `--verbose` — More output per occurrence
-* `-q`, `--quiet` — Less output per occurrence
+* `-v`, `--verbose` — Increase logging verbosity
+* `-q`, `--quiet` — Decrease logging verbosity
 
 
 

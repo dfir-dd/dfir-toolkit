@@ -25,8 +25,11 @@ creates bodyfile from Windows evtx files
   Possible values: `json`, `bodyfile`
 
 * `-S`, `--strict` — fail upon read error
-* `-v`, `--verbose` — More output per occurrence
-* `-q`, `--quiet` — Less output per occurrence
+
+  Possible values: `true`, `false`
+
+* `-v`, `--verbose` — Increase logging verbosity
+* `-q`, `--quiet` — Decrease logging verbosity
 
 
 

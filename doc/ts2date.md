@@ -23,8 +23,8 @@ replaces UNIX timestamps in a stream by a formatted date
 
 ###### **Options:**
 
-* `-v`, `--verbose` — More output per occurrence
-* `-q`, `--quiet` — Less output per occurrence
+* `-v`, `--verbose` — Increase logging verbosity
+* `-q`, `--quiet` — Decrease logging verbosity
 * `-f`, `--from-timezone <SRC_ZONE>` — name of offset of source timezone (or 'list' to display all possible values
 
   Default value: `UTC`

@@ -98,7 +98,7 @@ required-features = ["zip2bodyfile"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
 default = ["pol_export", "mactime2", "evtxtools", "regdump", "hivescan", "cleanhive", "ipgrep", "ts2date", "lnk2bodyfile", "pf2bodyfile", "zip2bodyfile"]
-mactime2 = ["gzip", "elastic", "chrono-tz", "thiserror", "bitflags", "encoding_rs_io"]
+mactime2 = ["gzip", "elastic", "chrono-tz", "thiserror", "bitflags", "encoding_rs_io", "color-print"]
 gzip = ["flate2"]
 elastic = ["elasticsearch", "tokio", "futures", "serde_json", "sha2", "base64", "num-traits", "num-derive", "strum", "strum_macros", "tokio-async-drop"]
 evtxtools = ["evtxscan", "evtxcat", "evtxls", "evtxanalyze", "evtx2bodyfile"]
@@ -133,7 +133,7 @@ winstructs = "0.3.0"
 lazy_static = "1.4"
 regex = {version = "1", optional=true}
 
-clap-markdown = "0.1.3"
+clap-markdown-dfir = "0.2.0"
 clap_complete = "4"
 clio = {version="0.3", features=["clap-parse"] }
 #clio = {path="../clio", features=["clap-parse"]}
@@ -145,6 +145,7 @@ flate2 = {version="1", optional=true}
 thiserror = {version="1", optional=true}
 bitflags = {version="2", optional=true}
 encoding_rs_io = {version="0.1", optional=true}
+color-print = {version="0.3.6", optional=true}
 
 # evtxtools
 dfirtk-eventdata = {version="0.1.2", optional=true}

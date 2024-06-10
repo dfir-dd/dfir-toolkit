@@ -19,8 +19,11 @@ creates bodyfile from ZIP Archives based on the contained files and folders
 ###### **Options:**
 
 * `--show-archive-name` — show the name of the archive in the bodyfile output
-* `-v`, `--verbose` — More output per occurrence
-* `-q`, `--quiet` — Less output per occurrence
+
+  Possible values: `true`, `false`
+
+* `-v`, `--verbose` — Increase logging verbosity
+* `-q`, `--quiet` — Decrease logging verbosity
 
 
 

@@ -18,8 +18,8 @@ Exporter for Windows Registry Policy Files
 
 ###### **Options:**
 
-* `-v`, `--verbose` — More output per occurrence
-* `-q`, `--quiet` — Less output per occurrence
+* `-v`, `--verbose` — Increase logging verbosity
+* `-q`, `--quiet` — Decrease logging verbosity
 
 
 

@@ -20,8 +20,8 @@ Parse Windows LNK files and create bodyfile output
 
 ###### **Options:**
 
-* `-v`, `--verbose` — More output per occurrence
-* `-q`, `--quiet` — Less output per occurrence
+* `-v`, `--verbose` — Increase logging verbosity
+* `-q`, `--quiet` — Decrease logging verbosity
 
 
 

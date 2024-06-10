@@ -8,9 +8,15 @@ This document contains the help content for the `mactime2` command-line program.
 
 ## `mactime2`
 
-replacement for `mactime`
+Replacement for `mactime`
 
 **Usage:** `mactime2 [OPTIONS]`
+
+IMPORTANT
+
+Note that POSIX specifies that all UNIX timestamps are UTC timestamps. It is
+up to you to ensure that the bodyfile only contains UNIX timestamps that
+comply with the POSIX standard.
 
 ###### **Options:**
 
@@ -22,16 +28,22 @@ replacement for `mactime`
   Possible values: `csv`, `txt`, `json`, `elastic`
 
 * `-d` — output as CSV instead of TXT. This is a conveniance option, which is identical to `--format=csv` and will be removed in a future release. If you specified `--format` and `-d`, the latter will be ignored
-* `-j` — output as JSON instead of TXT. This is a conveniance option, which is identical to `--format=json` and will be removed in a future release. If you specified `--format` and `-j`, the latter will be ignored
-* `-f`, `--from-timezone <SRC_ZONE>` — name of offset of source timezone (or 'list' to display all possible values
 
-  Default value: `UTC`
+  Possible values: `true`, `false`
+
+* `-j` — output as JSON instead of TXT. This is a conveniance option, which is identical to `--format=json` and will be removed in a future release. If you specified `--format` and `-j`, the latter will be ignored
+
+  Possible values: `true`, `false`
+
 * `-t`, `--to-timezone <DST_ZONE>` — name of offset of destination timezone (or 'list' to display all possible values
 
   Default value: `UTC`
 * `--strict` — strict mode: do not only warn, but abort if an error occurs
-* `-v`, `--verbose` — More output per occurrence
-* `-q`, `--quiet` — Less output per occurrence
+
+  Possible values: `true`, `false`
+
+* `-v`, `--verbose` — Increase logging verbosity
+* `-q`, `--quiet` — Decrease logging verbosity
 
 
 
