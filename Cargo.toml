@@ -186,8 +186,7 @@ frnsc-prefetch = {version="0.9", optional=true}
 forensic-rs = {version="0.9.1", optional=true}
 
 # zip2bodyfile
-# zip = {version="0.6", optional=true}
-zip = {version="0.6", optional=true, git="https://github.com/janstarke/zip.git"}
+zip = {version="0.6", optional=true}
 
 [dev-dependencies]
 
