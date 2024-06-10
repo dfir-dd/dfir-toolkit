@@ -15,12 +15,11 @@ use dfir_toolkit::common::{FancyParser, TzArgument};
 fn main() -> Result<()> {
     let cli: Cli = Cli::parse_cli();
 
-    if cli.src_zone.is_list() || cli.dst_zone.is_list() {
+    if cli.dst_zone.is_list() {
         TzArgument::display_zones();
         return Ok(());
     }
     debug_assert!(cli.dst_zone.is_tz());
-    debug_assert!(cli.src_zone.is_tz());
 
     let app: Mactime2Application = cli.into();
 
