@@ -40,7 +40,7 @@ where
             .get_matches();
 
         if matches.contains_id("markdown-help") {
-            clap_markdown::print_help_markdown::<P>();
+            clap_markdown_dfir::print_help_markdown::<P>(Default::default());
             exit(0);
         }
     }

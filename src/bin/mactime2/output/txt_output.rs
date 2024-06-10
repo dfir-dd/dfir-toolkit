@@ -8,7 +8,6 @@ pub struct TxtOutput<W>
 where
     W: Write + Send,
 {
-    src_zone: Tz,
     dst_zone: Tz,
     last_ts: (RefCell<i64>, RefCell<String>),
     empty_ts: RefCell<String>,
@@ -19,9 +18,8 @@ impl<W> TxtOutput<W>
 where
     W: Write + Send,
 {
-    pub fn new(writer: W, src_zone: Tz, dst_zone: Tz) -> Self {
+    pub fn new(writer: W, dst_zone: Tz) -> Self {
         Self {
-            src_zone,
             dst_zone,
             last_ts: (RefCell::new(i64::MIN), RefCell::new("".to_owned())),
             empty_ts: RefCell::new("                         ".to_owned()),
@@ -45,8 +43,9 @@ where
 {
     fn write_line(&mut self, timestamp: &i64, entry: &ListEntry) -> std::io::Result<()> {
         let ts = if *timestamp != *self.last_ts.0.borrow() {
-            *self.last_ts.1.borrow_mut() =
-                ForensicsTimestamp::new(*timestamp, self.src_zone, self.dst_zone).to_string();
+            *self.last_ts.1.borrow_mut() = ForensicsTimestamp::from(*timestamp)
+                .with_timezone(self.dst_zone)
+                .to_string();
             *self.last_ts.0.borrow_mut() = *timestamp;
             self.last_ts.1.borrow()
         } else {
@@ -100,7 +99,7 @@ mod tests {
                 line: Arc::new(bf_line),
             };
 
-            let mut output = TxtOutput::new(Cursor::new(vec![]), Tz::UTC, Tz::UTC);
+            let mut output = TxtOutput::new(Cursor::new(vec![]), Tz::UTC);
             output.write_line(&unix_ts, &entry).unwrap();
             output.write_line(&unix_ts, &entry).unwrap();
             let mut output = BufReader::new(Cursor::new(output.into_writer().into_inner())).lines();
@@ -110,14 +109,12 @@ mod tests {
             assert!(out_line2.starts_with(' '));
 
             let out_ts = out_line.split(' ').next().unwrap();
-            let rfc3339 = DateTime::parse_from_rfc3339(out_ts).expect(out_ts);
+            let rfc3339 = DateTime::parse_from_rfc3339(out_ts)
+                .expect(out_ts)
+                .timestamp();
             assert_eq!(
-                unix_ts,
-                rfc3339.timestamp(),
-                "Timestamp {} converted to '{}' and back to {}",
-                unix_ts,
-                out_ts,
-                rfc3339.timestamp()
+                unix_ts, rfc3339,
+                "Timestamp {unix_ts} converted to '{out_ts}' and back to {rfc3339}",
             );
         }
     }
@@ -134,7 +131,7 @@ mod tests {
                 line: Arc::new(bf_line),
             };
 
-            let mut output = TxtOutput::new(Cursor::new(vec![]), tz, tz);
+            let mut output = TxtOutput::new(Cursor::new(vec![]), tz);
             output.write_line(&unix_ts, &entry).unwrap();
             output.write_line(&unix_ts, &entry).unwrap();
             let mut output = BufReader::new(Cursor::new(output.into_writer().into_inner())).lines();
@@ -148,12 +145,10 @@ mod tests {
                 Ok(ts) => ts,
                 Err(e) => return Err(format!("error while parsing '{}': {}", out_ts, e)),
             };
-            let offset = rfc3339.offset().local_minus_utc() as i64;
-            let calculated_ts = rfc3339.timestamp() + offset;
+            let calculated_ts = rfc3339.timestamp();
             assert_eq!(
                 unix_ts, calculated_ts,
-                "Timestamp {} converted to '{}' and back to {} (offset was {}s)",
-                unix_ts, out_ts, calculated_ts, offset
+                "Timestamp {unix_ts} converted to '{out_ts}' and back to {calculated_ts}",
             );
         }
         Ok(())

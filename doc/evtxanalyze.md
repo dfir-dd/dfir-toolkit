@@ -23,8 +23,8 @@ crate provide functions to analyze evtx files
 
 ###### **Options:**
 
-* `-v`, `--verbose` — More output per occurrence
-* `-q`, `--quiet` — Less output per occurrence
+* `-v`, `--verbose` — Increase logging verbosity
+* `-q`, `--quiet` — Decrease logging verbosity
 
 
 
@@ -36,7 +36,7 @@ generate a process tree
 
 ###### **Arguments:**
 
-* `<EVTX_FILE>` — Name of the evtx file to parse
+* `<EVTX_FILE>` — Name of the evtx file to parse (should be the path to "Security.evtx")
 
 ###### **Options:**
 
@@ -58,11 +58,14 @@ display sessions
 
 ###### **Arguments:**
 
-* `<EVTX_FILES_DIR>` — Names of the evtx files to parse
+* `<EVTX_FILES_DIR>` — Names of the evtx files directory to parse. Be aware that this tool assumes some file names. If you renamed the files, session analysis wil not work correctly
 
 ###### **Options:**
 
 * `--include-anonymous` — include anonymous sessions
+
+  Possible values: `true`, `false`
+
 
 
 
@@ -74,7 +77,7 @@ display one single session
 
 ###### **Arguments:**
 
-* `<EVTX_FILES_DIR>` — Names of the evtx files to parse
+* `<EVTX_FILES_DIR>` — Names of the evtx files directory to parse. Be aware that this tool assumes some file names. If you renamed the files, session analysis wil not work correctly
 * `<SESSION_ID>` — Session ID
 
 

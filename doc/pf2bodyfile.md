@@ -18,8 +18,12 @@ creates bodyfile from Windows Prefetch files
 
 ###### **Options:**
 
-* `-v`, `--verbose` — More output per occurrence
-* `-q`, `--quiet` — Less output per occurrence
+* `-I` — show not only the executed files, but all references files -- such as libraries -- as well
+
+  Possible values: `true`, `false`
+
+* `-v`, `--verbose` — Increase logging verbosity
+* `-q`, `--quiet` — Decrease logging verbosity
 
 
 

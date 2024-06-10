@@ -28,8 +28,11 @@ search for IP addresses in text files
 
 * `-I`, `--ignore-ips <IGNORE_IPS>` — ignore any of the specified IP addresses. Values are delimited with comma
 * `-c`, `--colors` — highlight interesting content using colors
-* `-v`, `--verbose` — More output per occurrence
-* `-q`, `--quiet` — Less output per occurrence
+
+  Possible values: `true`, `false`
+
+* `-v`, `--verbose` — Increase logging verbosity
+* `-q`, `--quiet` — Decrease logging verbosity
 
 
 

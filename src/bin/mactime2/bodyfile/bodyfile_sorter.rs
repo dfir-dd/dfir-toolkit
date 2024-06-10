@@ -17,6 +17,8 @@ where
     W: Write + Send
 {
     fn write_line(&mut self, timestamp: &i64, entry: &ListEntry) -> std::io::Result<()>;
+    
+    #[allow(dead_code)]
     fn into_writer(self) -> W;
 }
 

@@ -22,6 +22,9 @@ This crates provides structs and functions to insert timeline data into an elast
 ###### **Options:**
 
 * `--strict` — strict mode: do not only warn, but abort if an error occurs
+
+  Possible values: `true`, `false`
+
 * `-I`, `--index <INDEX_NAME>` — name of the elasticsearch index
 * `-H`, `--host <HOST>` — server name or IP address of elasticsearch server
 
@@ -38,12 +41,15 @@ This crates provides structs and functions to insert timeline data into an elast
 * `-k`, `--insecure` — omit certificate validation
 
   Default value: `false`
+
+  Possible values: `true`, `false`
+
 * `-U`, `--username <USERNAME>` — username for elasticsearch server
 
   Default value: `elastic`
 * `-W`, `--password <PASSWORD>` — password for authenticating at elasticsearch
-* `-v`, `--verbose` — More output per occurrence
-* `-q`, `--quiet` — Less output per occurrence
+* `-v`, `--verbose` — Increase logging verbosity
+* `-q`, `--quiet` — Decrease logging verbosity
 
 
 

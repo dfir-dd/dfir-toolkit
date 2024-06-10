@@ -34,6 +34,7 @@
   - [ ] [`regview`](https://github.com/janstarke/regview)
   - [x] [`ts2date`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/ts2date.md)
   - [ ] [`usnjrnl_dump`](https://github.com/janstarke/usnjrnl)
+  - [x] [`zip2bodyfile`](https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/zip2bodyfile.md)
 
 # Overview of timelining tools
 

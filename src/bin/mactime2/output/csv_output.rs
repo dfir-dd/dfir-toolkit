@@ -11,7 +11,6 @@ pub(crate) struct CsvOutput<W>
 where
     W: Write + Send,
 {
-    src_zone: Tz,
     dst_zone: Tz,
     writer: csv::Writer<W>,
 }
@@ -22,9 +21,8 @@ impl<W> CsvOutput<W>
 where
     W: Write + Send,
 {
-    pub fn new(writer: W, src_zone: Tz, dst_zone: Tz) -> Self {
+    pub fn new(writer: W, dst_zone: Tz) -> Self {
         Self {
-            src_zone,
             dst_zone,
             writer: WriterBuilder::new()
                 .delimiter(CSV_DELIMITER)
@@ -48,7 +46,7 @@ where
 {
     fn write_line(&mut self, timestamp: &i64, entry: &ListEntry) -> std::io::Result<()> {
         let csv_line = CsvLine {
-            timestamp: ForensicsTimestamp::new(*timestamp, self.src_zone, self.dst_zone),
+            timestamp: ForensicsTimestamp::new(*timestamp, self.dst_zone),
             size: entry.line.get_size(),
             flags: entry.flags,
             mode: entry.line.get_mode_as_string(),
@@ -110,20 +108,18 @@ mod tests {
                 line: Arc::new(bf_line),
             };
 
-            let mut output = CsvOutput::new(Cursor::new(vec![]), Tz::UTC, Tz::UTC);
+            let mut output = CsvOutput::new(Cursor::new(vec![]), Tz::UTC);
             output.write_line(&unix_ts, &entry).unwrap();
             let mut output = BufReader::new(Cursor::new(output.into_writer().into_inner())).lines();
             let out_line = output.next().unwrap().unwrap();
 
             let out_ts = out_line.split(',').next().unwrap();
-            let rfc3339 = DateTime::parse_from_rfc3339(out_ts).expect(out_ts);
+            let rfc3339 = DateTime::parse_from_rfc3339(out_ts)
+                .expect(out_ts)
+                .timestamp();
             assert_eq!(
-                unix_ts,
-                rfc3339.timestamp(),
-                "Timestamp {} converted to '{}' and back to {}",
-                unix_ts,
-                out_ts,
-                rfc3339.timestamp()
+                unix_ts, rfc3339,
+                "Timestamp {unix_ts} converted to '{out_ts}' and back to {rfc3339}",
             );
         }
     }
@@ -140,7 +136,7 @@ mod tests {
                 line: Arc::new(bf_line),
             };
 
-            let mut output = CsvOutput::new(Cursor::new(vec![]), tz, tz);
+            let mut output = CsvOutput::new(Cursor::new(vec![]), tz);
             let delimiter: char = crate::output::CSV_DELIMITER.into();
             output.write_line(&unix_ts, &entry).unwrap();
             let mut output = BufReader::new(Cursor::new(output.into_writer().into_inner())).lines();
@@ -151,12 +147,10 @@ mod tests {
                 Ok(ts) => ts,
                 Err(e) => return Err(format!("error while parsing '{}': {}", out_ts, e)),
             };
-            let offset = rfc3339.offset().local_minus_utc() as i64;
-            let calculated_ts = rfc3339.timestamp() + offset;
+            let calculated_ts = rfc3339.timestamp();
             assert_eq!(
                 unix_ts, calculated_ts,
-                "Timestamp {} converted to '{}' and back to {} (offset was {}s)",
-                unix_ts, out_ts, calculated_ts, offset
+                "Timestamp {unix_ts} converted to '{out_ts}' and back to {calculated_ts}",
             );
         }
         Ok(())

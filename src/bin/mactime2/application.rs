@@ -36,11 +36,9 @@ pub (crate) enum OutputFormat {
     Elastic,
 }
 
-//#[derive(Builder)]
 pub struct Mactime2Application {
     format: OutputFormat,
     bodyfile: Input,
-    src_zone: Tz,
     dst_zone: Tz,
     strict_mode: bool,
 }
@@ -52,7 +50,6 @@ impl Mactime2Application {
     ) -> Box<dyn Sorter<Result<(), MactimeError>>> {
         let options = RunOptions {
             strict_mode: self.strict_mode,
-            src_zone: self.src_zone,
         };
 
         if matches!(self.format, OutputFormat::Json) {
@@ -62,8 +59,8 @@ impl Mactime2Application {
                 BodyfileSorter::default().with_receiver(decoder.get_receiver(), options);
 
             sorter = sorter.with_output(match self.format {
-                OutputFormat::Csv => Box::new(CsvOutput::new(std::io::stdout(), self.src_zone, self.dst_zone)),
-                OutputFormat::Txt => Box::new(TxtOutput::new(std::io::stdout(), self.src_zone, self.dst_zone)),
+                OutputFormat::Csv => Box::new(CsvOutput::new(std::io::stdout(), self.dst_zone)),
+                OutputFormat::Txt => Box::new(TxtOutput::new(std::io::stdout(), self.dst_zone)),
                 _ => panic!("invalid execution path"),
             });
             Box::new(sorter)
@@ -73,7 +70,6 @@ impl Mactime2Application {
     pub fn run(&self) -> anyhow::Result<()> {
         let options = RunOptions {
             strict_mode: self.strict_mode,
-            src_zone: self.src_zone,
         };
 
         let mut reader = <BodyfileReader as StreamReader<String, ()>>::from(self.bodyfile.clone())?;
@@ -106,7 +102,6 @@ impl From<Cli> for Mactime2Application {
         Self {
             format,
             bodyfile: cli.input_file,
-            src_zone: cli.src_zone.into_tz().unwrap(),
             dst_zone: cli.dst_zone.into_tz().unwrap(),
             strict_mode: cli.strict_mode,
         }
