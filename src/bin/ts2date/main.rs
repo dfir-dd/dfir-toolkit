@@ -28,8 +28,7 @@ fn main() -> Result<()> {
 
         let out = match re.captures(&content) {
             Some(caps) => {
-                //let ndt = NaiveDateTime::from_timestamp_opt(caps.name("ts").unwrap().as_str().parse::<i64>().unwrap(),0).unwrap();
-                let ts = ForensicsTimestamp::new(caps.name("ts").unwrap().as_str().parse::<i64>().unwrap(),cli.src_zone.into_tz().unwrap(), cli.dst_zone.into_tz().unwrap());
+                let ts = ForensicsTimestamp::from(caps.name("ts").unwrap().as_str().parse::<i64>().unwrap()).with_timezone(cli.dst_zone.into_tz().unwrap());
                 format!("{}{}{}", caps.name("lhs").unwrap().as_str(),
                                             ts,
                                             caps.name("rhs").unwrap().as_str())

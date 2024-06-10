@@ -13,9 +13,17 @@ const BODYFILE_HELP: &str =
 #[cfg(not(feature = "gzip"))]
 const BODYFILE_HELP: &str = "path to input file or '-' for stdin";
 
-/// replacement for `mactime`
+/// Replacement for `mactime`
 #[derive(Parser)]
-#[clap(name="mactime2", author, version, long_about = None)]
+#[clap(name="mactime2", author, version, long_about = None, after_help=
+r##"
+╭────────────────────────────────────────────────────────────────────────────╮
+│IMPORTANT:                                                                  │
+│                                                                            │
+│Note that POSIX specifies that all UNIX timestamps are UTC timestamps. It is│
+│up to you to ensure that the bodyfile only contains UNIX timestamps that    │
+│comply with the POSIX standard.                                             │
+╰────────────────────────────────────────────────────────────────────────────╯"##)]
 
 pub struct Cli {
     #[clap(short('b'), value_parser, value_hint=ValueHint::FilePath, default_value="-", help=BODYFILE_HELP, display_order(100))]
@@ -39,10 +47,6 @@ pub struct Cli {
     /// and will be removed in a future release. If you specified `--format` and `-j`, the latter will be ignored.
     #[clap(short('j'), display_order(620))]
     pub(crate) json_format: bool,
-
-    /// name of offset of source timezone (or 'list' to display all possible values
-    #[clap(short('f'), long("from-timezone"), display_order(300), default_value_t=TzArgument::Tz(Tz::UTC))]
-    pub src_zone: TzArgument,
 
     /// name of offset of destination timezone (or 'list' to display all possible values
     #[clap(short('t'), long("to-timezone"), display_order(400), default_value_t=TzArgument::Tz(Tz::UTC))]

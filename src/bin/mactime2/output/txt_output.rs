@@ -5,16 +5,14 @@ use std::cell::RefCell;
 use crate::bodyfile::{ListEntry, Mactime2Writer};
 
 pub struct TxtOutput {
-    src_zone: Tz,
     dst_zone: Tz,
     last_ts: (RefCell<i64>, RefCell<String>),
     empty_ts: RefCell<String>,
 }
 
 impl TxtOutput {
-    pub fn new(src_zone: Tz, dst_zone: Tz) -> Self {
+    pub fn new(dst_zone: Tz) -> Self {
         Self {
-            src_zone,
             dst_zone,
             last_ts: (RefCell::new(i64::MIN), RefCell::new("".to_owned())),
             empty_ts: RefCell::new("                         ".to_owned()),
@@ -25,8 +23,9 @@ impl TxtOutput {
 impl Mactime2Writer for TxtOutput {
     fn fmt(&self, timestamp: &i64, entry: &ListEntry) -> String {
         let ts = if *timestamp != *self.last_ts.0.borrow() {
-            *self.last_ts.1.borrow_mut() =
-                ForensicsTimestamp::new(*timestamp, self.src_zone, self.dst_zone).to_string();
+            *self.last_ts.1.borrow_mut() = ForensicsTimestamp::from(*timestamp)
+                .with_timezone(self.dst_zone)
+                .to_string();
             *self.last_ts.0.borrow_mut() = *timestamp;
             self.last_ts.1.borrow()
         } else {
@@ -65,7 +64,7 @@ mod tests {
     #[allow(non_snake_case)]
     #[test]
     fn test_correct_ts_UTC() {
-        let output = TxtOutput::new(Tz::UTC, Tz::UTC);
+        let output = TxtOutput::new(Tz::UTC);
         for _ in 1..10 {
             let unix_ts = rand::random::<u32>() as i64;
             let bf_line = Bodyfile3Line::new().with_crtime(Created::from(unix_ts));
@@ -79,14 +78,12 @@ mod tests {
             assert!(out_line2.starts_with(' '));
 
             let out_ts = out_line.split(' ').next().unwrap();
-            let rfc3339 = DateTime::parse_from_rfc3339(out_ts).expect(out_ts);
+            let rfc3339 = DateTime::parse_from_rfc3339(out_ts)
+                .expect(out_ts)
+                .timestamp();
             assert_eq!(
-                unix_ts,
-                rfc3339.timestamp(),
-                "Timestamp {} converted to '{}' and back to {}",
-                unix_ts,
-                out_ts,
-                rfc3339.timestamp()
+                unix_ts, rfc3339,
+                "Timestamp {unix_ts} converted to '{out_ts}' and back to {rfc3339}",
             );
         }
     }
@@ -96,7 +93,7 @@ mod tests {
     fn test_correct_ts_random_tz() -> Result<(), String> {
         for _ in 1..100 {
             let tz = random_tz();
-            let output = TxtOutput::new(tz, tz);
+            let output = TxtOutput::new(tz);
             let unix_ts = rand::random::<u32>() as i64;
             let bf_line = Bodyfile3Line::new().with_crtime(Created::from(unix_ts));
             let entry = ListEntry {
@@ -113,12 +110,10 @@ mod tests {
                 Ok(ts) => ts,
                 Err(e) => return Err(format!("error while parsing '{}': {}", out_ts, e)),
             };
-            let offset = rfc3339.offset().local_minus_utc() as i64;
-            let calculated_ts = rfc3339.timestamp() + offset;
+            let calculated_ts = rfc3339.timestamp();
             assert_eq!(
                 unix_ts, calculated_ts,
-                "Timestamp {} converted to '{}' and back to {} (offset was {}s)",
-                unix_ts, out_ts, calculated_ts, offset
+                "Timestamp {unix_ts} converted to '{out_ts}' and back to {calculated_ts}",
             );
         }
         Ok(())
