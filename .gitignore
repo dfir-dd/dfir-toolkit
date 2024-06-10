@@ -1,3 +1,6 @@
 target
 !Cargo.lock
 .vscode
+.idea
+tmp
+temp

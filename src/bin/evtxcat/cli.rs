@@ -1,4 +1,4 @@
-use clap::Parser;
+use clap::{Parser, ValueHint};
 use dfir_toolkit::common::HasVerboseFlag;
 use log::LevelFilter;
 
@@ -9,6 +9,7 @@ use crate::output_format::OutputFormat;
 #[clap(name=env!("CARGO_BIN_NAME"), author, version)]
 pub (crate) struct Cli {
     /// Name of the evtx file to read from
+    #[clap(value_hint=ValueHint::FilePath)]
     pub (crate) evtx_file: String,
 
     /// filter: minimal event record identifier

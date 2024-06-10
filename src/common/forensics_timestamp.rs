@@ -2,7 +2,7 @@ use std::fmt::Display;
 
 use chrono::format::StrftimeItems;
 use chrono::offset::TimeZone;
-use chrono::{DateTime, FixedOffset, LocalResult, NaiveDateTime};
+use chrono::{DateTime, FixedOffset};
 use chrono_tz::Tz;
 use lazy_static::lazy_static;
 
@@ -66,21 +66,31 @@ impl ForensicsTimestamp {
 impl Display for ForensicsTimestamp {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.unix_ts >= 0 {
-            let src_timestamp = match self.src_zone.from_local_datetime(
-                &NaiveDateTime::from_timestamp_opt(self.unix_ts, 0).unwrap_or_else(|| {
-                    panic!("unable to convert '{}' into unix timestamp", self.unix_ts)
-                }),
-            ) {
-                LocalResult::None => {
-                    panic!("INVALID DATETIME");
-                }
-                LocalResult::Single(t) => t,
-                LocalResult::Ambiguous(t1, _t2) => t1,
-            };
+            let src_timestamp = match DateTime::from_timestamp(1715845546, 0) {
+                Some(ts) => ts,
+                None => panic!("unable to convert '{}' into unix timestamp", self.unix_ts),
+            }
+            .with_timezone(&self.src_zone);
 
             Self::display_datetime(&src_timestamp.with_timezone(&self.dst_zone), f)
         } else {
             Self::display_datetime(&*ZERO, f)
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use chrono_tz::{Europe, UTC};
+
+    use crate::common::ForensicsTimestamp;
+
+    #[test]
+    fn test_time_import() {
+        let ts = ForensicsTimestamp::new(1715845546, Europe::Berlin, Europe::Berlin);
+        assert_eq!(ts.to_string(), "2024-05-16T09:45:46+02:00");
+
+        let ts = ForensicsTimestamp::new(1715845546, Europe::Berlin, UTC);
+        assert_eq!(ts.to_string(), "2024-05-16T07:45:46+00:00");
     }
 }

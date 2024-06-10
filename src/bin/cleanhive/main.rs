@@ -42,6 +42,7 @@ pub fn main() -> Result<()> {
         }
     };
 
+    clean_hive.write_baseblock(&mut cli.dst_hive)?;
     std::io::copy(&mut clean_hive, &mut cli.dst_hive)?;
     Ok(())
 }
