@@ -28,7 +28,7 @@ where
 {
     fn write_line(&mut self, timestamp: &i64, entry: &ListEntry) -> std::io::Result<()> {
         let timestamp = ForensicsTimestamp::from(*timestamp).with_timezone(self.dst_zone);
-        write!(
+        writeln!(
             self.writer,
             "{},{},{},{},{},{},{},\"{}\"",
             timestamp,
