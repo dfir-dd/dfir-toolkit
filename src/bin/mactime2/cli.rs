@@ -39,7 +39,17 @@ pub struct Cli {
     /// output as CSV instead of TXT. This is a convenience option, which is identical to `--format=csv`
     /// and will be removed in a future release. If you specified `--format` and `-d`, the latter will be ignored.
     #[clap(short('d'), display_order(610))]
+    #[arg(group="csv")]
     pub(crate) csv_format: bool,
+
+    /// use the old CSV format that was used by legacy mactime.
+    /// 
+    /// Keep in mind that in this format, fields which contain commas will
+    /// not be wrapped by quotes, as RFC4180 requires it. So, this format
+    /// is not RFC4180-compliant, which means that you might not be able
+    /// to use the output together with csv processing tools.
+    #[clap(long("old-csv"), display_order(615))]
+    pub(crate) old_csv: bool,
 
     /// output as JSON instead of TXT. This is a convenience option, which is identical to `--format=json`
     /// and will be removed in a future release. If you specified `--format` and `-j`, the latter will be ignored.

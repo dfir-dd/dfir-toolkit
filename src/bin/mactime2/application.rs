@@ -3,6 +3,8 @@ use clap::ValueEnum;
 use clio::Input;
 use strum_macros::Display;
 
+use crate::output::OldCsvOutput;
+
 use super::bodyfile::{BodyfileDecoder, BodyfileReader, BodyfileSorter};
 use super::cli::Cli;
 use super::error::MactimeError;
@@ -38,6 +40,7 @@ pub (crate) enum OutputFormat {
 
 pub struct Mactime2Application {
     format: OutputFormat,
+    old_csv: bool,
     bodyfile: Input,
     dst_zone: Tz,
     strict_mode: bool,
@@ -59,7 +62,10 @@ impl Mactime2Application {
                 BodyfileSorter::default().with_receiver(decoder.get_receiver(), options);
 
             sorter = sorter.with_output(match self.format {
-                OutputFormat::Csv => Box::new(CsvOutput::new(std::io::stdout(), self.dst_zone)),
+                OutputFormat::Csv => if self.old_csv {
+                    Box::new(OldCsvOutput::new(std::io::stdout(), self.dst_zone))
+                } else {
+                    Box::new(CsvOutput::new(std::io::stdout(), self.dst_zone))}
                 OutputFormat::Txt => Box::new(TxtOutput::new(std::io::stdout(), self.dst_zone)),
                 _ => panic!("invalid execution path"),
             });
@@ -101,6 +107,7 @@ impl From<Cli> for Mactime2Application {
 
         Self {
             format,
+            old_csv: cli.old_csv,
             bodyfile: cli.input_file,
             dst_zone: cli.dst_zone.into_tz().unwrap(),
             strict_mode: cli.strict_mode,
