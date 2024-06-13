@@ -1,6 +1,5 @@
-use std::io::{BufReader, Cursor, BufRead};
-use lazy_regex::regex;
 use assert_cmd::Command;
+use std::io::{BufReader, Cursor};
 
 /// tests if the result of `mactime2` is a stable sort, i.e. if pos(a)<=pos(b) then sorted_pos(a) <= sorted_pos(b)
 #[test]
@@ -20,25 +19,13 @@ fn is_stable_sorted() {
         .ok();
     assert!(result.is_ok());
 
-    let reader = BufReader::new(Cursor::new(result.unwrap().stdout));
-    let lines: Vec<_> = reader
-        .lines()
-        .map_while(Result::ok)
-        .map(name_of)
+    let mut reader = csv::ReaderBuilder::new()
+        .has_headers(false)
+        .from_reader(BufReader::new(Cursor::new(result.unwrap().stdout)));
+    let names: Vec<_> = reader
+        .records()
+        .filter_map(Result::ok)
+        .map(|record| record.get(7).unwrap().to_owned())
         .collect();
-    assert_eq!(lines.len(), 3);
-    assert_eq!(lines[0].as_ref().unwrap(), "a");
-    assert_eq!(lines[1].as_ref().unwrap(), "b");
-    assert_eq!(lines[2].as_ref().unwrap(), "c");
-}
-
-fn name_of(line: String) -> Option<String> {
-    let re = regex!(r#""(?P<name>[^"]*)""#);
-    let result = re.captures_iter(&line);
-    for c in result {
-        if let Some(name) = c.name("name") {
-            return Some(name.as_str().to_owned())
-        }
-    }
-    None
+    assert_eq!(names, vec!["a", "b", "c"]);
 }

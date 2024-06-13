@@ -39,6 +39,7 @@ pub struct Cli {
     /// output as CSV instead of TXT. This is a convenience option, which is identical to `--format=csv`
     /// and will be removed in a future release. If you specified `--format` and `-d`, the latter will be ignored.
     #[clap(short('d'), display_order(610))]
+    #[arg(group="csv")]
     pub(crate) csv_format: bool,
 
     /// output as JSON instead of TXT. This is a convenience option, which is identical to `--format=json`

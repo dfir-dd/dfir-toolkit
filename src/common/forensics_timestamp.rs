@@ -5,6 +5,7 @@ use chrono::offset::TimeZone;
 use chrono::{DateTime, FixedOffset, Utc};
 use chrono_tz::Tz;
 use lazy_static::lazy_static;
+use serde::Serialize;
 
 lazy_static! {
     static ref TIMESTAMP_FORMAT: Option<String> = {
@@ -102,5 +103,13 @@ mod tests {
 
         let ts = ForensicsTimestamp::from(1715845546).with_timezone(UTC);
         assert_eq!(ts.to_string(), "2024-05-16T07:45:46+00:00");
+    }
+}
+
+impl Serialize for ForensicsTimestamp {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer {
+        serializer.serialize_str(&format!("{self}"))
     }
 }
