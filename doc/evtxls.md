@@ -21,7 +21,12 @@ Display one or more events from an evtx file
 * `-d`, `--delimiter <DELIMITER>` — use this delimiter instead of generating fixed space columns
 * `-i`, `--include <INCLUDED_EVENT_IDS>` — List events with only the specified event ids, separated by ','
 * `-x`, `--exclude <EXCLUDED_EVENT_IDS>` — Exclude events with the specified event ids, separated by ','
-* `-c`, `--colors` — highlight interesting content using colors
+* `-C`, `--color <DISPLAY_COLORS>` — highlight interesting content using colors
+
+  Default value: `auto`
+
+  Possible values: `auto`, `always`, `never`
+
 * `-f`, `--from <NOT_BEFORE>` — hide events older than the specified date (hint: use RFC 3339 syntax)
 * `-t`, `--to <NOT_AFTER>` — hide events newer than the specified date (hint: use RFC 3339 syntax)
 * `-r`, `--regex <HIGHLIGHT>` — highlight event data based on this regular expression
@@ -56,8 +61,11 @@ Display one or more events from an evtx file
 * `-B`, `--hide-base-fields` — don't display any common event fields at all. This corresponds to specifying '--base-fields' without any values (which is not allowed, that's why there is this flag)
 
   Default value: `false`
-* `-v`, `--verbose` — More output per occurrence
-* `-q`, `--quiet` — Less output per occurrence
+
+  Possible values: `true`, `false`
+
+* `-v`, `--verbose` — Increase logging verbosity
+* `-q`, `--quiet` — Decrease logging verbosity
 
 
 

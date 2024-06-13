@@ -3,6 +3,8 @@ use clap::ValueEnum;
 use clio::Input;
 use strum_macros::Display;
 
+use crate::output::OldCsvOutput;
+
 use super::bodyfile::{BodyfileDecoder, BodyfileReader, BodyfileSorter};
 use super::cli::Cli;
 use super::error::MactimeError;
@@ -21,26 +23,32 @@ enum InputFormat {
 }
 
 #[derive(ValueEnum, Clone, Display)]
-pub (crate) enum OutputFormat {
+pub(crate) enum OutputFormat {
+    /// Comma-Separated Values compliant to RFC 4180
     #[strum(serialize = "csv")]
     Csv,
 
+    /// legacy text format, inherited from the old mactime
     #[strum(serialize = "txt")]
     Txt,
 
+    /// Javascript Object Notation
     #[strum(serialize = "json")]
     Json,
 
+    /// JSON-format to be used by elasticsearch
     #[cfg(feature = "elastic")]
     #[strum(serialize = "elastic")]
     Elastic,
+
+    /// Use the old (non RFC compliant) CSV format that was used by legacy mactime.
+    #[strum(serialize = "old-csv")]
+    OldCsv,
 }
 
-//#[derive(Builder)]
 pub struct Mactime2Application {
     format: OutputFormat,
     bodyfile: Input,
-    src_zone: Tz,
     dst_zone: Tz,
     strict_mode: bool,
 }
@@ -52,7 +60,6 @@ impl Mactime2Application {
     ) -> Box<dyn Sorter<Result<(), MactimeError>>> {
         let options = RunOptions {
             strict_mode: self.strict_mode,
-            src_zone: self.src_zone,
         };
 
         if matches!(self.format, OutputFormat::Json) {
@@ -62,8 +69,12 @@ impl Mactime2Application {
                 BodyfileSorter::default().with_receiver(decoder.get_receiver(), options);
 
             sorter = sorter.with_output(match self.format {
-                OutputFormat::Csv => Box::new(CsvOutput::new(self.src_zone, self.dst_zone)),
-                OutputFormat::Txt => Box::new(TxtOutput::new(self.src_zone, self.dst_zone)),
+                OutputFormat::OldCsv => {
+                    Box::new(OldCsvOutput::new(std::io::stdout(), self.dst_zone))
+                }
+
+                OutputFormat::Csv => Box::new(CsvOutput::new(std::io::stdout(), self.dst_zone)),
+                OutputFormat::Txt => Box::new(TxtOutput::new(std::io::stdout(), self.dst_zone)),
                 _ => panic!("invalid execution path"),
             });
             Box::new(sorter)
@@ -73,7 +84,6 @@ impl Mactime2Application {
     pub fn run(&self) -> anyhow::Result<()> {
         let options = RunOptions {
             strict_mode: self.strict_mode,
-            src_zone: self.src_zone,
         };
 
         let mut reader = <BodyfileReader as StreamReader<String, ()>>::from(self.bodyfile.clone())?;
@@ -106,7 +116,6 @@ impl From<Cli> for Mactime2Application {
         Self {
             format,
             bodyfile: cli.input_file,
-            src_zone: cli.src_zone.into_tz().unwrap(),
             dst_zone: cli.dst_zone.into_tz().unwrap(),
             strict_mode: cli.strict_mode,
         }

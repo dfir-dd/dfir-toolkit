@@ -75,7 +75,7 @@ impl Bodyfile3Line {
         [with_mode]   [mode_as_string];
     )]
     pub fn method_name(mut self, attribute_name: &str) -> Self {
-        self.attribute_name = attribute_name.to_owned();
+        attribute_name.clone_into(&mut self.attribute_name);
         self
     }
 

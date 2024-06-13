@@ -19,8 +19,8 @@ merges logfiles into a hive file
 ###### **Options:**
 
 * `-L`, `--log <LOGFILES>` — transaction LOG file(s). This argument can be specified one or two times
-* `-v`, `--verbose` — More output per occurrence
-* `-q`, `--quiet` — Less output per occurrence
+* `-v`, `--verbose` — Increase logging verbosity
+* `-q`, `--quiet` — Decrease logging verbosity
 * `-O`, `--output <DST_HIVE>` — name of the file to which the cleaned hive will be written
 
   Default value: `-`

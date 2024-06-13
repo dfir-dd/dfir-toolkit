@@ -19,11 +19,14 @@ Find time skews in an evtx file
 ###### **Options:**
 
 * `-S`, `--show-records` — display also the contents of the records befor and after a time skew
+
+  Possible values: `true`, `false`
+
 * `-N`, `--negative-tolerance <NEGATIVE_TOLERANCE>` — negative tolerance limit (in seconds): time skews to the past below this limit will be ignored
 
   Default value: `5`
-* `-v`, `--verbose` — More output per occurrence
-* `-q`, `--quiet` — Less output per occurrence
+* `-v`, `--verbose` — Increase logging verbosity
+* `-q`, `--quiet` — Decrease logging verbosity
 
 
 
