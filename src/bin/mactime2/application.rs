@@ -41,11 +41,7 @@ pub(crate) enum OutputFormat {
     #[strum(serialize = "elastic")]
     Elastic,
 
-    /// Use the old CSV format that was used by legacy mactime.
-    /// Keep in mind that in this format, fields which contain commas will
-    /// not be wrapped by quotes, as RFC4180 requires it. So, this format
-    /// is not RFC4180-compliant, which means that you might not be able
-    /// to use the output together with csv processing tools.
+    /// Use the old (non RFC compliant) CSV format that was used by legacy mactime.
     #[strum(serialize = "old-csv")]
     OldCsv,
 }
