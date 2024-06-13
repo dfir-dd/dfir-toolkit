@@ -23,24 +23,35 @@ enum InputFormat {
 }
 
 #[derive(ValueEnum, Clone, Display)]
-pub (crate) enum OutputFormat {
+pub(crate) enum OutputFormat {
+    /// Comma-Separated Values compliant to RFC 4180
     #[strum(serialize = "csv")]
     Csv,
 
+    /// legacy text format, inherited from the old mactime
     #[strum(serialize = "txt")]
     Txt,
 
+    /// Javascript Object Notation
     #[strum(serialize = "json")]
     Json,
 
+    /// JSON-format to be used by elasticsearch
     #[cfg(feature = "elastic")]
     #[strum(serialize = "elastic")]
     Elastic,
+
+    /// Use the old CSV format that was used by legacy mactime.
+    /// Keep in mind that in this format, fields which contain commas will
+    /// not be wrapped by quotes, as RFC4180 requires it. So, this format
+    /// is not RFC4180-compliant, which means that you might not be able
+    /// to use the output together with csv processing tools.
+    #[strum(serialize = "old-csv")]
+    OldCsv,
 }
 
 pub struct Mactime2Application {
     format: OutputFormat,
-    old_csv: bool,
     bodyfile: Input,
     dst_zone: Tz,
     strict_mode: bool,
@@ -62,10 +73,11 @@ impl Mactime2Application {
                 BodyfileSorter::default().with_receiver(decoder.get_receiver(), options);
 
             sorter = sorter.with_output(match self.format {
-                OutputFormat::Csv => if self.old_csv {
+                OutputFormat::OldCsv => {
                     Box::new(OldCsvOutput::new(std::io::stdout(), self.dst_zone))
-                } else {
-                    Box::new(CsvOutput::new(std::io::stdout(), self.dst_zone))}
+                }
+
+                OutputFormat::Csv => Box::new(CsvOutput::new(std::io::stdout(), self.dst_zone)),
                 OutputFormat::Txt => Box::new(TxtOutput::new(std::io::stdout(), self.dst_zone)),
                 _ => panic!("invalid execution path"),
             });
@@ -107,7 +119,6 @@ impl From<Cli> for Mactime2Application {
 
         Self {
             format,
-            old_csv: cli.old_csv,
             bodyfile: cli.input_file,
             dst_zone: cli.dst_zone.into_tz().unwrap(),
             strict_mode: cli.strict_mode,
