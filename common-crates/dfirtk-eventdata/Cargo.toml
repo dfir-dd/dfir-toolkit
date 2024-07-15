@@ -1,6 +1,6 @@
 [package]
 name = "dfirtk-eventdata"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2018"
 authors = ["Jan Starke <Jan.Starke@posteo.de>"]
 description = "CLI tools for digital forensics and incident response"
@@ -16,4 +16,4 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1"
 darling = "0.20"
 quote = "1"
-log = {version = "0.4", features = [ "release_max_level_info" ]}
+log = {version = "0.4"}
