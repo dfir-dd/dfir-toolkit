@@ -802,7 +802,7 @@ dependencies = [
 
 [[package]]
 name = "dfir-toolkit"
-version = "0.11.0"
+version = "0.11.1"
 dependencies = [
  "anyhow",
  "assert-json-diff",
@@ -868,9 +868,9 @@ dependencies = [
 
 [[package]]
 name = "dfirtk-eventdata"
-version = "0.1.2"
+version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "efc96511560e4661da0ada6debede9ed1dc63d8ac2ad8cefc00434e351a8b509"
+checksum = "4a32cfafa6811b47801a9717057c5538b90bcce906eb841297b41f0ab0867684"
 dependencies = [
  "anyhow",
  "darling 0.20.10",

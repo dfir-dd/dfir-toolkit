@@ -259,7 +259,7 @@ checksum = "f2696e8a945f658fd14dc3b87242e6b80cd0f36ff04ea560fa39082368847946"
 
 [[package]]
 name = "dfirtk-eventdata"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "anyhow",
  "darling",
