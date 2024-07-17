@@ -802,7 +802,7 @@ dependencies = [
 
 [[package]]
 name = "dfir-toolkit"
-version = "0.11.1"
+version = "0.11.2"
 dependencies = [
  "anyhow",
  "assert-json-diff",
@@ -843,7 +843,7 @@ dependencies = [
  "more-asserts",
  "nt_hive2",
  "num",
- "num-derive 0.4.2",
+ "num-derive 0.3.3",
  "num-traits",
  "ouroboros",
  "phf",
@@ -1784,9 +1784,9 @@ dependencies = [
 
 [[package]]
 name = "nt_hive2"
-version = "4.2.2"
+version = "4.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4f8ca887a8de781cf30bf9398bd8775d729b18617379ea02e6b10e4ca3ee24a2"
+checksum = "ae8c624d54324d957e912a85352be5098202234bff95c351b66877f0d2d89634"
 dependencies = [
  "anyhow",
  "binread",
