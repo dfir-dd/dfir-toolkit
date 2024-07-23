@@ -3,6 +3,8 @@ pub mod unique_pid;
 use std::{
     cell::RefCell,
     collections::{BTreeMap, HashMap, HashSet},
+    io::stdout,
+    ops::Deref,
     rc::{Rc, Weak},
 };
 
@@ -12,7 +14,10 @@ pub(crate) use process::*;
 use regex::Regex;
 use serde_json::{json, Value};
 
-use crate::{cli::{Command, Format}, pstree::unique_pid::UniquePid};
+use crate::{
+    cli::{Command, Format},
+    pstree::unique_pid::UniquePid,
+};
 
 use super::Cli;
 
@@ -21,7 +26,7 @@ pub(crate) fn display_pstree(cli: &Cli) -> anyhow::Result<()> {
         Command::PsTree {
             username,
             evtx_file,
-            format
+            format,
         } => {
             let username_regex = username
                 .as_ref()
@@ -110,7 +115,16 @@ pub(crate) fn display_pstree(cli: &Cli) -> anyhow::Result<()> {
                     println!("{}", serde_json::to_string_pretty(&procs_as_json)?);
                 }
 
-                Format::Csv => unimplemented!(),
+                Format::Csv => {
+                    let mut wtr = csv::Writer::from_writer(stdout().lock());
+                    let processes: HashSet<_> = events
+                        .values()
+                        .map(|p| ProcessTableEntry::from(p.as_ref().borrow().deref()))
+                        .collect();
+                    for process in processes {
+                        wtr.serialize(process)?;
+                    }
+                }
 
                 Format::Markdown => {
                     let root_processes: BTreeMap<_, _> = events
