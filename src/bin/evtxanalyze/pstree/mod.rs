@@ -42,21 +42,26 @@ pub(crate) fn display_pstree(cli: &Cli) -> anyhow::Result<()> {
 
             let mut parser = EvtxParser::from_path(evtx_file)?;
             let mut unique_pids = HashMap::new();
-            let events: HashMap<_, _> = parser
-                .records_json_value()
-                .map(|r| r.expect("error reading event"))
-                .map(Process::try_from)
-                .filter_map(|r| r.expect("invalid event"))
-                .filter(has_username)
-                .map(|e| {
-                    let pid = UniquePid::from(&e);
-                    unique_pids
-                        .entry(e.new_process_id)
-                        .or_insert_with(HashSet::new)
-                        .insert(pid.clone());
-                    (pid, Rc::new(RefCell::new(e)))
-                })
-                .collect();
+            let mut events = HashMap::new();
+            for record in parser.records_json_value() {
+                match record {
+                    Err(why) => log::warn!("{why}"),
+                    Ok(record) => match Process::try_from(record) {
+                        Err(why) => log::warn!("{why}"),
+                        Ok(Some(process)) => {
+                            if has_username(&process) {
+                                let pid = UniquePid::from(&process);
+                                unique_pids
+                                    .entry(process.new_process_id)
+                                    .or_insert_with(HashSet::new)
+                                    .insert(pid.clone());
+                                events.insert(pid, Rc::new(RefCell::new(process)));
+                            }
+                        }
+                        Ok(None) => (),
+                    },
+                }
+            }
 
             log::warn!("found {} process creations", events.len());
 

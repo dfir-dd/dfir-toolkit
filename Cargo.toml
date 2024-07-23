@@ -200,6 +200,7 @@ forensic-rs = {version="0.13", optional=true}
 # zip2bodyfile
 zip = {version="2.1.3", optional=true, features=["time"]}
 time = {version="0.3.36", optional=true}
+exitcode = "1.1.2"
 
 [dev-dependencies]
 
