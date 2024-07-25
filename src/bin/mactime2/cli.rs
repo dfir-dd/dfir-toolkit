@@ -40,7 +40,7 @@ pub struct Cli {
     pub(crate) output_format: Option<OutputFormat>,
 
     /// output as CSV instead of TXT. This is a convenience option, which is identical to `--format=csv`
-    /// and will be removed in a future release. If you specified `--format` and `-d`, the latter will be ignored.
+    /// and will be removed in a future release.
     #[clap(
         id("csv"),
         short('d'),
@@ -54,11 +54,12 @@ pub struct Cli {
         short('H'),
         long("show-headers"),
         display_order(615),
-        conflicts_with("json"))]
+        conflicts_with("json")
+    )]
     pub(crate) show_headers: bool,
 
     /// output as JSON instead of TXT. This is a convenience option, which is identical to `--format=json`
-    /// and will be removed in a future release. If you specified `--format` and `-j`, the latter will be ignored.
+    /// and will be removed in a future release.
     #[clap(
         id("json"),
         short('j'),
