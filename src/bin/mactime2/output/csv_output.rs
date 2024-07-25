@@ -21,12 +21,12 @@ impl<W> CsvOutput<W>
 where
     W: Write + Send,
 {
-    pub fn new(writer: W, dst_zone: Tz) -> Self {
+    pub fn new(writer: W, dst_zone: Tz, has_headers: bool) -> Self {
         Self {
             dst_zone,
             writer: WriterBuilder::new()
                 .delimiter(CSV_DELIMITER)
-                .has_headers(false)
+                .has_headers(has_headers)
                 .from_writer(writer),
         }
     }
@@ -108,7 +108,7 @@ mod tests {
                 line: Arc::new(bf_line),
             };
 
-            let mut output = CsvOutput::new(Cursor::new(vec![]), Tz::UTC);
+            let mut output = CsvOutput::new(Cursor::new(vec![]), Tz::UTC, false);
             output.write_line(&unix_ts, &entry).unwrap();
             let mut output = BufReader::new(Cursor::new(output.into_writer().into_inner())).lines();
             let out_line = output.next().unwrap().unwrap();
@@ -136,7 +136,7 @@ mod tests {
                 line: Arc::new(bf_line),
             };
 
-            let mut output = CsvOutput::new(Cursor::new(vec![]), tz);
+            let mut output = CsvOutput::new(Cursor::new(vec![]), tz, false);
             let delimiter: char = crate::output::CSV_DELIMITER.into();
             output.write_line(&unix_ts, &entry).unwrap();
             let mut output = BufReader::new(Cursor::new(output.into_writer().into_inner())).lines();

@@ -50,6 +50,7 @@ pub struct Mactime2Application {
     format: OutputFormat,
     bodyfile: Input,
     dst_zone: Tz,
+    show_headers: bool,
     strict_mode: bool,
 }
 
@@ -73,7 +74,11 @@ impl Mactime2Application {
                     Box::new(OldCsvOutput::new(std::io::stdout(), self.dst_zone))
                 }
 
-                OutputFormat::Csv => Box::new(CsvOutput::new(std::io::stdout(), self.dst_zone)),
+                OutputFormat::Csv => Box::new(CsvOutput::new(
+                    std::io::stdout(),
+                    self.dst_zone,
+                    self.show_headers,
+                )),
                 OutputFormat::Txt => Box::new(TxtOutput::new(std::io::stdout(), self.dst_zone)),
                 _ => panic!("invalid execution path"),
             });
@@ -117,6 +122,7 @@ impl From<Cli> for Mactime2Application {
             format,
             bodyfile: cli.input_file,
             dst_zone: cli.dst_zone.into_tz().unwrap(),
+            show_headers: cli.show_headers,
             strict_mode: cli.strict_mode,
         }
     }
