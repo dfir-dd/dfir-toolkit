@@ -43,11 +43,17 @@ pub(crate) fn display_pstree(cli: &Cli) -> anyhow::Result<()> {
             let mut parser = EvtxParser::from_path(evtx_file)?;
             let mut unique_pids = HashMap::new();
             let mut events = HashMap::new();
+            let mut handled_records = 0;
+            let mut expected_records: usize = 0;
             for record in parser.records_json_value() {
+                expected_records += 1;
                 match record {
-                    Err(why) => log::warn!("{why}"),
+                    Err(why) => {
+                        log::error!("error while parsing a record; read {handled_records} until now. I'll try to continue with the next record");
+                        log::warn!("{why}")
+                    }
                     Ok(record) => match Process::try_from(record) {
-                        Err(why) => log::warn!("{why}"),
+                        Err(why) => log::error!("{why}"),
                         Ok(Some(process)) => {
                             if has_username(&process) {
                                 let pid = UniquePid::from(&process);
@@ -57,10 +63,17 @@ pub(crate) fn display_pstree(cli: &Cli) -> anyhow::Result<()> {
                                     .insert(pid.clone());
                                 events.insert(pid, Rc::new(RefCell::new(process)));
                             }
+                            handled_records += 1;
                         }
-                        Ok(None) => (),
+                        Ok(None) => handled_records += 1,
                     },
                 }
+            }
+
+            log::info!("finished reading all records");
+
+            if handled_records < expected_records {
+                log::warn!("I expected {expected_records}, but only {handled_records} could be handled.")
             }
 
             log::warn!("found {} process creations", events.len());
