@@ -3,11 +3,15 @@ use std::{collections::HashMap, path::PathBuf};
 use anyhow::Result;
 use chrono::Duration;
 use cli::Cli;
-use dfir_toolkit::common::FancyParser;
 use colored_json::to_colored_json_auto;
+use dfir_toolkit::common::FancyParser;
 use dfir_toolkit::evtx::{EventId, Range};
 use evtx::{EvtxParser, SerializedEvtxRecord};
-use term_table::{row::Row, table_cell::TableCell};
+use term_table::row;
+use term_table::{
+    row::Row,
+    table_cell::{Alignment, TableCell},
+};
 
 mod cli;
 
@@ -66,23 +70,19 @@ fn print_ranges(
             let mut table = term_table::Table::new();
             if let Some(size) = termsize::get() {
                 table.set_max_column_widths(vec![
-                    (0, (size.cols / 2).into()),
-                    (1, (size.cols / 2).into()),
+                    (0, ((size.cols-3) / 2).into()),
+                    (1, ((size.cols-3) / 2).into()),
                 ])
             }
 
-            table.add_row(Row::new(vec![
-                TableCell::new_with_alignment(
-                    range.begin().timestamp().format("%FT%T"),
-                    1,
-                    term_table::table_cell::Alignment::Center,
-                ),
-                TableCell::new_with_alignment(
-                    range.end().timestamp().format("%FT%T"),
-                    1,
-                    term_table::table_cell::Alignment::Center,
-                ),
-            ]));
+            table.add_row(row!(
+                TableCell::builder(range.begin().timestamp().format("%FT%T"))
+                    .alignment(Alignment::Center)
+                    .col_span(1),
+                TableCell::builder(range.end().timestamp().format("%FT%T"))
+                    .alignment(Alignment::Center)
+                    .col_span(1)
+            ));
 
             let first_record = &records[range.begin()];
             let last_record = &records[range.end()];

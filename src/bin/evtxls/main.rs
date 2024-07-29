@@ -76,11 +76,18 @@ impl EvtxLs {
         };
 
         let mut records = Vec::new();
+        let mut handled_records = 0;
+        let mut expected_records: usize = 0;
 
         for result in parser.records_json_value() {
+            expected_records += 1;
             match result {
-                Err(_) => (),
+                Err(why) => {
+                    log::error!("error while parsing a record; read {handled_records} until now. I'll try to continue with the next record");
+                    log::warn!("{why}")
+                }
                 Ok(record) => {
+                    handled_records += 1;
                     if let Some(not_before) = self.cli.not_before.as_ref() {
                         if &record.timestamp < not_before {
                             continue;
@@ -114,6 +121,10 @@ impl EvtxLs {
                     }
                 }
             }
+        }
+
+        if handled_records < expected_records {
+            log::warn!("I expected {expected_records}, but only {handled_records} could be handled.")
         }
 
         Ok(records)

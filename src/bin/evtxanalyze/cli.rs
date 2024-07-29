@@ -1,5 +1,6 @@
 use std::{io::stdout, path::PathBuf};
 
+use anyhow::bail;
 use clap::{Parser, Subcommand, ValueEnum, ValueHint};
 use dfir_toolkit::common::HasVerboseFlag;
 use log::LevelFilter;
@@ -82,6 +83,20 @@ impl Cli {
                 evtx_files_dir,
                 session_id,
             } => {
+                if !evtx_files_dir.exists() {
+                    bail!(
+                        "directory '{}' does not exist. Aborting now.",
+                        evtx_files_dir.to_string_lossy()
+                    )
+                }
+
+                if !evtx_files_dir.is_dir() {
+                    bail!(
+                        "'{}' is no directory. Aborting now.",
+                        evtx_files_dir.to_string_lossy()
+                    );
+                }
+
                 let sessions = SessionStore::import(evtx_files_dir, true)?;
                 match sessions.find_session(session_id) {
                     None => log::error!("no value found for session id {session_id}"),
@@ -105,6 +120,20 @@ impl Cli {
                 evtx_files_dir,
                 include_anonymous,
             } => {
+                if !evtx_files_dir.exists() {
+                    bail!(
+                        "directory '{}' does not exist. Aborting now.",
+                        evtx_files_dir.to_string_lossy()
+                    )
+                }
+
+                if !evtx_files_dir.is_dir() {
+                    bail!(
+                        "'{}' is no directory. Aborting now.",
+                        evtx_files_dir.to_string_lossy()
+                    );
+                }
+
                 let sessions = SessionStore::import(evtx_files_dir, *include_anonymous)?;
 
                 let mut csv_writer = csv::Writer::from_writer(stdout());
@@ -119,9 +148,8 @@ impl Cli {
     }
 }
 
-
 impl HasVerboseFlag for Cli {
-    fn log_level_filter(&self)-> LevelFilter {
+    fn log_level_filter(&self) -> LevelFilter {
         self.verbose.log_level_filter()
     }
 }

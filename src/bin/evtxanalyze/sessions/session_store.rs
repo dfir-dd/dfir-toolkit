@@ -25,8 +25,14 @@ impl SessionStore {
 
         for filename in KNOWN_FILES {
             let path = evtx_files_dir.join(filename);
-            if !(path.exists() && path.is_file()) {
-                log::warn!("unable to read file {}", path.display());
+            
+            if ! path.exists() {
+                log::error!("expected file '{}', but it does not exist. Omitting it...", path.display());
+                continue;
+            }
+
+            if ! path.is_file() {
+                log::error!("tried to read '{}', but it is not a file. Omiting it...", path.display());
                 continue;
             }
 

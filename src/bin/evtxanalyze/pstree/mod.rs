@@ -3,6 +3,8 @@ pub mod unique_pid;
 use std::{
     cell::RefCell,
     collections::{BTreeMap, HashMap, HashSet},
+    io::stdout,
+    ops::Deref,
     rc::{Rc, Weak},
 };
 
@@ -12,7 +14,10 @@ pub(crate) use process::*;
 use regex::Regex;
 use serde_json::{json, Value};
 
-use crate::{cli::{Command, Format}, pstree::unique_pid::UniquePid};
+use crate::{
+    cli::{Command, Format},
+    pstree::unique_pid::UniquePid,
+};
 
 use super::Cli;
 
@@ -21,7 +26,7 @@ pub(crate) fn display_pstree(cli: &Cli) -> anyhow::Result<()> {
         Command::PsTree {
             username,
             evtx_file,
-            format
+            format,
         } => {
             let username_regex = username
                 .as_ref()
@@ -37,21 +42,39 @@ pub(crate) fn display_pstree(cli: &Cli) -> anyhow::Result<()> {
 
             let mut parser = EvtxParser::from_path(evtx_file)?;
             let mut unique_pids = HashMap::new();
-            let events: HashMap<_, _> = parser
-                .records_json_value()
-                .map(|r| r.expect("error reading event"))
-                .map(Process::try_from)
-                .filter_map(|r| r.expect("invalid event"))
-                .filter(has_username)
-                .map(|e| {
-                    let pid = UniquePid::from(&e);
-                    unique_pids
-                        .entry(e.new_process_id)
-                        .or_insert_with(HashSet::new)
-                        .insert(pid.clone());
-                    (pid, Rc::new(RefCell::new(e)))
-                })
-                .collect();
+            let mut events = HashMap::new();
+            let mut handled_records = 0;
+            let mut expected_records: usize = 0;
+            for record in parser.records_json_value() {
+                expected_records += 1;
+                match record {
+                    Err(why) => {
+                        log::error!("error while parsing a record; read {handled_records} until now. I'll try to continue with the next record");
+                        log::warn!("{why}")
+                    }
+                    Ok(record) => match Process::try_from(record) {
+                        Err(why) => log::error!("{why}"),
+                        Ok(Some(process)) => {
+                            if has_username(&process) {
+                                let pid = UniquePid::from(&process);
+                                unique_pids
+                                    .entry(process.new_process_id)
+                                    .or_insert_with(HashSet::new)
+                                    .insert(pid.clone());
+                                events.insert(pid, Rc::new(RefCell::new(process)));
+                            }
+                            handled_records += 1;
+                        }
+                        Ok(None) => handled_records += 1,
+                    },
+                }
+            }
+
+            log::info!("finished reading all records");
+
+            if handled_records < expected_records {
+                log::warn!("I expected {expected_records}, but only {handled_records} could be handled.")
+            }
 
             log::warn!("found {} process creations", events.len());
 
@@ -110,7 +133,16 @@ pub(crate) fn display_pstree(cli: &Cli) -> anyhow::Result<()> {
                     println!("{}", serde_json::to_string_pretty(&procs_as_json)?);
                 }
 
-                Format::Csv => unimplemented!(),
+                Format::Csv => {
+                    let mut wtr = csv::Writer::from_writer(stdout().lock());
+                    let processes: HashSet<_> = events
+                        .values()
+                        .map(|p| ProcessTableEntry::from(p.as_ref().borrow().deref()))
+                        .collect();
+                    for process in processes {
+                        wtr.serialize(process)?;
+                    }
+                }
 
                 Format::Markdown => {
                     let root_processes: BTreeMap<_, _> = events

@@ -1,31 +1,93 @@
-use std::{collections::{BTreeMap, HashMap}, rc::Weak, cell::RefCell, fmt::Display};
+use std::{
+    cell::RefCell,
+    collections::{BTreeMap, HashMap},
+    fmt::Display,
+    hash::Hash,
+    rc::Weak,
+};
 
 use anyhow::bail;
 use chrono::{DateTime, Utc};
 use evtx::SerializedEvtxRecord;
-use serde_json::{Value, json};
+use serde::Serialize;
+use serde_json::{json, Value};
 
+pub(crate) struct Process {
+    pub(crate) timestamp: DateTime<Utc>,
+    pub(crate) event_record_id: u64,
+    pub(crate) subject_user_sid: String,
+    pub(crate) subject_user_name: String,
+    pub(crate) subject_domain_name: String,
+    pub(crate) subject_logon_id: String,
+    pub(crate) new_process_id: u64,
+    pub(crate) new_process_name: String,
+    pub(crate) token_elevation_type: String,
+    pub(crate) process_id: u64,
+    pub(crate) command_line: String,
+    pub(crate) target_user_sid: String,
+    pub(crate) target_user_name: String,
+    pub(crate) target_domain_name: String,
+    pub(crate) target_logon_id: String,
+    pub(crate) parent_process_name: Option<String>,
+    pub(crate) mandatory_label: Option<String>,
+    pub(crate) children: BTreeMap<DateTime<Utc>, Weak<RefCell<Self>>>,
+    pub(crate) is_root: bool,
+}
 
-pub (crate) struct Process {
-    pub (crate) timestamp: DateTime<Utc>,
-    pub (crate) event_record_id: u64,
-    pub (crate) subject_user_sid: String,
-    pub (crate) subject_user_name: String,
-    pub (crate) subject_domain_name: String,
-    pub (crate) subject_logon_id: String,
-    pub (crate) new_process_id: u64,
-    pub (crate) new_process_name: String,
-    pub (crate) token_elevation_type: String,
-    pub (crate) process_id: u64,
-    pub (crate) command_line: String,
-    pub (crate) target_user_sid: String,
-    pub (crate) target_user_name: String,
-    pub (crate) target_domain_name: String,
-    pub (crate) target_logon_id: String,
-    pub (crate) parent_process_name: Option<String>,
-    pub (crate) mandatory_label: Option<String>,
-    pub (crate) children: BTreeMap<DateTime<Utc>, Weak<RefCell<Self>>>,
-    pub (crate) is_root: bool,
+#[derive(Serialize, Clone)]
+pub(crate) struct ProcessTableEntry {
+    pub(crate) subject_user_sid: String,
+    pub(crate) subject_user_name: String,
+    pub(crate) subject_domain_name: String,
+    pub(crate) subject_logon_id: String,
+    pub(crate) new_process_id: u64,
+    pub(crate) new_process_name: String,
+    pub(crate) token_elevation_type: String,
+    pub(crate) process_id: u64,
+    pub(crate) command_line: String,
+    pub(crate) target_user_sid: String,
+    pub(crate) target_user_name: String,
+    pub(crate) target_domain_name: String,
+    pub(crate) target_logon_id: String,
+    pub(crate) parent_process_name: Option<String>,
+}
+
+impl From<&Process> for ProcessTableEntry {
+    fn from(value: &Process) -> Self {
+        Self {
+            subject_user_sid: value.subject_user_sid.clone(),
+            subject_user_name: value.subject_user_name.clone(),
+            subject_domain_name: value.subject_domain_name.clone(),
+            subject_logon_id: value.subject_logon_id.clone(),
+            new_process_id: value.new_process_id,
+            new_process_name: value.new_process_name.clone(),
+            token_elevation_type: value.token_elevation_type.clone(),
+            process_id: value.process_id,
+            command_line: value.command_line.clone(),
+            target_user_sid: value.target_user_sid.clone(),
+            target_user_name: value.target_user_name.clone(),
+            target_domain_name: value.target_domain_name.clone(),
+            target_logon_id: value.target_logon_id.clone(),
+            parent_process_name: value.parent_process_name.clone(),
+        }
+    }
+}
+
+impl Hash for ProcessTableEntry {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.process_id.hash(state);
+        self.command_line.hash(state);
+        self.parent_process_name.hash(state);
+    }
+}
+
+impl Eq for ProcessTableEntry {}
+impl PartialEq for ProcessTableEntry {
+    fn eq(&self, other: &Self) -> bool {
+        self.process_id == other.process_id
+            && self.command_line == other.command_line
+            && self.parent_process_name == other.parent_process_name
+    }
 }
 
 impl From<&Process> for Value {
@@ -207,10 +269,10 @@ impl Process {
             .into();
         let parent_process_name = from_json_or_null!(event_data, "ParentProcessName")
             .as_str()
-            .map(|s|s.to_owned());
+            .map(|s| s.to_owned());
         let mandatory_label = from_json_or_null!(event_data, "MandatoryLabel")
             .as_str()
-            .map(|s|s.to_owned());
+            .map(|s| s.to_owned());
 
         Ok(Some(Self {
             timestamp: record.timestamp,
