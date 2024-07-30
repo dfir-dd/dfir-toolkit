@@ -122,7 +122,7 @@ cleanhive = ["nt_hive2"]
 anyhow = "1.0"
 binread = "2.2.0"
 chrono = "0.4"
-clap = {version = "4", features = ["derive", "wrap_help", "cargo"] }
+clap = {version = "4.5", features = ["derive", "wrap_help", "cargo"] }
 clap-verbosity-flag = "2.0.0"
 csv = "1.2.2"
 encoding_rs = "0.8"
