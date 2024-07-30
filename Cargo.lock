@@ -852,6 +852,7 @@ dependencies = [
  "time",
  "tokio",
  "tokio-async-drop",
+ "walkdir",
  "winstructs",
  "zip",
 ]
