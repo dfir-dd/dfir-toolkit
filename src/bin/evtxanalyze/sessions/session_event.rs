@@ -48,7 +48,7 @@ impl SessionEvent {
     where
         W: Write,
     {
-        writer.serialize(&Into::<EventAsCsv>::into(self))
+        writer.serialize(Into::<EventAsCsv>::into(self))
     }
 }
 

@@ -108,7 +108,7 @@ impl Session {
     where
         W: Write,
     {
-        writer.serialize(&Into::<SessionAsCsv>::into(self))
+        writer.serialize(Into::<SessionAsCsv>::into(self))
     }
 
     pub fn is_anonymous(&self) -> bool {
