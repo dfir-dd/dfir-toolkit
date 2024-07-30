@@ -29,7 +29,7 @@ pub struct Cli {
     #[clap(short('b'), value_parser, value_hint=ValueHint::FilePath, default_value="-", help=BODYFILE_HELP, display_order(100))]
     pub(crate) input_file: Input,
 
-    /// output format, if not specified, default value is 'csv-with-headers'
+    /// output format, if not specified, default value is 'txt'
     #[clap(
         id("format"),
         short('F'),
@@ -48,7 +48,7 @@ pub struct Cli {
         conflicts_with_all(["json", "format"]))]
     pub(crate) csv_format: bool,
 
-    /// do not display a header line in the CSV output
+    /// display a header line in the CSV output
     #[clap(
         id("show-headers"),
         short('H'),
