@@ -1,7 +1,7 @@
 
 # DFIR Toolkit
 
-<img align="right" width="64px" src="https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/images/dfir_fox_128.png?raw=true" />
+<img align="right" width="128px" src="https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/images/dfir_fox_128.png?raw=true" />
 
 [![Crates.io](https://img.shields.io/crates/v/dfir-toolkit)](https://crates.io/crates/dfir-toolkit)
 [![Crates.io (latest)](https://img.shields.io/crates/dv/dfir-toolkit)](https://crates.io/crates/dfir-toolkit)
