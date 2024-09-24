@@ -43,7 +43,7 @@
 # Installation
 
 ```bash
-sudo apt install libscca-dev
+sudo apt install libscca-dev libssl-dev
 cargo install dfir-toolkit
 ```
 
