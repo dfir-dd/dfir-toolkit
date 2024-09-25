@@ -3,7 +3,7 @@ use clap::ValueEnum;
 use clio::Input;
 use strum_macros::Display;
 
-use crate::output::OldCsvOutput;
+use crate::output::{OldCsvOutput, RecordOutput};
 
 use super::bodyfile::{BodyfileDecoder, BodyfileReader, BodyfileSorter};
 use super::cli::Cli;
@@ -31,6 +31,10 @@ pub(crate) enum OutputFormat {
     /// Javascript Object Notation
     #[strum(serialize = "json")]
     Json,
+
+    /// flow.record format used by `dissect` and `rdump`
+    #[strum(serialize = "record")]
+    Record,
 
     /// Use the old (non RFC compliant) CSV format that was used by legacy mactime.
     #[strum(serialize = "old-csv")]
@@ -65,6 +69,7 @@ impl Mactime2Application {
                 self.show_headers,
             )),
             OutputFormat::Txt => Box::new(TxtOutput::new(std::io::stdout(), self.dst_zone)),
+            OutputFormat::Record => Box::new(RecordOutput::new(std::io::stdout(), self.dst_zone)),
             _ => panic!("invalid execution path"),
         });
         Box::new(sorter)

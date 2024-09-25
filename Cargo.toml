@@ -9,7 +9,7 @@ license = "GPL-3.0"
 
 # this version is required, because earlier versions handle missing `created`
 # timestamps as `Uncategorized`, instead of `Unsupported`
-rust-version = "1.78"
+rust-version = "1.80"
 
 [package.metadata.deb]
 maintainer-scripts = "scripts/maintainer"
@@ -93,7 +93,7 @@ required-features = ["zip2bodyfile"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
 default = ["pol_export", "mactime2", "evtxtools", "regdump", "hivescan", "cleanhive", "ipgrep", "ts2date", "lnk2bodyfile", "pf2bodyfile", "zip2bodyfile"]
-mactime2 = ["gzip", "chrono-tz", "thiserror", "bitflags", "encoding_rs_io", "color-print", "strum", "strum_macros"]
+mactime2 = ["gzip", "chrono-tz", "thiserror", "bitflags", "encoding_rs_io", "color-print", "strum", "strum_macros", "sha2"]
 gzip = ["flate2"]
 evtxtools = ["evtxscan", "evtxcat", "evtxls", "evtxanalyze", "evtx2bodyfile"]
 pol_export = []
@@ -120,7 +120,7 @@ clap = {version = "4.5", features = ["derive", "wrap_help", "cargo"] }
 clap-verbosity-flag = "2.0.0"
 csv = "1.2.2"
 encoding_rs = "0.8"
-flow-record = "0.4.2"
+flow-record = "0.4.4"
 
 ## setting release_max_level_info conflicts with evtx
 # log = {version = "0.4", features = [ "release_max_level_info" ]}
@@ -137,7 +137,7 @@ clio = {version="0.3", features=["clap-parse"] }
 #clio = {path="../clio", features=["clap-parse"]}
 
 # mactime2
-chrono-tz = {version="0.8", optional=true}
+chrono-tz = {version="0", optional=true}
 serde_json = {version = "1", optional=true}
 flate2 = {version="1", optional=true}
 thiserror = {version="1", optional=true}

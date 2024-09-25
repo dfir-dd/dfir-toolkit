@@ -1072,9 +1072,9 @@ dependencies = [
 
 [[package]]
 name = "flow-record"
-version = "0.4.2"
+version = "0.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "12ea19db0135e4a00aa3655e953106e5b8f30b6c2f1f45313836461bc15e79a0"
+checksum = "6ae63f7bfd1e8412006223dc7df0e17060d7667bdbd73ce8ab2a33e1191f2394"
 dependencies = [
  "binrw",
  "bitflags 2.6.0",
@@ -1090,9 +1090,9 @@ dependencies = [
 
 [[package]]
 name = "flow-record-common"
-version = "0.4.2"
+version = "0.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ade1700d676b9117a88e6a9ba18c4f90c420531e4b5fbb12cce99a3b2851dec8"
+checksum = "1b75fa5020fb9807f66c0229b5ebd8cb93440531865ebf8f6d3d28c2ea1aaa4d"
 dependencies = [
  "binrw",
  "chrono",
@@ -1100,16 +1100,15 @@ dependencies = [
  "proc-macro2",
  "quote",
  "rmpv",
- "sha2",
  "strum",
  "thiserror",
 ]
 
 [[package]]
 name = "flow-record-derive"
-version = "0.4.2"
+version = "0.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a3d39842eeb57e5db8292e1f7bdc03b4fc28f11caf2c8ed3653ce6e4e1cb17ba"
+checksum = "91fd6daf453a4d3cf7dc047a603dca62d4396a8cbf1e43cbbcd86f94de1e3af9"
 dependencies = [
  "chrono",
  "darling",
