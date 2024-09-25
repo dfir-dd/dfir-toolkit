@@ -2,7 +2,7 @@ use anyhow::{bail, Result};
 use cli::Cli;
 use dfir_toolkit::common::FancyParser;
 use evtx_file::EvtxFile;
-use output_formatter::{BodyfileOutputFormatter, JsonOutputFormatter};
+use output_formatter::BodyfileOutputFormatter;
 
 mod bf_data;
 mod cli;
@@ -25,9 +25,6 @@ fn main() -> Result<()> {
     for input in cli.evtx_files().iter() {
         let file = EvtxFile::from(input);
         match cli.format() {
-            output_format::OutputFormat::Json => {
-                file.print_records(JsonOutputFormatter, !cli.strict())?
-            }
             output_format::OutputFormat::Bodyfile => {
                 file.print_records(BodyfileOutputFormatter, !cli.strict())?
             }

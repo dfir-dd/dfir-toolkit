@@ -9,17 +9,13 @@ use super::bodyfile::{BodyfileDecoder, BodyfileReader, BodyfileSorter};
 use super::cli::Cli;
 use super::error::MactimeError;
 use super::filter::{Consumer, Joinable, Provider, RunOptions, Sorter};
-use super::output::{CsvOutput, JsonSorter, TxtOutput};
+use super::output::{CsvOutput, TxtOutput};
 use super::stream::StreamReader;
 
 #[derive(ValueEnum, Clone, Display)]
 enum InputFormat {
     #[strum(serialize = "bodyfile")]
     Bodyfile,
-
-    #[cfg(feature = "elastic")]
-    #[strum(serialize = "json")]
-    Json,
 }
 
 #[derive(ValueEnum, Clone, Display)]
@@ -35,11 +31,6 @@ pub(crate) enum OutputFormat {
     /// Javascript Object Notation
     #[strum(serialize = "json")]
     Json,
-
-    /// JSON-format to be used by elasticsearch
-    #[cfg(feature = "elastic")]
-    #[strum(serialize = "elastic")]
-    Elastic,
 
     /// Use the old (non RFC compliant) CSV format that was used by legacy mactime.
     #[strum(serialize = "old-csv")]
@@ -63,27 +54,20 @@ impl Mactime2Application {
             strict_mode: self.strict_mode,
         };
 
-        if matches!(self.format, OutputFormat::Json) {
-            Box::new(JsonSorter::with_receiver(decoder.get_receiver(), options))
-        } else {
-            let mut sorter =
-                BodyfileSorter::default().with_receiver(decoder.get_receiver(), options);
+        let mut sorter = BodyfileSorter::default().with_receiver(decoder.get_receiver(), options);
 
-            sorter = sorter.with_output(match self.format {
-                OutputFormat::OldCsv => {
-                    Box::new(OldCsvOutput::new(std::io::stdout(), self.dst_zone))
-                }
+        sorter = sorter.with_output(match self.format {
+            OutputFormat::OldCsv => Box::new(OldCsvOutput::new(std::io::stdout(), self.dst_zone)),
 
-                OutputFormat::Csv => Box::new(CsvOutput::new(
-                    std::io::stdout(),
-                    self.dst_zone,
-                    self.show_headers,
-                )),
-                OutputFormat::Txt => Box::new(TxtOutput::new(std::io::stdout(), self.dst_zone)),
-                _ => panic!("invalid execution path"),
-            });
-            Box::new(sorter)
-        }
+            OutputFormat::Csv => Box::new(CsvOutput::new(
+                std::io::stdout(),
+                self.dst_zone,
+                self.show_headers,
+            )),
+            OutputFormat::Txt => Box::new(TxtOutput::new(std::io::stdout(), self.dst_zone)),
+            _ => panic!("invalid execution path"),
+        });
+        Box::new(sorter)
     }
 
     pub fn run(&self) -> anyhow::Result<()> {

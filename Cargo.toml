@@ -50,11 +50,6 @@ path = "src/bin/pol_export/main.rs"
 required-features = ["pol_export"]
 
 [[bin]]
-name = "es4forensics"
-path = "src/bin/es4forensics/main.rs"
-required-features = ["elastic"]
-
-[[bin]]
 name = "regdump"
 path = "src/bin/regdump/main.rs"
 required-features = ["regdump"]
@@ -98,15 +93,14 @@ required-features = ["zip2bodyfile"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
 default = ["pol_export", "mactime2", "evtxtools", "regdump", "hivescan", "cleanhive", "ipgrep", "ts2date", "lnk2bodyfile", "pf2bodyfile", "zip2bodyfile"]
-mactime2 = ["gzip", "elastic", "chrono-tz", "thiserror", "bitflags", "encoding_rs_io", "color-print"]
+mactime2 = ["gzip", "chrono-tz", "thiserror", "bitflags", "encoding_rs_io", "color-print", "strum", "strum_macros"]
 gzip = ["flate2"]
-elastic = ["elasticsearch", "tokio", "futures", "serde_json", "sha2", "base64", "num-traits", "num-derive", "strum", "strum_macros", "tokio-async-drop"]
 evtxtools = ["evtxscan", "evtxcat", "evtxls", "evtxanalyze", "evtx2bodyfile"]
 pol_export = []
 evtxscan = ["evtx"]
 evtxcat = ["evtx", "colored_json", "term-table", "termsize"]
 evtxls = ["evtx", "colored", "lazy-regex", "regex", "sigpipe", "dfirtk-eventdata"]
-evtxanalyze = ["evtx", "dfirtk-sessionevent-derive", "dfirtk-eventdata", "exitcode", "walkdir"]
+evtxanalyze = ["evtx", "dfirtk-sessionevent-derive", "dfirtk-eventdata", "exitcode", "walkdir", "serde_json"]
 evtx2bodyfile = ["evtx", "getset", "ouroboros", "indicatif"]
 ipgrep = []
 ts2date = ["regex"]
@@ -126,6 +120,7 @@ clap = {version = "4.5", features = ["derive", "wrap_help", "cargo"] }
 clap-verbosity-flag = "2.0.0"
 csv = "1.2.2"
 encoding_rs = "0.8"
+flow-record = "0.4.2"
 
 ## setting release_max_level_info conflicts with evtx
 # log = {version = "0.4", features = [ "release_max_level_info" ]}
@@ -171,13 +166,6 @@ ouroboros = {version="0.18", optional=true}
 
 # bodyfile, es4forensics
 duplicate = "1"
-
-# es4forensics
-# requires libssl-dev
-elasticsearch = {version="8.4.0-alpha.1", optional=true}
-tokio = { version = "1", features = ["full"], optional=true }
-tokio-async-drop = {version="0", optional=true}
-futures = {version="0.3", optional=true }
 
 sha2 = {version="0.10", optional=true}
 base64 = {version="0.21", optional=true}
