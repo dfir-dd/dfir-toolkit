@@ -92,12 +92,22 @@ impl From<UnixTimestamp> for Option<DateTime<Utc>> {
 impl TryFrom<&Bodyfile3Line> for FileRecord {
     type Error = flow_record::prelude::Error;
     fn try_from(line: &Bodyfile3Line) -> Result<Self, Self::Error> {
+        let mode;
+        let file_type;
+
+        if line.get_mode_as_string().is_empty() {
+            mode = FileMode::UNSPECIFIED;
+            file_type = FileType::Unknown;
+        } else {
+            mode = FileMode::try_from(&line.get_mode_as_string()[..])?;
+            file_type = FileType::try_from(&line.get_mode_as_string()[..])?;
+        }
         Ok(Self {
             file_name: Path::new(line.get_name().to_string().into(), PathType::Posix),
             user_id: *line.get_uid(),
             group_id: *line.get_gid(),
-            mode: FileMode::try_from(&line.get_mode_as_string()[..])?,
-            file_type: FileType::try_from(&line.get_mode_as_string()[..])?,
+            mode,
+            file_type,
             size: Filesize::from(*line.get_size()),
             modified: line
                 .get_mtime()
