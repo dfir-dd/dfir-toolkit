@@ -1,9 +1,25 @@
 use std::{path::PathBuf, fs::File};
 
-use clap::{Parser, ValueHint};
+use clap::{Parser, ValueEnum, ValueHint};
 use dfir_toolkit::common::HasVerboseFlag;
 use log::LevelFilter;
 use nt_hive2::{HiveParseMode, Hive};
+use strum_macros::Display;
+
+#[derive(ValueEnum, Clone, Display)]
+pub (crate) enum OutputFormat {
+    /// registry export format format
+    #[strum(serialize = "reg")]
+    Reg,
+
+    /// bodyfile format
+    #[strum(serialize = "bodyfile")]
+    Bodyfile,
+
+    /// flow record format (<https://docs.rs/flow-record>)
+    #[strum(serialize = "record")]
+    Record
+}
 
 /// parses registry hive files and prints a bodyfile
 #[derive(Parser)]
@@ -19,8 +35,8 @@ pub (crate) struct Cli {
     pub (crate) logfiles: Vec<PathBuf>,
 
     /// print as bodyfile format
-    #[clap(short('b'), long("bodyfile"))]
-    pub (crate) display_bodyfile: bool,
+    #[clap(short('F'), long("format"), default_value_t=OutputFormat::Reg)]
+    pub (crate) format: OutputFormat,
 
     /// ignore the base block (e.g. if it was encrypted by some ransomware)
     #[clap(short('I'), long)]

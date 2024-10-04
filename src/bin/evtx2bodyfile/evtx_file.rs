@@ -5,7 +5,7 @@ use indicatif::{ProgressBar, ProgressDrawTarget, ProgressStyle};
 use ouroboros::self_referencing;
 use serde_json::Value;
 
-use crate::output_formatter::OutputFormatter;
+use crate::output_writer::OutputWriter;
 
 pub(crate) struct EvtxFile(Input);
 
@@ -58,24 +58,21 @@ impl From<&Input> for EvtxFile {
 }
 
 impl EvtxFile {
-    pub(crate) fn print_records<F>(self, formatter: F, treat_errors_as_warnings: bool) -> Result<()>
+    pub(crate) fn print_records<F>(self, treat_errors_as_warnings: bool) -> Result<()>
     where
-        F: OutputFormatter,
+        F: OutputWriter<std::io::Stdout>,
     {
+        let mut formatter = F::from(std::io::stdout());
         let bar = self.create_progress_bar().unwrap();
         for value in self.into_iter() {
-            match formatter.record_to_string(&value) {
-                Ok(s) => println!("{s}"),
-                Err(why) => {
-                    if treat_errors_as_warnings {
-                        log::warn!("Error while reading record: {why}");
-                    } else {
-                        bar.finish_and_clear();
-                        return Err(why);
-                    }
+            if let Err(why) = formatter.output(&value) {
+                if treat_errors_as_warnings {
+                    log::warn!("Error while reading record: {why}");
+                } else {
+                    bar.finish_and_clear();
+                    return Err(why);
                 }
             }
-
             bar.inc(1);
         }
         bar.finish_and_clear();
