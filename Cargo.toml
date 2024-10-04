@@ -120,7 +120,8 @@ clap = {version = "4.5", features = ["derive", "wrap_help", "cargo"] }
 clap-verbosity-flag = "2.0.0"
 csv = "1.2.2"
 encoding_rs = "0.8"
-flow-record = "0.4.4"
+flow-record = "0.4.6"
+#flow-record = {path="../flow-record"}
 
 ## setting release_max_level_info conflicts with evtx
 # log = {version = "0.4", features = [ "release_max_level_info" ]}

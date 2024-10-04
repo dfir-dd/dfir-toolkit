@@ -12,6 +12,7 @@ mod cli;
 mod evtx_file;
 mod output_format;
 mod output_writer;
+mod value_map;
 #[macro_use]
 mod macros;
 
