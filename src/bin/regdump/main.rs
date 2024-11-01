@@ -1,11 +1,14 @@
 use anyhow::{bail, Result};
 
+use chrono::{DateTime, Utc};
 use dfir_toolkit::common::bodyfile::Bodyfile3Line;
 use dfir_toolkit::common::{FancyParser, FormattableDatetime};
+use flow_record::derive::*;
+use flow_record::prelude::*;
 use nt_hive2::*;
 use simplelog::{Config, SimpleLogger};
 use std::fs::File;
-use std::io::{Read, Seek};
+use std::io::{Read, Seek, Write};
 
 use crate::cli::Cli;
 
@@ -15,12 +18,18 @@ fn main() -> Result<()> {
     let mut cli = Cli::parse_cli();
     let _ = SimpleLogger::init(cli.verbose.log_level_filter(), Config::default());
 
-    fn do_print_key<RS>(hive: &mut Hive<RS, CleanHive>, root_key: &KeyNode, cli: &Cli) -> Result<()>
+    fn do_print_key<RS, W>(
+        hive: &mut Hive<RS, CleanHive>,
+        root_key: &KeyNode,
+        cli: &Cli,
+        ser: &mut Serializer<W>,
+    ) -> Result<()>
     where
         RS: Read + Seek,
+        W: Write,
     {
         let mut path = Vec::new();
-        print_key(hive, root_key, &mut path, cli)
+        print_key(hive, root_key, &mut path, cli, ser)
     }
 
     match File::open(&cli.hive_file) {
@@ -45,7 +54,8 @@ fn main() -> Result<()> {
             };
 
             let root_key = &clean_hive.root_key_node().unwrap();
-            do_print_key(&mut clean_hive, root_key, &cli).unwrap();
+            let mut serializer = Serializer::new(std::io::stdout());
+            do_print_key(&mut clean_hive, root_key, &cli, &mut serializer).unwrap();
         }
         Err(why) => {
             eprintln!(
@@ -59,35 +69,63 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn print_key<RS>(
+#[derive(FlowRecord)]
+#[flow_record(version = 1, source = "regdump", classification = "reg")]
+struct RegistryKey<'d> {
+    path: String,
+    ctime: &'d DateTime<Utc>,
+    values_count: usize
+}
+
+fn print_key<RS, W>(
     hive: &mut Hive<RS, CleanHive>,
     keynode: &KeyNode,
     path: &mut Vec<String>,
     cli: &Cli,
+    ser: &mut Serializer<W>,
 ) -> Result<()>
 where
     RS: Read + Seek,
+    W: Write,
 {
     path.push(keynode.name().to_string());
 
     let current_path = path.join("\\");
-    if cli.display_bodyfile {
-        let bf_line = Bodyfile3Line::new()
-            .with_name(&current_path)
-            .with_ctime(keynode.timestamp().into());
-        println!("{}", bf_line);
-    } else {
-        if cli.hide_timestamps {
-            println!("\n[{}]", &current_path);
-        } else {
-            println!("\n[{}]; {}", &current_path, FormattableDatetime::from(keynode.timestamp()));
+
+    match cli.format {
+        cli::OutputFormat::Reg => {
+            if cli.hide_timestamps {
+                println!("\n[{}]", &current_path);
+            } else {
+                println!(
+                    "\n[{}]; {}",
+                    &current_path,
+                    FormattableDatetime::from(keynode.timestamp())
+                );
+            }
+
+            print_values(keynode);
         }
 
-        print_values(keynode);
+        cli::OutputFormat::Bodyfile => {
+            let bf_line = Bodyfile3Line::new()
+                .with_name(&current_path)
+                .with_ctime(keynode.timestamp().into());
+            println!("{}", bf_line);
+        }
+
+        cli::OutputFormat::Record => {
+            let key = RegistryKey {
+                path: current_path,
+                ctime: keynode.timestamp(),
+                values_count: keynode.values().len()
+            };
+            ser.serialize(key)?;
+        }
     }
 
     for sk in keynode.subkeys(hive).unwrap().iter() {
-        print_key(hive, &sk.borrow(), path, cli)?;
+        print_key(hive, &sk.borrow(), path, cli, ser)?;
     }
     path.pop();
 
