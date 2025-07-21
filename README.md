@@ -1,4 +1,23 @@
 
+> [!CAUTION]
+> # `DFIR Toolkit` is leaving github
+> 
+> ## Why?
+>
+> We believe that all men (and women, and all human between and above) are created equal. In this mindset, it does not make sense to judge people based on their birthplace, or their language, color, religion, or whatsoever.
+> 
+> We believe that who you are is made up of what you do. If you are caring towards other people, then that's you are. If you do harm to other people, then that's who you are.
+> 
+> We're concerned of what is currently happening in the United States. We don't like it when a government thinks it is above the law. We don't like it when a government doesn't serve the people, but sees people as a threat. But that's politics.
+> 
+> Github is part of Microsoft, and Microsoft is supporting this government. For example, Microsoft blocked the mail accounts of ICC members because of political reasons. We don't want to get our accounts blocked or deleted arbitrarily. Therefore, we're going to not support Microsoft in any way. That's why we'll move all our repositories away from github.
+> 
+> We had a good time. Cheers.
+>
+> ## Where?
+> 
+> The new place-to-be for the `DFIR Toolkit` is <https://codeberg.org/dfir-dd/dfir-toolkit>.
+> 
 # DFIR Toolkit
 
 <img align="right" width="128px" src="https://github.com/dfir-dd/dfir-toolkit/blob/main/doc/images/dfir_fox_128.png?raw=true" />
