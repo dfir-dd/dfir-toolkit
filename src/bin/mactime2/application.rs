@@ -28,10 +28,6 @@ pub(crate) enum OutputFormat {
     #[strum(serialize = "txt")]
     Txt,
 
-    /// Javascript Object Notation
-    #[strum(serialize = "json")]
-    Json,
-
     /// flow.record format used by `dissect` and `rdump`
     #[strum(serialize = "record")]
     Record,
@@ -99,8 +95,6 @@ impl From<Cli> for Mactime2Application {
             None => {
                 if cli.csv_format {
                     OutputFormat::Csv
-                } else if cli.json_format {
-                    OutputFormat::Json
                 } else {
                     OutputFormat::Txt
                 }
